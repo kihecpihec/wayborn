@@ -4,6 +4,10 @@ Wayborn igralcu omogoča, da med hojo odkriva dele resničnega sveta na pixel-ar
 
 ## Diagram primerov uporabe
 
+![Popravljeni diagram](diagrami/primeri-uporabe.svg)
+
+[Prenesi PNG](diagrami/primeri-uporabe.png) · [Izvor DOT](diagrami/primeri-uporabe.dot)
+
 ```mermaid
 flowchart LR
     I["Igralec"]
@@ -17,11 +21,16 @@ flowchart LR
         UC5(["UC5 · Preglej predvideno osvajanje"])
         UC6(["UC6 · Sinhroniziraj odpravo"])
         UC7(["UC7 · Preglej profil in XP"])
+        UC8(["UC8 · Kozmetika · po MVP"])
+        UC9(["UC9 · Izzivi in dosežki · po MVP"])
+        UC10(["UC10 · Ekipe · po MVP"])
     end
     I --- UC1 & UC2 & UC3 & UC4 & UC5 & UC6 & UC7
     L --- UC2 & UC3
     S --- UC1 & UC6
-    UC5 -. "«extend» · če trasa omogoča osvojitev" .-> UC4
+    I --- UC8
+    I --- UC9
+    I --- UC10
 ```
 
 ## Ključni scenariji
@@ -38,27 +47,61 @@ flowchart LR
 
 ## Predvidena navigacija
 
+![Popravljeni diagram](diagrami/navigacija.svg)
+
+[Prenesi PNG](diagrami/navigacija.png) · [Izvor DOT](diagrami/navigacija.dot)
+
 ```mermaid
 flowchart TD
     A["Vstop"] --> M["Zemljevid"]
     M -->|"Začni · dovoljenje še manjka"| G["Dovoljenje GPS"]
     G -->|"Zavrni · vrnitev"| M
-    G -->|"Dovoli"| W["Aktivna odprava"]
-    M -->|"Začni · GPS dovoljen"| W
-    W <-->|"Premor / Nadaljuj"| P["Premor"]
+    G -->|"Dovoli"| V["Čakanje na veljaven GPS"]
+    M -->|"Začni · GPS dovoljen"| V
+    V -->|"Veljaven položaj"| W["Aktivna odprava"]
+    V -->|"Prekliči"| M
+    W -->|"Premor"| P["Premor"]
+    P -->|"Nadaljuj · nov segment"| V
     W --> E["Potrditev zaključka"]
     P --> E
-    E -->|"Nazaj"| W
+    E -->|"Prekliči · prej aktivna"| W
+    E -->|"Prekliči · prej premor"| P
     E -->|"Potrdi"| R["Povzetek · čaka na sinhronizacijo"]
-    R <-->|"Preglej celice / Nazaj"| T["Predogled osvajanja"]
-    R -->|"Potrditev zaledja"| C["Potrjeni rezultat"]
+    R <-->|"Izbirni predogled / Nazaj"| T["Predogled osvajanja"]
+    R -->|"Vrni se · odprava ostane v vrsti"| M
+    R -->|"Povezava in veljavna seja"| S["Strežniško preverjanje"]
+    S -->|"Omrežna napaka · ponovi pozneje"| R
+    S -->|"Sprejeto"| C["Potrjeni rezultat"]
+    S -->|"Zavrnjeno"| X["Razlog zavrnitve · brez nagrade"]
+    X --> M
     C --> M
     C --> F["Profil"]
     M <--> F
-    M <-->|"Po potrditvi osvojitve"| O["Potrjeno ozemlje"]
+    M <--> J["Journal · izzivi in dosežki · po MVP"]
+    M <--> K["Guilds · ekipe · po MVP"]
+    F <--> H["Kozmetika · po MVP"]
+    M <-->|"Preglej / Nazaj"| O["Potrjeno ozemlje"]
 ```
 
 ## Klikabilni prototip
+
+### Pravila popravljenega toka
+
+Predogled osvajanja je izbiren. Sinhronizacija lokalne vrste poteka tudi po vrnitvi na zemljevid, ko sta na voljo povezava in veljavna prijavna seja. Strežnik potrdi lastništvo in XP. Rezultat lahko vsebuje nič osvojenih celic. Ob poteku seje odprava ostane shranjena do ponovne prijave.
+
+Dovoljenje GPS še ne zagotavlja uporabnega položaja. Ob slabem signalu ali prehodu v ozadje se beleženje prekine. Ob obnovi signala in nadaljevanju iz premora se začne nov segment z ohranjenimi statistikami. Prekinjenih segmentov ne povezujemo v osvojitveno zanko. Preklic zaključka povrne predhodno aktivno ali ustavljeno stanje.
+
+### Pripombe k priloženima slikama in HTML V2
+
+Zgornja diagrama in slikovna izvoza v mapi diagrami predstavljajo popravljeni načrt. Izvorni datoteki DOT omogočata ponovni izvoz z Graphviz.
+
+- V diagramu primerov uporabe uporabimo polne povezave med igralcem in primeri uporabe. Zaledje sodeluje pri prijavi in sinhronizaciji. Zaporedje korakov prikazuje navigacijski diagram.
+- Hero vsebuje profil in XP v MVP. Kozmetika, Journal in Guilds so nadgradnje po MVP.
+- V navigaciji dodamo Territory, povratne povezave, čakanje na GPS, izbirni predogled in neuspešno sinhronizacijo.
+- HTML V2 potrebuje zaslone oziroma stanja za vstop, dovoljenje GPS, premor, potrditev zaključka, povzetek in čakajočo oziroma zavrnjeno sinhronizacijo. Demonstracijski gumb za osvojitev v izvedbi počaka na strežniško potrditev.
+- Simulacija V2 oglašuje korak 150 m, koda pa prišteje 170 m. Razdalja, XP na zemljevidu in napredek profila morajo izhajati iz skupnega stanja odprave.
+
+### Obstoječi prototip MVP
 
 Odpri [index.html](mockupi/index.html) iz lokalne kopije repozitorija. Prototip je v slovenščini in deluje brez povezave. Štirje gumbi ob telefonu nastavijo vzorčne podatke za prvi obisk, hojo, osvajanje in sinhronizacijo. GPS, prijava, napredek in odgovor zaledja so simulirani. Ponastavitev scenarija povrne njegove začetne podatke.
 
