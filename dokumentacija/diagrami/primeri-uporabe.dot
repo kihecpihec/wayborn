@@ -1,0 +1,35 @@
+digraph G {
+rankdir=LR;
+graph [bgcolor="#f6f9fa", pad="0.4", nodesep="0.35", ranksep="0.6", fontname="DejaVu Sans", fontsize=22, labelloc=t, label="WAYBORN / PRIMERI UPORABE"];
+node [shape=box, style="rounded,filled", fillcolor="#e4f3ed", color="#428c79", fontname="DejaVu Sans", fontsize=12, margin="0.18,0.12"];
+edge [color="#72929b", fontcolor="#36555d", fontname="DejaVu Sans", fontsize=10];
+subgraph cluster_app { label="Mobilna aplikacija Wayborn"; color="#b5cad3";
+UC1 [shape=ellipse,label="UC1 · Vstopi v igro"];
+UC2 [shape=ellipse,label="UC2 · Začni odpravo"];
+UC3 [shape=ellipse,label="UC3 · Hodi in razkrivaj zemljevid"];
+UC4 [shape=ellipse,label="UC4 · Upravljaj in zaključi odpravo"];
+UC5 [shape=ellipse,label="UC5 · Preglej predvideno osvajanje"];
+UC6 [shape=ellipse,label="UC6 · Sinhroniziraj odpravo"];
+UC7 [shape=ellipse,label="UC7 · Preglej profil in XP"];
+UC8 [shape=ellipse,fillcolor="#fff3df",color="#d9a044",style="filled,dashed",label="UC8 · Kozmetika · po MVP"];
+UC9 [shape=ellipse,fillcolor="#fff3df",color="#d9a044",style="filled,dashed",label="UC9 · Izzivi in dosežki · po MVP"];
+UC10 [shape=ellipse,fillcolor="#fff3df",color="#d9a044",style="filled,dashed",label="UC10 · Ekipe · po MVP"];
+}
+I [shape=plaintext,fillcolor="#f6f9fa",label="Igralec"];
+L [shape=plaintext,fillcolor="#f6f9fa",label="Lokacijska storitev naprave"];
+S [shape=plaintext,fillcolor="#f6f9fa",label="Zaledje Wayborn"];
+I -> UC1 [dir=none];
+I -> UC2 [dir=none];
+I -> UC3 [dir=none];
+I -> UC4 [dir=none];
+I -> UC5 [dir=none];
+I -> UC6 [dir=none];
+I -> UC7 [dir=none];
+L -> UC2 [dir=none];
+L -> UC3 [dir=none];
+S -> UC1 [dir=none];
+S -> UC6 [dir=none];
+I -> UC8 [dir=none];
+I -> UC9 [dir=none];
+I -> UC10 [dir=none];
+}
