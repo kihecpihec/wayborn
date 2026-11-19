@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Wayborn demo" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata><name>Ljubljana walking sample</name></metadata>
+  <wpt lat="46.05140" lon="14.50600"><time>2026-11-13T12:00:00Z</time></wpt>
+  <wpt lat="46.05150" lon="14.50600"><time>2026-11-13T12:00:10Z</time></wpt>
+  <wpt lat="46.05160" lon="14.50600"><time>2026-11-13T12:00:20Z</time></wpt>
+  <wpt lat="46.05170" lon="14.50600"><time>2026-11-13T12:00:30Z</time></wpt>
+  <wpt lat="46.05180" lon="14.50600"><time>2026-11-13T12:00:40Z</time></wpt>
+</gpx>
