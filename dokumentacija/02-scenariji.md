@@ -1,49 +1,73 @@
-# Uporabniški scenariji in navigacija
+# Primeri uporabe in navigacija
+
+Wayborn igralcu omogoča, da med hojo odkriva dele resničnega sveta na pixel-art zemljevidu. Po koncu odprave pregleda odkritja, predvideno osvajanje in XP. Lokacijska storitev daje aplikaciji podatke med odpravo. Strežnik potrdi lastništvo in nagrade, ko je naprava povezana.
 
 ## Diagram primerov uporabe
 
 ```mermaid
 flowchart LR
-  I[Igralec] --> P[Prijava in profil]
-  I --> O[Začni / ustavi / zaključi odpravo]
-  I --> M[Razišči zemljevid]
-  I --> Z[Osvoji ali prevzemi celice]
-  I --> N[Preglej XP in povzetek]
-  G[Lokacijska storitev naprave] --> O
-  O --> M
-  M --> Z
-  S[Strežnik] --> V[Preveri traso in pravila]
-  Z --> V
-  V --> N
+    I["Igralec"]
+    L["Lokacijska storitev naprave"]
+    S["Zaledje Wayborn"]
+    subgraph W["Mobilna aplikacija Wayborn"]
+        UC1(["UC1 · Vstopi v igro"])
+        UC2(["UC2 · Začni odpravo"])
+        UC3(["UC3 · Hodi in razkrivaj zemljevid"])
+        UC4(["UC4 · Upravljaj in zaključi odpravo"])
+        UC5(["UC5 · Preglej predvideno osvajanje"])
+        UC6(["UC6 · Sinhroniziraj odpravo"])
+        UC7(["UC7 · Preglej profil in XP"])
+    end
+    I --- UC1 & UC2 & UC3 & UC4 & UC5 & UC6 & UC7
+    L --- UC2 & UC3
+    S --- UC1 & UC6
+    UC5 -. "«extend» · če trasa omogoča osvojitev" .-> UC4
 ```
 
-| ID | Scenarij in predpogoj | Glavni potek | Alternativa in rezultat |
-| --- | --- | --- | --- |
-| UC1 | Nov uporabnik | Odpre prijavo, vnese podatke, potrdi, izbere ime lika | Napačni podatki: sporočilo brez izgube vnosa; brez povezave prijava ni mogoča |
-| UC2 | Prijavljen igralec, začetek odprave | Zemljevid → Začni → dovoli GPS → aktivna odprava | Zavrnjeno dovoljenje: navodilo za nastavitve; predogled zemljevida brez beleženja |
-| UC3 | Aktivna odprava | GPS → preverjanje popravka → razdalja → razkritje novih celic | Slab GPS ali skok: opozorilo; brez neveljavne razdalje in osvajanja |
-| UC4 | Aktivna odprava | Premor → Nadaljuj → nov segment → Zaključi → povzetek | Med premorom se ne nabirajo čas, razdalja in odkritja; konec zahteva potrditev |
-| UC5 | Veljavna trasa | Strežnik preveri zanko in velikost → potrdi osvojene celice | Velika zanka: samo pas; samopresečna: brez notranjosti; delni prevzem ohrani druge celice |
-| UC6 | Zaključena odprava | Lokalno shrani → pošlji z ID odprave → prejmi XP in lastništvo | Brez povezave: »čaka na sinhronizacijo«; ponovitev istega ID ne podvoji nagrade |
-| UC7 | Prijavljen igralec | Profil → pregled XP, stopnje in dosežkov → nazaj na zemljevid | Kozmetika in izzivi so predvidene nadgradnje |
+## Ključni scenariji
+
+| Primer | Predpogoj in običajni potek | Odstopanje in pričakovani rezultat |
+| --- | --- | --- |
+| **UC1 · Vstop v igro** | Nov igralec se prijavi ali ustvari račun. Po vstopu se odpre zemljevid. V mockupu vstopi kot vzorčni igralec. | Napačni podatki ali nedosegljivo zaledje zadržijo igralca na prijavi. Mockup izvede uspešen vzorčni vstop. |
+| **UC2 · Začetek odprave** | Igralec na zemljevidu izbere **Začni odpravo**. Ob prvem zagonu dovoli lokacijo med uporabo. Po veljavnem popravku se prikaže položaj. | Po zavrnitvi lahko še gleda zemljevid. Beleženje se začne šele, ko omogoči dovoljenje. |
+| **UC3 · Hoja in odkrivanje** | Veljavni GPS odseki posodobijo razdaljo, čas, oceno korakov in sled. Megla se umika z obiskanih celic. Kontroli **Pixel/Karta** in **Sredi na igralca** upravljata prikaz zemljevida. | Slab signal ustavi beleženje nove razdalje in odkritij. Premik pogleda ne premakne igralca in ne ustvari XP. |
+| **UC4 · Premor in zaključek** | Igralec začasno ustavi odpravo v zgornji vrstici. Ob nadaljevanju začne nov segment in obdrži dosežene vrednosti. Po potrditvi zaključka vidi povzetek. | Med premorom se napredek ne beleži. Vrnitev s potrditvenega zaslona ohrani odpravo. |
+| **UC5 · Osvajanje** | Povzetek ob primerni trasi ponudi predogled. Veljavna majhna zanka zajame pot in notranjost. Če se dve zajeti celici prekrivata s tujim ozemljem, se ob potrditvi preneseta le ti dve. | Velik obhod zajame pas ob poti. Ozemlje pod meglo ostane skrito, preostanek tujega ozemlja ohrani lastnika. |
+| **UC6 · Sinhronizacija** | Zaključena odprava počaka v lokalni vrsti. Po povezavi strežnik preveri traso ter potrdi lastništvo in XP. | Brez povezave povzetek kaže čakajoče stanje. Ponovno pošiljanje iste odprave ne podvoji XP. |
+| **UC7 · Profil in XP** | Igralec odpre profil iz zemljevida ali potrjenega povzetka. Vidi stopnjo in potrjeno napredovanje. | Čakajoča nagrada je vidna v povzetku. V profil se prišteje po potrditvi. |
 
 ## Predvidena navigacija
 
 ```mermaid
 flowchart TD
-  A[Prijava] --> B[Zemljevid]
-  B --> C[Aktivna odprava]
-  C --> D[Premor]
-  D --> C
-  C --> E[Potrditev zaključka]
-  E --> F[Povzetek in sinhronizacija]
-  F --> B
-  B <--> G[Profil]
-  B <--> H[Podrobnosti odkritega ozemlja]
+    A["Vstop"] --> M["Zemljevid"]
+    M -->|"Začni · dovoljenje še manjka"| G["Dovoljenje GPS"]
+    G -->|"Zavrni · vrnitev"| M
+    G -->|"Dovoli"| W["Aktivna odprava"]
+    M -->|"Začni · GPS dovoljen"| W
+    W <-->|"Premor / Nadaljuj"| P["Premor"]
+    W --> E["Potrditev zaključka"]
+    P --> E
+    E -->|"Nazaj"| W
+    E -->|"Potrdi"| R["Povzetek · čaka na sinhronizacijo"]
+    R <-->|"Preglej celice / Nazaj"| T["Predogled osvajanja"]
+    R -->|"Potrditev zaledja"| C["Potrjeni rezultat"]
+    C --> M
+    C --> F["Profil"]
+    M <--> F
+    M <-->|"Po potrditvi osvojitve"| O["Potrjeno ozemlje"]
 ```
 
-## Mockupi in preverjanje
+## Klikabilni prototip
 
-Odpri [interaktivni HTML](mockupi/index.html) lokalno; ne potrebuje strežnika ali omrežja. Prikazuje prijavo, zemljevid z meglo, aktivno odpravo, premor, povzetek, ozemlje in profil. Vse številke so vzorčne. Gumbi prikazujejo predviden tok, ne uporabljajo GPS, ne ustvarijo računa in ničesar ne shranjujejo.
+Odpri [index.html](mockupi/index.html) iz lokalne kopije repozitorija. Prototip je v slovenščini in deluje brez povezave. Štirje gumbi ob telefonu nastavijo vzorčne podatke za prvi obisk, hojo, osvajanje in sinhronizacijo. GPS, prijava, napredek in odgovor zaledja so simulirani. Ponastavitev scenarija povrne njegove začetne podatke.
 
-Ročni pregled: prijava → začetek → premor → nadaljevanje → zaključek → preklic → zaključek → potrditev → povzetek → zemljevid; nato ozemlje in profil. Preveri tudi prikaz pri širini 360 px in upravljanje s tipkovnico. Za delujoče GPS in dejanske podlage uporabi ločeni Expo demo. Njegove izvorne slike so v `prototip/mapa/docs/screenshots/`.
+- [Wayborn Demo 01](https://github.com/kihecpihec/wayborn-demo1/tree/5f02aa160005eb4b9ff06d667f046f95acdbd65e) je izhodišče za lokacijski HUD, gumba Pixel/Karta in centriranje ter ploščo odprave s segmentnim XP. Podlaga mockupa je izrez posnetka zemljevida pri povečavi 18. Preklop na navadno karto je stiliziran prikaz.
+- [Wayborn landing](https://github.com/kihecpihec/wayborn-landing/tree/2c13b42) je izhodišče za videz vstopa, paleto in zamisel o postopnem razkrivanju pixel-art sveta. Osvajanje, sinhronizacija in trajni profil izhajajo iz [projektne zasnove](01-projekt.md).
+
+### Pot skozi prototip za pregled
+
+1. **Prvi obisk.** Vstopi, začni odpravo, zavrni GPS, vrni se na zemljevid in ob ponovnem začetku omogoči dovoljenje.
+2. **Hoja.** Simuliraj odsek in opazuj meglo, čas in XP. Preveri, da premor in slab GPS ustavita napredek. Nato nadaljuj. Na zaslonu za zaključek lahko izbereš vrnitev na odpravo.
+3. **Osvajanje.** Zaključi pripravljeno vzorčno pot in v povzetku primerjaj majhno zanko z velikim obhodom. Odpri predogled celic za oba primera.
+4. **Sinhronizacija.** Preveri čakajoči povzetek, simuliraj ponovno povezavo in sinhroniziraj odpravo. Po ponovnem pošiljanju preveri, da se v profilu XP prišteje enkrat.

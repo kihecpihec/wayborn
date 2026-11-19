@@ -10,7 +10,7 @@ Preverjeno pri pripravi mejnika (19. 11. 2026), lokalno na Linux z Node 24.22.2:
 | Obstoječi testi zemljevida in odprave | 30/30 uspešnih, `npm test` |
 | Spletni izvoz dema | Uspeh, `npm run build:web` |
 | Mockupi, širina 360 in 760 px | HTML predogled brez konzolnih napak |
-| Tok mockupov v brskalniku | Obvezna polja prijave; prijava → zemljevid → odprava → premor → nadaljevanje → preklic zaključka → potrditev zaključka → povzetek → ozemlje → profil: uspeh |
+| Tok mockupov v brskalniku | Vzorčni vstop, zavrnitev in odobritev GPS, napredek in megla, premor, slab GPS, preklic zaključka, majhna zanka in velik obhod, ponovitev sinhronizacije ter potrjeni XP v profilu: uspeh |
 | GitHub Issues | 9 objavljenih nalog z dodeljeno osebo in prioriteto v naslovu |
 
 CI uporablja Node 22 in enake ukaze. Končni dokaz izvajanja workflowa je GitHub Actions run, povezan z objavljenim commitom; lokalni rezultati ga ne nadomestijo.

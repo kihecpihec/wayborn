@@ -1,28 +1,267 @@
 <!doctype html>
-<html lang="sl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Wayborn — prototip zaslonov</title>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wayborn · Prototip odprave</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font:15px/1.5 system-ui,sans-serif;color:#182135}main{max-width:880px;margin:auto;padding:20px 0}h1{font-size:26px;margin:0}h2{font-size:25px;line-height:1.2}h3{margin:12px 0}p{color:#566175}button,input{font:inherit}button{cursor:pointer;border:1px solid #d9dce0;background:#fff;border-radius:12px;padding:11px 15px;color:#182135}button:focus-visible,input:focus-visible{outline:3px solid #277661;outline-offset:3px}.gold{background:#ffcc43;border-color:#ffcc43;font-weight:700}.dark{background:#182135;border-color:#182135;color:white}.wide{width:100%;margin:6px 0}header{padding:0 16px;color:var(--foreground,#182135)}header p{margin-top:6px;color:var(--muted-foreground,#566175)}nav{display:flex;gap:8px;flex-wrap:wrap;padding:10px 16px 20px}nav button[aria-current=true]{background:#182135;color:#fff}.layout{display:flex;align-items:flex-start;justify-content:center;gap:25px;padding:0 16px}.phone{width:352px;max-width:100%;flex-shrink:0;background:#fbfaf6;border:7px solid #192135;border-radius:36px;overflow:hidden;box-shadow:0 12px 35px #18213518}.status{padding:12px 20px 7px;display:flex;justify-content:space-between;font-size:12px;font-weight:700}.screen{min-height:560px}.panel{padding:20px}.note{max-width:300px;flex:1}.note div{padding:16px;background:#f2f0e9;border-radius:16px;margin-bottom:12px}.note p{margin:4px 0}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#657083}.map{height:290px;position:relative;overflow:hidden;background:#a7c586}.map svg{width:100%;height:100%;position:absolute;inset:0}.fog{position:absolute;inset:0;background:#26354be6;clip-path:polygon(0 0,100% 0,100% 100%,70% 100%,70% 70%,55% 60%,40% 75%,10% 55%,0 60%)}.map-label{position:absolute;top:15px;left:15px;background:#fbfaf6ed;border-radius:10px;padding:8px 12px;font-size:12px}.pin{position:absolute;top:66%;left:45%;background:#ffcc43;box-shadow:0 0 0 7px #ffffff88;width:20px;height:20px;border:4px solid #182135}.territory{position:absolute;bottom:15px;right:15px}.stats{display:flex;justify-content:space-between;gap:10px}.stats b{display:block;font-size:22px}.stats small{color:#657083;font-size:11px}.bar{height:9px;background:#e2e3dc;border-radius:6px;overflow:hidden;margin:14px 0}.bar span{display:block;width:64%;background:#ffcc43;height:100%}.avatar{font-size:60px;text-align:center;background:#e9efdc;border-radius:15px;padding:20px}.tile{padding:13px;background:#f0efe8;border-radius:12px;margin:10px 0}.footer{display:flex;justify-content:space-around;padding:9px;background:#fff;border-top:1px solid #e7e6e0}.footer button{border:0;padding:8px}.tag{font-size:11px;color:#27604d;background:#e4f1e4;padding:5px 9px;border-radius:8px}label{display:block;margin-top:15px;font-size:13px}input{width:100%;padding:12px;border:1px solid #c9cdd0;border-radius:10px;background:white}.warning{background:#fff1cc;padding:12px;border-radius:10px;font-size:13px}.error{color:#a53325}dialog{border:0;border-radius:20px;padding:24px;max-width:310px}dialog::backdrop{background:#18213599}@media(max-width:650px){.layout{flex-direction:column;align-items:center}.note{max-width:352px;width:100%}.phone{width:352px}nav button{padding:8px 10px}}
+  :root {--ink:#16243e; --muted:#5a6f8e; --paper:#f3f4ee; --card:#fffefb; --line:#dce3da; --night:#12203a; --gold:#ffcc43; --green:#69d7a0}
+  * {box-sizing:border-box}
+  body {margin:0; color:var(--foreground,var(--ink)); font:16px/1.45 ui-rounded, system-ui, sans-serif}
+  main {max-width:900px;margin:auto;padding:18px 0}
+  .brand {display:flex;align-items:center;gap:10px;padding:0 12px;margin-bottom:20px}
+  .brand img {width:36px;height:36px;object-fit:contain;image-rendering:pixelated}
+  h1,h2,h3,p {margin:0}
+  h1 {font-size:26px;letter-spacing:-.04em}
+  h2 {font-size:24px;line-height:1.15}
+  h3 {font-size:18px}
+  small,.caption {font-size:12px}
+  .layout {display:grid;grid-template-columns:minmax(0,400px) minmax(0,225px);gap:22px;justify-content:center;padding:0 12px}
+  .phone {color:var(--ink);background:var(--card);border:6px solid #0a1224;border-radius:30px;overflow:hidden}
+  .phone-head {display:flex;justify-content:space-between;align-items:center;padding:10px 16px;font-weight:750;font-size:13px}
+  .map {position:relative;height:320px;background:#aec092 url('ljubljana.webp') center/cover;overflow:hidden;isolation:isolate}
+  .fog {position:absolute;inset:0;background:#12203af2;clip-path:polygon(0 0,100% 0,100% 40%,86% 40%,86% 33%,70% 33%,70% 25%,56% 25%,56% 32%,42% 32%,42% 45%,29% 45%,29% 55%,17% 55%,17% 72%,0 72%)}
+  .revealed .fog {clip-path:polygon(0 0,100% 0,100% 27%,83% 27%,83% 19%,71% 19%,71% 13%,42% 13%,42% 21%,18% 21%,18% 32%,0 32%)}
+  .map[data-discovery="1"] .fog {transform:translateY(-9%)}
+  .map[data-discovery="2"] .fog {transform:translateY(-18%)}
+  .map.base {background:#e8e5d4}
+  .map.base .fog {background:#12203a}
+  .map.base::before {content:"";position:absolute;inset:0;background:repeating-linear-gradient(31deg,transparent 0 58px,#fff 58px 65px),repeating-linear-gradient(124deg,#e5e4d3 0 55px,#fff 55px 60px);z-index:-1}
+  .trail {position:absolute;left:33%;top:49%;width:38%;height:26%;border:3px dashed var(--gold);transform:rotate(-17deg);border-radius:8px;filter:drop-shadow(0 1px 1px var(--ink))}
+  .trail.open {border-top:0;border-left:0}
+  .territory {position:absolute;left:31%;top:41%;display:grid;grid-template-columns:repeat(6,1fr);width:48%;height:26%;transform:rotate(-12deg)}
+  .cell {border:1px solid transparent}
+  .cell.foreign {background:#7093c7ad;border-color:#243754}
+  .cell.claimed {background:#ffcc43a6;border-color:#584309}
+  .cell.transfer {background:repeating-linear-gradient(45deg,#ffcc43cf 0 4px,#7a551fae 4px 6px);border-color:#584309}
+  .player {position:absolute;left:57%;top:60%;width:18px;height:22px;background:var(--gold);border:3px solid var(--ink);box-shadow:0 3px 0 #0a122488}
+  .player::after {content:"";display:block;width:8px;height:4px;background:#fff2c0;margin:4px auto}
+  .hud {position:absolute;inset:12px 12px auto;display:flex;justify-content:space-between;align-items:center;gap:6px;background:var(--card);border-radius:14px;padding:9px 12px;box-shadow:0 4px 12px #12203a24}
+  .stat b {display:block;font-size:18px;font-variant-numeric:tabular-nums}
+  .stat small {display:block;color:var(--muted);font-size:10px}
+  .map-tools {position:absolute;inset:auto 10px 23px;display:flex;gap:6px;align-items:center}
+  .map-tools .loc {margin-right:auto}
+  .credit {position:absolute;bottom:0;right:0;background:var(--card);font-size:9px;padding:2px 5px}
+  button {font:inherit;font-weight:650;min-height:40px;border:1px solid var(--line);border-radius:11px;background:var(--card);color:var(--ink);padding:8px 12px;cursor:pointer}
+  button:focus-visible {outline:3px solid #287962;outline-offset:2px}
+  .dark {background:var(--night);color:white;border-color:var(--night)}
+  .gold {background:var(--gold);border-color:var(--gold)}
+  .sheet {padding:14px 17px 16px}
+  .sheet h2 {margin-bottom:5px}
+  .sheet p,.sheet small {color:var(--muted)}
+  .sheet p {font-size:14px}
+  .stack {display:grid;gap:8px;margin-top:12px}
+  .row {display:flex;gap:8px;align-items:center;justify-content:space-between}
+  .progress {display:grid;grid-template-columns:repeat(20,1fr);gap:3px;margin:7px 0 12px}
+  .progress span {height:8px;border-radius:2px;background:#e9ebe4}
+  .progress .filled {background:var(--gold)}
+  .box {background:var(--paper);border-radius:12px;padding:12px;margin-top:10px}
+  .warning {background:#fff2cb;color:var(--ink)}
+  .nav {border-top:1px solid var(--line);display:flex;justify-content:center;gap:10px;padding:8px}
+  .nav button {border:0}
+  .nav button[aria-current=true] {background:var(--paper)}
+  .aside {color:var(--ink);background:var(--paper);border-radius:16px;padding:16px;align-self:start}
+  .aside p {color:var(--muted);font-size:13px;margin:6px 0}
+  .aside button {text-align:left}
+  .aside button[aria-pressed=true] {border-color:var(--ink);background:var(--gold)}
+  .scenario {margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+  .welcome {background:radial-gradient(ellipse at bottom,#263c5d,var(--night) 70%);color:#eaf2fb;padding:28px 18px}
+  .welcome img {width:70px;height:70px;object-fit:contain;image-rendering:pixelated}
+  .welcome h2 {font-size:30px;margin-top:8px}
+  @media(max-width:600px) {.layout {grid-template-columns:minmax(0,400px)} .map {height:280px}}
 </style>
-<main><header><div class="eyebrow">Projektna zasnova · interaktivni mockupi</div><h1>wayborn <span style="color:#a47c15">✦</span></h1><p>Predvideni zasloni aplikacije. Vzorčni podatki, brez GPS in shranjevanja.</p></header><nav aria-label="Pregled zaslonov" id="navigation"></nav><div class="layout"><div class="phone"><div class="status"><span>9:41</span><span>● ▰</span></div><div id="view" class="screen"></div></div><aside class="note"><div><b id="scenario"></b><p id="explanation"></p></div><div><b>Predlagan vizualni jezik</b><p>Temnomoderna, zlata in svetla podlaga iz dema. Shematski zemljevid ponazarja meglo, lik in ozemlja; ne predstavlja resnične geografije.</p></div><div><b>Obseg prototipa</b><p>Prijava in statistike so simulirane. Trajni napredek, osvajanje in profil bodo del implementacije. Demo zemljevida je ločen v mapi prototip/mapa.</p></div></aside></div></main>
-<dialog id="confirm"><h3>Zaključi odpravo?</h3><p>Po potrditvi se odpre povzetek in zahteva za preverjanje trase.</p><button onclick="document.querySelector('dialog').close()">Nadaljuj odpravo</button><button class="gold wide" onclick="document.querySelector('dialog').close();show('summary')">Zaključi</button></dialog>
+</head>
+<body>
+<main>
+  <header class="brand">
+    <img src="../../prototip/mapa/assets/wayborn-icon.png" alt="">
+    <div><h1>wayborn</h1><small>Klikabilni prototip · simulirana odprava</small></div>
+  </header>
+  <div class="layout">
+    <section class="phone" aria-label="Predogled mobilne aplikacije">
+      <div class="phone-head"><span>9:41</span><span>wayborn</span><span aria-hidden="true">▮▮▮</span></div>
+      <div id="screen"></div>
+    </section>
+    <aside class="aside">
+      <h3>Preizkusi scenarij</h3>
+      <div class="stack" id="scenarios">
+        <button data-scenario="first">Prvi obisk in dovoljenje</button>
+        <button data-scenario="walk">Hoja in odkrivanje</button>
+        <button data-scenario="claim">Zanka in delni prevzem</button>
+        <button data-scenario="sync">Oddaja brez povezave</button>
+      </div>
+      <div class="scenario" aria-live="polite" id="hint"></div>
+      <button class="stack" data-action="reset">Ponastavi scenarij</button>
+    </aside>
+  </div>
+</main>
 <script>
-const names={login:'Prijava',map:'Zemljevid',walk:'Odprava',summary:'Povzetek',territory:'Ozemlje',profile:'Profil'};
-let paused=false;
-const notes={login:['UC1 · Prvi obisk','Uporabnik se prijavi ali ustvari račun. Prototip preveri obvezni polji, prijava je simulirana.'],map:['UC2 · Priprava odprave','Zemljevid pokaže osebno odkritje. Lastništvo pod meglo ostaja skrito. Začetek bi v aplikaciji zahteval dovoljenje GPS.'],walk:['UC3–4 · Gibanje in premor','Prikaz aktivne odprave in premora. Zaključek zahteva potrditev. Vzorčne statistike se ne spreminjajo.'],summary:['UC6 · Zaključek in sinhronizacija','Rezultat je začasen, dokler strežnik ne preveri trase in nagrad. Ponovljena zahteva ne sme podvojiti XP.'],territory:['UC5 · Delni prevzem','Vidne so le odkrite celice. Prevzem spremeni samo dejansko osvojene celice; gumb vodi v novo odpravo.'],profile:['UC7 · Napredek lika','Pregled lika, XP in dosežkov. Kozmetika je prikaz prihodnje nadgradnje.']};
-const map=`<div class="map" role="img" aria-label="Shematski pixel zemljevid z meglo in odkritim zelenim območjem"><svg viewBox="0 0 340 290" preserveAspectRatio="none"><path d="M-20 250L370 70M60 -20L210 310" stroke="#d4c49e" stroke-width="22"/><path d="M-20 250L370 70M60 -20L210 310" stroke="#f7edcc" stroke-width="12"/><path d="M-5 110Q100 150 170 70T350 40" fill="none" stroke="#72b4c4" stroke-width="25"/><g fill="#778358"><path d="M15 195h23v20H15zM220 200h30v25h-30zM65 250h25v20H65z"/></g><g fill="#c48f72" stroke="#665b53" stroke-width="3"><path d="M45 160h26v22H45zM110 215h30v24h-30zM235 134h23v28h-23zM280 215h27v25h-27z"/></g><path d="M142 235L112 207L152 175L192 192Z" fill="#e8b64666" stroke="#b88913" stroke-width="3" stroke-dasharray="5 4"/></svg><div class="fog"></div><span class="map-label">Ljubljana · shematski prikaz</span><span class="pin"></span><button class="territory" onclick="show('territory')">Odkrito ozemlje ↗</button></div>`;
-const footer=`<div class="footer"><button onclick="show('map')">⌖ Zemljevid</button><button onclick="show('profile')">♙ Profil</button></div>`;
-const stat=`<div class="stats"><div><b>1,24</b><small>km poti</small></div><div><b>18:42</b><small>čas odprave</small></div><div><b>12</b><small>novih celic</small></div></div>`;
-function show(key){
- document.getElementById('navigation').innerHTML=Object.entries(names).map(([id,name])=>`<button aria-current="${id===key}" onclick="show('${id}')">${name}</button>`).join('');
- document.getElementById('scenario').textContent=notes[key][0];document.getElementById('explanation').textContent=notes[key][1];
- let html='';
- if(key==='login')html=`<div class="panel"><div class="eyebrow">Your world, your adventure</div><h2>Tvoja naslednja<br>pustolovščina je zunaj.</h2><div class="avatar" aria-label="Raziskovalec">♜ ✦</div><form onsubmit="event.preventDefault();show('map')"><label for="email">E-pošta</label><input id="email" type="email" placeholder="ime@primer.si" required autocomplete="email"><label for="password">Geslo</label><input id="password" type="password" required minlength="6" autocomplete="current-password"><button class="gold wide" style="margin-top:22px">Prijava · simulacija</button></form><button class="wide" onclick="document.getElementById('message').textContent='Registracija je načrtovana: e-pošta → potrditev → ime lika.'">Ustvari račun</button><p id="message" aria-live="polite"></p></div>`;
- if(key==='map')html=map+`<div class="panel"><span class="tag">Stopnja 4 · Raziskovalec</span><h2>Kam greš danes?</h2><p>Razkrij nove poti in z majhno zanko osvoji svoj košček sveta.</p><div class="stats"><div><b>48</b><small>odkritih celic</small></div><div><b>8</b><small>lastnih celic</small></div></div><button class="gold wide" onclick="paused=false;show('walk')">Začni odpravo · hoja</button></div>`+footer;
- if(key==='walk')html=map+`<div class="panel"><span class="tag">${paused?'Premor':'GPS aktiven · vzorec'}</span><h2>${paused?'Vzemi si trenutek.':'Tvoja odprava'}</h2>${stat}<p>${paused?'Med premorom ne beležimo napredka.':'Nove celice prinašajo XP. Pazi na okolico.'}</p><button class="gold wide" onclick="paused=!paused;show('walk')">${paused?'Nadaljuj':'Premor'}</button><button class="wide" onclick="document.querySelector('dialog').showModal()">Zaključi odpravo</button></div>`;
- if(key==='summary')html=`<div class="panel"><div class="eyebrow">Odprava zaključena</div><h2>Vsak korak<br>odkrije več.</h2><div class="avatar">✦ +300 XP</div><p>Predvidena nagrada za 12 novih celic.</p>${stat}<div class="tile"><b>Predvideno osvajanje</b><p>8 celic · delni prevzem 2 tujih celic. Preostalo tuje ozemlje ostane nespremenjeno.</p></div><div class="warning">Čaka na sinhronizacijo. XP in lastništvo še nista potrjena.</div><button class="gold wide" onclick="show('map')">Nazaj na zemljevid</button></div>`;
- if(key==='territory')html=map+`<div class="panel"><div class="eyebrow">Odkrito ozemlje</div><h2>Ob reki</h2><p>Lastnik: Popotnik_7 · vzorčni javni vzdevek</p><div class="tile">Viden del: 6 odkritih celic. Pod meglo ne prikazujemo lastništva.</div><p>Za prevzem moraš območje dejansko obiskati. Velik obhod osvoji samo pas ob poti.</p><button class="gold wide" onclick="paused=false;show('walk')">Začni odpravo za prevzem</button><button class="wide" onclick="show('map')">Nazaj</button></div>`;
- if(key==='profile')html=`<div class="panel"><div class="eyebrow">Tvoj lik</div><h2>Raziskovalec</h2><div class="avatar">♜ ✦</div><h3>Stopnja 4</h3><div class="bar"><span></span></div><p>320 / 500 XP do naslednje stopnje · vzorec</p><div class="tile"><b>Prva pustolovščina</b><p>Dosežek za zaključeno prvo odpravo.</p></div><div class="tile"><b>Oprema in dodatki</b><p>Predvidena nadgradnja po MVP.</p></div><button class="gold wide" onclick="show('map')">Nadaljuj raziskovanje</button></div>`+footer;
- document.getElementById('view').innerHTML=html;
-}
-show('login');
-</script></html>
+  const screens = document.querySelector('#screen');
+  const scenarios = {
+    first: {screen:'welcome', label:'UC1–UC2', hint:'Vstopi kot vzorčni igralec. Na zemljevidu začni odpravo in preizkusi zavrnitev ter ponovno dovoljenje GPS.'},
+    walk: {screen:'map', label:'UC3–UC4', hint:'Začni odpravo in se premakni po poti. Uporabi premor v vrhnji vrstici. Preizkusi slab signal in znova vzpostavi GPS.'},
+    claim: {screen:'walk', label:'UC5', hint:'Zaključi odpravo. V povzetku primerjaj majhno zanko z večjim obhodom in preveri, katere tuje celice se prenesejo.'},
+    sync: {screen:'summary', label:'UC6–UC7', hint:'Preizkusi pošiljanje brez povezave. Vzpostavi povezavo, potrdi rezultat in odpri profil s posodobljenim XP.'},
+  };
+  let state;
+  let scenario = 'walk';
+  const button = (action, text, style = '', attrs = '') =>
+    `<button class="${style}" data-action="${action}" ${attrs}>${text}</button>`;
+
+  function start(key) {
+    scenario = key;
+    state = {
+      screen:scenarios[key].screen, gps:key === 'first' ? 'ask' : 'ready',
+      steps:['claim','sync'].includes(key) ? 3 : 0,
+      paused:false, weak:false, offline:key === 'sync', posted:false, large:false,
+      base:false, centered:true, previous:'map', xp:175,
+    };
+    render();
+  }
+
+  function progress(xp) {
+    return `<div class="row"><b>Stopnja ${4 + Math.floor(xp / 500)}</b><small>${xp % 500} / 500 XP</small></div>
+      <div class="progress" role="progressbar" aria-label="XP do naslednje stopnje" aria-valuenow="${xp % 500}" aria-valuemax="500">
+      ${Array.from({length:20},(_,i)=>`<span class="${i < Math.floor((xp % 500) / 25) ? 'filled' : ''}"></span>`).join('')}</div>`;
+  }
+
+  function territory() {
+    const cells = state.large ? ['.....F','...CCT','...CFF'] : ['.CCCTF','.CCTCF','....FF'];
+    const classes = {F:'foreign', C:'claimed', T:'transfer', '.':''};
+    return '<div class="territory" aria-hidden="true">' + cells.join('').split('')
+      .map(cell => '<span class="cell ' + classes[cell] + '"></span>').join('') + '</div>';
+  }
+
+  function map(active) {
+    const n = state.steps;
+    const stat = (value, label) => `<div class="stat"><b>${value}</b><small>${label}</small></div>`;
+    return `<div class="map ${n === 3 ? 'revealed' : ''} ${state.base ? 'base' : ''}" data-discovery="${n}">
+      <div class="fog" aria-hidden="true"></div>
+      ${n ? `<div class="trail ${n < 3 || state.large ? 'open' : ''}" aria-hidden="true"></div>` : ''}
+      ${n >= 3 && state.screen === 'claim' ? territory() : ''}
+      ${state.gps === 'ready' && state.centered ? '<span class="player" role="img" aria-label="Raziskovalec"></span>' : ''}
+      ${active ? `<div class="hud">${stat((n * .16).toFixed(2).replace('.',','),'km hoje')}
+        ${stat(['00:00','03:12','06:24','09:36'][n],'čas hoje')}${stat(n * 213,'oc. korakov')}
+        ${active === 'confirm' ? '' : button('pause',state.paused ? '▶' : 'Ⅱ','dark',`aria-label="${state.paused ? 'Nadaljuj odpravo' : 'Premor'}"`)}</div>` : ''}
+      <div class="map-tools"><small class="loc">${button('pan',state.centered ? 'Ljubljana' : 'Premaknjen pogled','', 'aria-label="Simuliraj premik pogleda"')}</small>
+        ${button('base',state.base ? 'Karta' : 'Pixel','gold','aria-label="Preklopi slog zemljevida"')}
+        ${button('center','◎','','aria-label="Sredi na igralca"')}</div>
+      <small class="credit">© OpenStreetMap contributors · OpenMapTiles · OpenFreeMap</small>
+    </div>`;
+  }
+
+  const nav = () => `<nav class="nav" aria-label="Glavni meni">
+    ${button('map','Zemljevid','',`aria-current="${state.screen === 'map'}"`)}
+    ${button('profile','Profil','',`aria-current="${state.screen === 'profile'}"`)}</nav>`;
+
+  function render(focusAction) {
+    const n = state.steps;
+    let body = '';
+    switch (state.screen) {
+      case 'welcome':
+        body = `<div class="welcome"><img src="../../prototip/mapa/assets/wayborn-icon.png" alt=""><h2>Vsaka ulica skriva nekaj novega.</h2></div>
+          <section class="sheet"><h2>Dobrodošel v Waybornu</h2><p>Odkrivaj resnične ulice in razkrij svoj zemljevid.</p><div class="stack">${button('map','Vstopi kot vzorčni igralec','gold')}</div></section>`;
+        break;
+      case 'map':
+        body = map(false) + `<section class="sheet"><h2>Tvoja naslednja odprava</h2>
+          <p>Hoja · Ljubljana</p><div class="box">${progress(state.xp)}</div>
+          <div class="stack">${button('begin','Začni odpravo','gold')}
+          ${state.posted && n >= 3 ? button('confirmed-claim','Preglej osvojene celice') : ''}</div></section>` + nav();
+        break;
+      case 'permission':
+        body = map(false) + `<section class="sheet"><h2>${state.gps === 'denied' ? 'GPS je izključen' : 'Dovoli uporabo lokacije'}</h2>
+          <p>Lokacija med odpravo omogoči merjenje poti in odkrivanje celic.</p><div class="stack">
+          ${button('allow',state.gps === 'denied' ? 'Simuliraj dovoljenje v nastavitvah' : 'Dovoli med uporabo','gold')}
+          ${state.gps === 'denied' ? button('map','Vrni se na zemljevid') : button('deny','Zavrni')}</div></section>`;
+        break;
+      case 'walk':
+        body = map(true) + `<section class="sheet"><h2>${state.paused ? 'Odprava na premoru' : 'Današnja odprava'}</h2>
+          <p aria-live="polite">${state.paused ? 'Med premorom se napredek ne beleži.' : state.weak ? 'Slab GPS · beleženje napredka čaka na natančnejši signal.' : '● GPS aktiven · ' + n * 2 + ' novih celic'}</p>
+          <div class="box">${progress(state.xp + n * 50)}</div><div class="stack">
+          ${button('step',n === 3 ? 'Vzorčna pot končana' : 'Simuliraj naslednji odsek','gold',state.paused || state.weak || n === 3 ? 'disabled' : '')}
+          ${button('weak',state.weak ? 'Obnovi GPS' : 'Simuliraj slab GPS')}
+          ${button('finish','Zaključi odpravo','dark')}</div></section>`;
+        break;
+      case 'finish':
+        body = map('confirm') + `<section class="sheet"><h2>Zaključi odpravo?</h2><p>V povzetku lahko preveriš odkritja in predvideno osvajanje.</p>
+          <div class="stack">${button('summary','Potrdi zaključek','gold')}${button('walk','Vrni se na odpravo')}</div></section>`;
+        break;
+      case 'summary':
+        body = `<section class="sheet"><h2>Povzetek odprave</h2><p>${(n * .16).toFixed(2).replace('.',',')} km · ${n * 2} novih celic</p>
+          <div class="box"><h3>+${n * 50} XP</h3><p>${state.posted ? 'Nagrada je potrjena' : 'Predvidena nagrada'}</p></div>
+          ${n >= 3 ? `<div class="box"><h3>Ozemlje</h3><p>${state.large ? 'Velik obhod · pas ob poti' : 'Majhna zanka · pot in notranjost'}</p>
+          <div class="stack">${button('claim',state.posted ? 'Preglej potrjene celice' : 'Preglej predvidene celice')}${!state.posted ? button('large',state.large ? 'Prikaži majhno zanko' : 'Primerjaj z velikim obhodom') : ''}</div></div>` : ''}
+          <div class="box ${state.offline ? 'warning' : ''}" aria-live="polite">
+          ${state.posted ? 'Odprava je sinhronizirana.' : state.offline ? 'Brez povezave · odprava čaka na sinhronizacijo.' : 'Pripravljeno za pošiljanje.'}</div>
+          <div class="stack">${state.posted ? button('profile','Odpri profil','gold') : state.offline ? button('connect','Vzpostavi povezavo','gold') : button('send','Sinhroniziraj odpravo','gold')}
+          ${state.posted ? button('retry','Preizkusi ponovno pošiljanje') : ''}${state.posted ? button('map','Nazaj na zemljevid') : ''}</div></section>`;
+        break;
+      case 'claim':
+        body = map(false) + `<section class="sheet"><h2>${state.posted ? 'Potrjeno ozemlje' : 'Predogled osvajanja'}</h2>
+          <p>${state.large ? '4 celice v pasu ob poti. Notranjost velike zanke ostane zunaj osvojitve.' : '8 celic ob poti in znotraj majhne zanke. Dve od teh celic sta bili tuji.'}</p>
+          <div class="box"><p>Zlata · pridobljene celice<br>Črtasta · delni prevzem tujih celic<br>Modra · preostanek tujega ozemlja<br>Temna · še neraziskano območje</p></div>
+          <div class="stack">${button(state.previous,'Nazaj','dark')}</div></section>`;
+        break;
+      case 'profile':
+        body = `<div class="welcome"><img src="../../prototip/mapa/assets/wayborn-icon.png" alt=""><h2>Raziskovalec</h2></div>
+          <section class="sheet"><h2>Napredek lika</h2><div class="box">${progress(state.xp)}
+          <p>${state.posted ? 'Potrjeno iz odprave · +' + n * 50 + ' XP' : 'Potrjen napredek iz prejšnjih odprav'}</p></div></section>` + nav();
+        break;
+    }
+    screens.innerHTML = body;
+    document.querySelectorAll('[data-scenario]').forEach(element => {
+      element.setAttribute('aria-pressed', String(element.dataset.scenario === scenario));
+    });
+    document.querySelector('#hint').innerHTML = `<b>${scenarios[scenario].label}</b><p>${scenarios[scenario].hint}</p>`;
+    if (focusAction && focusAction !== 'retry') {
+      const target = screens.querySelector('[data-action="' + focusAction + '"]:not(:disabled)') || screens.querySelector('h2');
+      if (target) {
+        if (target.tagName === 'H2') target.tabIndex = -1;
+        target.focus({preventScroll:true});
+      }
+    }
+  }
+
+  document.addEventListener('click', event => {
+    const control = event.target.closest('button');
+    if (!control) return;
+    if (control.dataset.scenario) return start(control.dataset.scenario);
+    const action = control.dataset.action;
+    if (action === 'reset') return start(scenario);
+    switch (action) {
+      case 'begin':
+        if (state.gps !== 'ready') { state.screen = 'permission'; break; }
+        Object.assign(state,{screen:'walk',steps:0,paused:false,weak:false,posted:false,large:false});
+        break;
+      case 'allow': state.gps = 'ready'; state.screen = 'walk'; break;
+      case 'deny': state.gps = 'denied'; break;
+      case 'pause': state.paused = !state.paused; break;
+      case 'step': if (!state.paused && !state.weak) state.steps = Math.min(3,state.steps + 1); break;
+      case 'weak': state.weak = !state.weak; break;
+      case 'base': state.base = !state.base; break;
+      case 'pan': state.centered = false; break;
+      case 'center': state.centered = true; break;
+      case 'large': state.large = !state.large; break;
+      case 'connect': state.offline = false; break;
+      case 'send':
+        if (!state.posted && !state.offline) { state.xp += state.steps * 50; state.posted = true; }
+        break;
+      case 'retry':
+        screens.querySelector('[aria-live]').textContent = 'Odprava je že potrjena. XP se ne podvoji.';
+        return;
+      case 'claim':
+      case 'confirmed-claim':
+        state.previous = state.screen; state.screen = 'claim'; break;
+      case 'map':
+      case 'walk':
+      case 'finish':
+      case 'summary':
+      case 'profile': state.screen = action; break;
+      default: return;
+    }
+    render(action);
+  });
+  start(scenario);
+</script>
+</body>
+</html>
