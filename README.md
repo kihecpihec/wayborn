@@ -1,42 +1,45 @@
 # Wayborn — Your World, Your Adventure
 
-Mobilna raziskovalna RPG igra, ki gibanje po resničnem svetu pretvarja v odkrivanje pixel-art zemljevida in osvajanje ozemelj.
+A mobile exploration RPG that turns real-world walking into a pixel-art map,
+personal discoveries, territory capture, and character progression.
 
-**Ekipa:** Ismar Mujezinović ([@ismarM](https://github.com/ismarM)), Hanan Mešič ([@kihecpihec](https://github.com/kihecpihec)).
+Team: Ismar Mujezinović (@ismarM) owns app/data integration; Hanan Mešič
+(@kihecpihec) owns GPS/maps/geographic rules. They review each other's changes.
 
-## Projektni mejnik
+## Start here
 
-- [Projektna zasnova in obseg](dokumentacija/01-projekt.md)
-- [Uporabniški scenariji in navigacija](dokumentacija/02-scenariji.md)
-- [Klikabilni mockupi](dokumentacija/mockupi/index.html) — prenesi repozitorij in odpri HTML v brskalniku; GitHub HTML prikazuje kot kodo.
-- [Podatkovni model in arhitektura](dokumentacija/03-arhitektura.md)
-- [Razvojni načrt in odgovornosti](dokumentacija/04-razvoj.md)
-- [Kontrolni seznam oddaje](dokumentacija/05-oddaja.md)
-- [Začetne naloge](dokumentacija/06-naloge.md)
+- [Project and scope](docs/01-project.md)
+- [Scenarios](docs/02-scenarios.md) and [interactive mockup](docs/mockups/index.html)
+- [Architecture](docs/03-architecture.md)
+- [Full two-developer milestone plan](docs/08-development-roadmap.md)
+- [Product flow and landing-page alignment](docs/09-product-experience.md)
+- [Decision register](docs/decisions/README.md) and [delivery workflow](docs/testing/README.md)
+- [Feature specifications and acceptance testing](docs/specifications/README.md)
+- [Agent instructions](AGENTS.md)
+- [Task assignments](docs/06-tasks.md), [submission checklist](docs/05-submission.md), and [validation record](docs/07-validation.md)
 
-## Struktura
+## Run
 
-`prototip/mapa/` vsebuje priloženi Expo demo zemljevida; `dokumentacija/` projektno dokumentacijo in ločen prototip zaslonov; `scripts/` preverjanje dokumentacije; `.github/` CI in predloge nalog.
-
-## Zagon prototipa zemljevida
-
-Node 22.13 ali novejši, npm:
+Node 22.13+ and npm:
 
 ```sh
-cd prototip/mapa
+cd prototype/map
 npm ci
 npm run web
 ```
 
-Za telefon: `npm start` in združljiv Expo Go oziroma razvojna gradnja. Podrobnosti in omejitve so v [README dema](prototip/mapa/README.md). Zemljevid potrebuje internet. GPS v brskalniku potrebuje localhost ali HTTPS.
+For a phone use `npm start` and a compatible Expo Go or development build.
+See the [demo README](prototype/map/README.md). Map tiles require internet;
+browser GPS requires localhost or HTTPS.
 
-Demo je tehnični prototip zemljevida, GPS sledenja in začasnih statistik, ne končna igra. Ob ponovnem nalaganju se napredek izgubi. Fog of war, osvajanje, računi, trajna hramba in ekipe še niso izvedeni. Klikabilni mockupi prikazujejo načrtovane funkcije z vzorčnimi podatki.
-
-## Preverjanje
+## Baseline checks
 
 ```sh
 python3 scripts/check_docs.py
-cd prototip/mapa
+python3 scripts/specifications.py
+python3 scripts/check_baseline.py
+python3 scripts/test_baseline.py
+cd prototype/map
 npm ci
 npm run typecheck
 npm run lint
@@ -44,8 +47,10 @@ npm test
 npm run build:web
 ```
 
-Workflow `Začetna preverjanja` teče ob pushu in pull requestu. Izvoz spletne različice preveri prevajanje; dovoljenja in GPS na fizični napravi preverimo ročno.
+`npm test` includes specification acceptance tests. Planned scenarios are reported
+as TODO, never as working functionality. CI fails for missing coverage of a feature
+marked implemented. Existing renderer/unit tests remain useful secondary checks.
 
-## Sodelovanje
-
-Naloge vodimo v GitHub Issues s prioriteto P0/P1/P2 in odgovornim članom. Spremembe potekajo v vejah prek pull requestov, ki jih pregleda drugi član. Rok tega mejnika še ni potrjen; datum 11. 11. 2026 v izhodiščni ideji se nanaša na prvo oddajo. Asistentov GitHub račun je treba še pridobiti in mu omogočiti dostop.
+The app is still a technical map/GPS prototype. Accounts, persistent gameplay,
+H3 discovery, capture, and backend synchronization are not implemented. Mockups use
+sample data; a green baseline does not mean the finished MVP is available.

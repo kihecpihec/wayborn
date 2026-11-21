@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wayborn · Expedition prototype</title>
+<style>
+  :root {--ink:#16243e; --muted:#5a6f8e; --paper:#f3f4ee; --card:#fffefb; --line:#dce3da; --night:#12203a; --gold:#ffcc43; --green:#69d7a0}
+  * {box-sizing:border-box}
+  body {margin:0; color:var(--foreground,var(--ink)); font:16px/1.45 ui-rounded, system-ui, sans-serif}
+  main {max-width:900px;margin:auto;padding:18px 0}
+  .brand {display:flex;align-items:center;gap:10px;padding:0 12px;margin-bottom:20px}
+  .brand img {width:36px;height:36px;object-fit:contain;image-rendering:pixelated}
+  h1,h2,h3,p {margin:0}
+  h1 {font-size:26px;letter-spacing:-.04em}
+  h2 {font-size:24px;line-height:1.15}
+  h3 {font-size:18px}
+  small,.caption {font-size:12px}
+  .layout {display:grid;grid-template-columns:minmax(0,400px) minmax(0,225px);gap:22px;justify-content:center;padding:0 12px}
+  .phone {color:var(--ink);background:var(--card);border:6px solid #0a1224;border-radius:30px;overflow:hidden}
+  .phone-head {display:flex;justify-content:space-between;align-items:center;padding:10px 16px;font-weight:750;font-size:13px}
+  .map {position:relative;height:320px;background:#aec092 url('ljubljana.webp') center/cover;overflow:hidden;isolation:isolate}
+  .fog {position:absolute;inset:0;background:#12203af2;clip-path:polygon(0 0,100% 0,100% 40%,86% 40%,86% 33%,70% 33%,70% 25%,56% 25%,56% 32%,42% 32%,42% 45%,29% 45%,29% 55%,17% 55%,17% 72%,0 72%)}
+  .revealed .fog {clip-path:polygon(0 0,100% 0,100% 27%,83% 27%,83% 19%,71% 19%,71% 13%,42% 13%,42% 21%,18% 21%,18% 32%,0 32%)}
+  .map[data-discovery="1"] .fog {transform:translateY(-9%)}
+  .map[data-discovery="2"] .fog {transform:translateY(-18%)}
+  .map.base {background:#e8e5d4}
+  .map.base .fog {background:#12203a}
+  .map.base::before {content:"";position:absolute;inset:0;background:repeating-linear-gradient(31deg,transparent 0 58px,#fff 58px 65px),repeating-linear-gradient(124deg,#e5e4d3 0 55px,#fff 55px 60px);z-index:-1}
+  .trail {position:absolute;left:33%;top:49%;width:38%;height:26%;border:3px dashed var(--gold);transform:rotate(-17deg);border-radius:8px;filter:drop-shadow(0 1px 1px var(--ink))}
+  .trail.open {border-top:0;border-left:0}
+  .territory {position:absolute;left:31%;top:41%;display:grid;grid-template-columns:repeat(6,1fr);width:48%;height:26%;transform:rotate(-12deg)}
+  .cell {border:1px solid transparent}
+  .cell.foreign {background:#7093c7ad;border-color:#243754}
+  .cell.claimed {background:#ffcc43a6;border-color:#584309}
+  .cell.transfer {background:repeating-linear-gradient(45deg,#ffcc43cf 0 4px,#7a551fae 4px 6px);border-color:#584309}
+  .player {position:absolute;left:57%;top:60%;width:18px;height:22px;background:var(--gold);border:3px solid var(--ink);box-shadow:0 3px 0 #0a122488}
+  .player::after {content:"";display:block;width:8px;height:4px;background:#fff2c0;margin:4px auto}
+  .hud {position:absolute;inset:12px 12px auto;display:flex;justify-content:space-between;align-items:center;gap:6px;background:var(--card);border-radius:14px;padding:9px 12px;box-shadow:0 4px 12px #12203a24}
+  .stat b {display:block;font-size:18px;font-variant-numeric:tabular-nums}
+  .stat small {display:block;color:var(--muted);font-size:10px}
+  .map-tools {position:absolute;inset:auto 10px 23px;display:flex;gap:6px;align-items:center}
+  .map-tools .loc {margin-right:auto}
+  .credit {position:absolute;bottom:0;right:0;background:var(--card);font-size:9px;padding:2px 5px}
+  button {font:inherit;font-weight:650;min-height:40px;border:1px solid var(--line);border-radius:11px;background:var(--card);color:var(--ink);padding:8px 12px;cursor:pointer}
+  button:focus-visible {outline:3px solid #287962;outline-offset:2px}
+  .dark {background:var(--night);color:white;border-color:var(--night)}
+  .gold {background:var(--gold);border-color:var(--gold)}
+  .sheet {padding:14px 17px 16px}
+  .sheet h2 {margin-bottom:5px}
+  .sheet p,.sheet small {color:var(--muted)}
+  .sheet p {font-size:14px}
+  .stack {display:grid;gap:8px;margin-top:12px}
+  .row {display:flex;gap:8px;align-items:center;justify-content:space-between}
+  .progress {display:grid;grid-template-columns:repeat(20,1fr);gap:3px;margin:7px 0 12px}
+  .progress span {height:8px;border-radius:2px;background:#e9ebe4}
+  .progress .filled {background:var(--gold)}
+  .box {background:var(--paper);border-radius:12px;padding:12px;margin-top:10px}
+  .warning {background:#fff2cb;color:var(--ink)}
+  .nav {border-top:1px solid var(--line);display:flex;justify-content:center;gap:10px;padding:8px}
+  .nav button {border:0}
+  .nav button[aria-current=true] {background:var(--paper)}
+  .aside {color:var(--ink);background:var(--paper);border-radius:16px;padding:16px;align-self:start}
+  .aside p {color:var(--muted);font-size:13px;margin:6px 0}
+  .aside button {text-align:left}
+  .aside button[aria-pressed=true] {border-color:var(--ink);background:var(--gold)}
+  .scenario {margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+  .welcome {background:radial-gradient(ellipse at bottom,#263c5d,var(--night) 70%);color:#eaf2fb;padding:28px 18px}
+  .welcome img {width:70px;height:70px;object-fit:contain;image-rendering:pixelated}
+  .welcome h2 {font-size:30px;margin-top:8px}
+  @media(max-width:600px) {.layout {grid-template-columns:minmax(0,400px)} .map {height:280px}}
+</style>
+</head>
+<body>
+<main>
+  <header class="brand">
+    <img src="../../prototype/map/assets/wayborn-icon.png" alt="">
+    <div><h1>wayborn</h1><small>Clickable prototype · simulated expedition</small></div>
+  </header>
+  <div class="layout">
+    <section class="phone" aria-label="Mobile app preview">
+      <div class="phone-head"><span>9:41</span><span>wayborn</span><span aria-hidden="true">▮▮▮</span></div>
+      <div id="screen"></div>
+    </section>
+    <aside class="aside">
+      <h3>Try a scenario</h3>
+      <div class="stack" id="scenarios">
+        <button data-scenario="first">First visit and permission</button>
+        <button data-scenario="walk">Walking and discovery</button>
+        <button data-scenario="claim">Loop and partial takeover</button>
+        <button data-scenario="sync">Offline submission</button>
+      </div>
+      <div class="scenario" aria-live="polite" id="hint"></div>
+      <button class="stack" data-action="reset">Reset scenario</button>
+    </aside>
+  </div>
+</main>
+<script>
+  const screens = document.querySelector('#screen');
+  const scenarios = {
+    first: {screen:'welcome', label:'UC1–UC2', hint:'Enter as a sample player. Start an expedition and try denying and then granting GPS permission.'},
+    walk: {screen:'map', label:'UC3–UC4', hint:'Start an expedition and follow the route. Pause from the top bar. Try weak signal and restore GPS.'},
+    claim: {screen:'walk', label:'UC5', hint:'Finish the expedition. Compare a small loop with a large circuit and inspect transferred cells.'},
+    sync: {screen:'summary', label:'UC6–UC7', hint:'Try offline submission. Reconnect, confirm the result and open the updated XP profile.'},
+  };
+  let state;
+  let scenario = 'walk';
+  const button = (action, text, style = '', attrs = '') =>
+    `<button class="${style}" data-action="${action}" ${attrs}>${text}</button>`;
+
+  function start(key) {
+    scenario = key;
+    state = {
+      screen:scenarios[key].screen, gps:key === 'first' ? 'ask' : 'ready',
+      steps:['claim','sync'].includes(key) ? 3 : 0,
+      paused:false, weak:false, offline:key === 'sync', posted:false, large:false,
+      base:false, centered:true, previous:'map', xp:175,
+    };
+    render();
+  }
+
+  function progress(xp) {
+    return `<div class="row"><b>Level ${4 + Math.floor(xp / 500)}</b><small>${xp % 500} / 500 XP</small></div>
+      <div class="progress" role="progressbar" aria-label="XP to next level" aria-valuenow="${xp % 500}" aria-valuemax="500">
+      ${Array.from({length:20},(_,i)=>`<span class="${i < Math.floor((xp % 500) / 25) ? 'filled' : ''}"></span>`).join('')}</div>`;
+  }
+
+  function territory() {
+    const cells = state.large ? ['.....F','...CCT','...CFF'] : ['.CCCTF','.CCTCF','....FF'];
+    const classes = {F:'foreign', C:'claimed', T:'transfer', '.':''};
+    return '<div class="territory" aria-hidden="true">' + cells.join('').split('')
+      .map(cell => '<span class="cell ' + classes[cell] + '"></span>').join('') + '</div>';
+  }
+
+  function map(active) {
+    const n = state.steps;
+    const stat = (value, label) => `<div class="stat"><b>${value}</b><small>${label}</small></div>`;
+    return `<div class="map ${n === 3 ? 'revealed' : ''} ${state.base ? 'base' : ''}" data-discovery="${n}">
+      <div class="fog" aria-hidden="true"></div>
+      ${n ? `<div class="trail ${n < 3 || state.large ? 'open' : ''}" aria-hidden="true"></div>` : ''}
+      ${n >= 3 && state.screen === 'claim' ? territory() : ''}
+      ${state.gps === 'ready' && state.centered ? '<span class="player" role="img" aria-label="Explorer"></span>' : ''}
+      ${active ? `<div class="hud">${stat((n * .16).toFixed(2),'km walked')}
+        ${stat(['00:00','03:12','06:24','09:36'][n],'walk time')}${stat(n * 213,'est. steps')}
+        ${active === 'confirm' ? '' : button('pause',state.paused ? '▶' : 'Ⅱ','dark',`aria-label="${state.paused ? 'Resume expedition' : 'Pause'}"`)}</div>` : ''}
+      <div class="map-tools"><small class="loc">${button('pan',state.centered ? 'Ljubljana' : 'Panned view','', 'aria-label="Simulate panning"')}</small>
+        ${button('base',state.base ? 'Map' : 'Pixel','gold','aria-label="Switch map style"')}
+        ${button('center','◎','','aria-label="Center on player"')}</div>
+      <small class="credit">© OpenStreetMap contributors · OpenMapTiles · OpenFreeMap</small>
+    </div>`;
+  }
+
+  const nav = () => `<nav class="nav" aria-label="Main menu">
+    ${button('map','Map','',`aria-current="${state.screen === 'map'}"`)}
+    ${button('profile','Profile','',`aria-current="${state.screen === 'profile'}"`)}</nav>`;
+
+  function render(focusAction) {
+    const n = state.steps;
+    let body = '';
+    switch (state.screen) {
+      case 'welcome':
+        body = `<div class="welcome"><img src="../../prototype/map/assets/wayborn-icon.png" alt=""><h2>Every street holds something new.</h2></div>
+          <section class="sheet"><h2>Welcome to Wayborn</h2><p>Explore real streets and reveal your map.</p><div class="stack">${button('map','Enter as sample player','gold')}</div></section>`;
+        break;
+      case 'map':
+        body = map(false) + `<section class="sheet"><h2>Your next expedition</h2>
+          <p>Walking · Ljubljana</p><div class="box">${progress(state.xp)}</div>
+          <div class="stack">${button('begin','Start expedition','gold')}
+          ${state.posted && n >= 3 ? button('confirmed-claim','View captured cells') : ''}</div></section>` + nav();
+        break;
+      case 'permission':
+        body = map(false) + `<section class="sheet"><h2>${state.gps === 'denied' ? 'GPS is disabled' : 'Allow location access'}</h2>
+          <p>Location during an expedition enables distance tracking and cell discovery.</p><div class="stack">
+          ${button('allow',state.gps === 'denied' ? 'Simulate permission in settings' : 'Allow while using the app','gold')}
+          ${state.gps === 'denied' ? button('map','Return to map') : button('deny','Deny')}</div></section>`;
+        break;
+      case 'walk':
+        body = map(true) + `<section class="sheet"><h2>${state.paused ? 'Expedition paused' : 'Today’s expedition'}</h2>
+          <p aria-live="polite">${state.paused ? 'Progress is not recorded while paused.' : state.weak ? 'Weak GPS · waiting for an accurate signal.' : '● GPS active · ' + n * 2 + ' new cells'}</p>
+          <div class="box">${progress(state.xp + n * 50)}</div><div class="stack">
+          ${button('step',n === 3 ? 'Sample route complete' : 'Simulate next segment','gold',state.paused || state.weak || n === 3 ? 'disabled' : '')}
+          ${button('weak',state.weak ? 'Restore GPS' : 'Simulate weak GPS')}
+          ${button('finish','Finish expedition','dark')}</div></section>`;
+        break;
+      case 'finish':
+        body = map('confirm') + `<section class="sheet"><h2>Finish expedition?</h2><p>Review discoveries and provisional captures in the summary.</p>
+          <div class="stack">${button('summary','Confirm finish','gold')}${button('walk','Return to expedition')}</div></section>`;
+        break;
+      case 'summary':
+        body = `<section class="sheet"><h2>Expedition summary</h2><p>${(n * .16).toFixed(2)} km · ${n * 2} new cells</p>
+          <div class="box"><h3>+${n * 50} XP</h3><p>${state.posted ? 'Reward confirmed' : 'Estimated reward'}</p></div>
+          ${n >= 3 ? `<div class="box"><h3>Territory</h3><p>${state.large ? 'Large circuit · route band' : 'Small loop · route and interior'}</p>
+          <div class="stack">${button('claim',state.posted ? 'View confirmed cells' : 'Preview candidate cells')}${!state.posted ? button('large',state.large ? 'Show small loop' : 'Compare large circuit') : ''}</div></div>` : ''}
+          <div class="box ${state.offline ? 'warning' : ''}" aria-live="polite">
+          ${state.posted ? 'Expedition synchronized.' : state.offline ? 'Offline · expedition queued for sync.' : 'Ready to submit.'}</div>
+          <div class="stack">${state.posted ? button('profile','Open profile','gold') : state.offline ? button('connect','Reconnect','gold') : button('send','Sync expedition','gold')}
+          ${state.posted ? button('retry','Try resubmitting') : ''}${state.posted ? button('map','Back to map') : ''}</div></section>`;
+        break;
+      case 'claim':
+        body = map(false) + `<section class="sheet"><h2>${state.posted ? 'Confirmed territory' : 'Capture preview'}</h2>
+          <p>${state.large ? '4 cells along the route. The large loop interior is excluded.' : '8 cells along and inside the small loop. Two were owned by another player.'}</p>
+          <div class="box"><p>Gold · captured cells<br>Striped · transferred cells<br>Blue · remaining foreign territory<br>Dark · unexplored area</p></div>
+          <div class="stack">${button(state.previous,'Back','dark')}</div></section>`;
+        break;
+      case 'profile':
+        body = `<div class="welcome"><img src="../../prototype/map/assets/wayborn-icon.png" alt=""><h2>Explorer</h2></div>
+          <section class="sheet"><h2>Character progress</h2><div class="box">${progress(state.xp)}
+          <p>${state.posted ? 'Confirmed from expedition · +' + n * 50 + ' XP' : 'Confirmed progress from previous expeditions'}</p></div></section>` + nav();
+        break;
+    }
+    screens.innerHTML = body;
+    document.querySelectorAll('[data-scenario]').forEach(element => {
+      element.setAttribute('aria-pressed', String(element.dataset.scenario === scenario));
+    });
+    document.querySelector('#hint').innerHTML = `<b>${scenarios[scenario].label}</b><p>${scenarios[scenario].hint}</p>`;
+    if (focusAction && focusAction !== 'retry') {
+      const target = screens.querySelector('[data-action="' + focusAction + '"]:not(:disabled)') || screens.querySelector('h2');
+      if (target) {
+        if (target.tagName === 'H2') target.tabIndex = -1;
+        target.focus({preventScroll:true});
+      }
+    }
+  }
+
+  document.addEventListener('click', event => {
+    const control = event.target.closest('button');
+    if (!control) return;
+    if (control.dataset.scenario) return start(control.dataset.scenario);
+    const action = control.dataset.action;
+    if (action === 'reset') return start(scenario);
+    switch (action) {
+      case 'begin':
+        if (state.gps !== 'ready') { state.screen = 'permission'; break; }
+        Object.assign(state,{screen:'walk',steps:0,paused:false,weak:false,posted:false,large:false});
+        break;
+      case 'allow': state.gps = 'ready'; state.screen = 'walk'; break;
+      case 'deny': state.gps = 'denied'; break;
+      case 'pause': state.paused = !state.paused; break;
+      case 'step': if (!state.paused && !state.weak) state.steps = Math.min(3,state.steps + 1); break;
+      case 'weak': state.weak = !state.weak; break;
+      case 'base': state.base = !state.base; break;
+      case 'pan': state.centered = false; break;
+      case 'center': state.centered = true; break;
+      case 'large': state.large = !state.large; break;
+      case 'connect': state.offline = false; break;
+      case 'send':
+        if (!state.posted && !state.offline) { state.xp += state.steps * 50; state.posted = true; }
+        break;
+      case 'retry':
+        screens.querySelector('[aria-live]').textContent = 'Expedition already confirmed. XP is not duplicated.';
+        return;
+      case 'claim':
+      case 'confirmed-claim':
+        state.previous = state.screen; state.screen = 'claim'; break;
+      case 'map':
+      case 'walk':
+      case 'finish':
+      case 'summary':
+      case 'profile': state.screen = action; break;
+      default: return;
+    }
+    render(action);
+  });
+  start(scenario);
+</script>
+</body>
+</html>

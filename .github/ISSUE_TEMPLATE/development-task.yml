@@ -1,0 +1,25 @@
+name: Development task
+description: Specification, owner, priority, and observable acceptance criteria
+title: "[Task] "
+body:
+  - type: textarea
+    id: specification
+    attributes:
+      label: Specification and scenario IDs
+      description: State the player goal, required rules, expected result, and dependencies. Assign an owner.
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options: [P0, P1, P2]
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance tests and evidence
+      description: Write Given/When/Then before implementation. Include failure/recovery and required device or backend checks.
+    validations:
+      required: true

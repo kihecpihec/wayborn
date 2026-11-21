@@ -1,0 +1,2154 @@
+{
+  "version": 1,
+  "baseline": "Wayborn full-product specification baseline 2",
+  "features": [
+    {
+      "id": "MAP",
+      "title": "Map presentation",
+      "owner": "Hanan",
+      "wave": 1,
+      "status": "planned",
+      "goal": "Show real geography in a readable pixel-art world.",
+      "rules": [
+        "Keep provider attribution visible in all styles.",
+        "Camera changes never change gameplay position or rewards.",
+        "Unavailable tiles must not lose recorded walks.",
+        "Map opening does not start recording. Show labeled preview without a valid permitted fix."
+      ],
+      "endResult": "A usable map with explicit loading/error states and independently controlled camera.",
+      "dependencies": [],
+      "scenarios": [
+        {
+          "id": "MAP-01",
+          "given": "A visible map and active walk",
+          "when": "pan, change style, and recenter",
+          "then": "position, discoveries and XP remain unchanged",
+          "level": "ui"
+        },
+        {
+          "id": "MAP-02",
+          "given": "The tile provider is unavailable",
+          "when": "open the map and record a walk",
+          "then": "show failure/retry state and retain the walk",
+          "level": "integration"
+        },
+        {
+          "id": "MAP-03",
+          "given": "A loaded map",
+          "when": "switch between pixel and normal styles",
+          "then": "both styles retain provider attribution",
+          "level": "ui"
+        }
+      ]
+    },
+    {
+      "id": "AUTH",
+      "title": "Accounts and session recovery",
+      "owner": "Ismar",
+      "wave": 1,
+      "status": "planned",
+      "goal": "Let a player securely return to their own progress.",
+      "rules": [
+        "Derive identity from authentication.",
+        "Support sign-in/out and the selected flow\u2019s verification and recovery.",
+        "Never discard queued work on session expiration."
+      ],
+      "endResult": "A restored authenticated session or an actionable entry error.",
+      "dependencies": [],
+      "scenarios": [
+        {
+          "id": "AUTH-01",
+          "given": "A new user",
+          "when": "register and verify using the chosen auth flow",
+          "then": "a single profile is created and map entry succeeds",
+          "level": "integration"
+        },
+        {
+          "id": "AUTH-02",
+          "given": "Invalid credentials or expired session",
+          "when": "attempt sign-in or submission",
+          "then": "deny access, show a useful error, and preserve pending work",
+          "level": "integration"
+        },
+        {
+          "id": "AUTH-03",
+          "given": "A player who lost access",
+          "when": "complete the supported recovery flow",
+          "then": "regain only their own account",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "NAV",
+      "title": "Navigation and app shell",
+      "owner": "Ismar",
+      "wave": 1,
+      "status": "planned",
+      "goal": "Make the core player flow reachable and reversible.",
+      "rules": [
+        "Use Expo Router.",
+        "Keep business logic outside routes.",
+        "Unconfigured services fail clearly.",
+        "Open into Map after bounded branded loading; browsing is available before account/permission prompts.",
+        "Map, Activity, Guild, Goals and Profile are primary destinations. Require authentication to record durable rewarded activities, not to browse."
+      ],
+      "endResult": "Entry, map, permission, summary, territory and profile routes share one consistent state.",
+      "dependencies": [],
+      "scenarios": [
+        {
+          "id": "NAV-01",
+          "given": "An active or paused expedition",
+          "when": "open finish confirmation and cancel",
+          "then": "restore the exact preceding lifecycle state and totals",
+          "level": "ui"
+        },
+        {
+          "id": "NAV-02",
+          "given": "A persisted pending summary",
+          "when": "return to map then reopen the summary",
+          "then": "the same expedition remains queued and visible",
+          "level": "ui"
+        }
+      ]
+    },
+    {
+      "id": "GEO",
+      "title": "Versioned geographic rules",
+      "owner": "Hanan",
+      "wave": 0,
+      "status": "planned",
+      "goal": "Make client preview and server decisions reproducible.",
+      "rules": [
+        "H3 IDs are strings; never reinterpret demo cell keys.",
+        "Record resolution, units, supported region and rules version.",
+        "Field-test thresholds; define path coverage, boundaries and captured-interior discovery before persistence."
+      ],
+      "endResult": "Documented rule decisions and shared deterministic geographic fixtures.",
+      "dependencies": [],
+      "scenarios": [
+        {
+          "id": "GEO-01",
+          "given": "The same trace and rules version",
+          "when": "evaluate on client and server",
+          "then": "candidate cells and reasons agree exactly",
+          "level": "integration"
+        },
+        {
+          "id": "GEO-02",
+          "given": "A boundary/antimeridian or unsupported-region trace",
+          "when": "evaluate coverage",
+          "then": "apply the documented boundary policy or explicit rejection without giant accidental capture",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "GPS",
+      "title": "Accepted walking samples",
+      "owner": "Hanan",
+      "wave": 0,
+      "status": "implemented",
+      "goal": "Prevent invalid movement from creating demo progress.",
+      "rules": [
+        "Only finite, in-range coordinates with finite nonnegative timestamps and known accuracy from 0 through 50 m are accepted.",
+        "Samples must have strictly increasing timestamps.",
+        "Movement below 3 m is jitter and grants no distance.",
+        "Movement faster than 4 m/s is rejected, using actual elapsed seconds even below one second.",
+        "Weak/invalid fixes break continuity; recovery establishes a new baseline.",
+        "A speed jump earns no cells or distance; it establishes a new baseline.",
+        "Paused or finished walks ignore samples; finish requires explicit reset to start another demo walk.",
+        "Elapsed-time updates must be finite and positive, and only count while running.",
+        "An interval greater than 15 seconds since the accepted baseline starts a new segment and contributes no connecting distance (D05 trial).",
+        "A location-service interruption explicitly clears continuity.",
+        "Displayed accepted position does not move to a rejected fix; preserve the last accepted position with uncertainty handled by the UI."
+      ],
+      "endResult": "Only accepted movement contributes distance and sample-cell discovery; no bridge spans a rejected gap.",
+      "dependencies": [],
+      "scenarios": [
+        {
+          "id": "GPS-01",
+          "given": "A new demo walk",
+          "when": "walk 0.0001 degrees north on the equator over ten seconds",
+          "then": "record approximately 11.12 meters",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 1000,
+              "accuracyM": 5
+            },
+            {
+              "action": "sample",
+              "latitude": 0.0001,
+              "longitude": 0,
+              "timeMs": 11000,
+              "accuracyM": 5
+            }
+          ],
+          "expect": {
+            "distanceM": [
+              11.0,
+              11.3
+            ]
+          }
+        },
+        {
+          "id": "GPS-02",
+          "given": "An accepted starting point",
+          "when": "jump one latitude degree in one second",
+          "then": "award no distance or additional discovery",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 1000,
+              "accuracyM": 5
+            },
+            {
+              "action": "sample",
+              "latitude": 1,
+              "longitude": 0,
+              "timeMs": 2000,
+              "accuracyM": 5
+            }
+          ],
+          "expect": {
+            "distanceM": [
+              0,
+              0
+            ],
+            "discoveryCount": 1
+          }
+        },
+        {
+          "id": "GPS-03",
+          "given": "An accepted start followed by weak GPS",
+          "when": "recover far away after the gap",
+          "then": "start a new segment without bridging the gap",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 1000,
+              "accuracyM": 5
+            },
+            {
+              "action": "sample",
+              "latitude": 0.01,
+              "longitude": 0,
+              "timeMs": 11000,
+              "accuracyM": 100
+            },
+            {
+              "action": "sample",
+              "latitude": 0.01,
+              "longitude": 0,
+              "timeMs": 21000,
+              "accuracyM": 5
+            }
+          ],
+          "expect": {
+            "distanceM": [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "GPS-04",
+          "given": "An accepted start",
+          "when": "send unknown accuracy",
+          "then": "do not grant any additional discovery",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 1000,
+              "accuracyM": 5
+            },
+            {
+              "action": "sample",
+              "latitude": 0.01,
+              "longitude": 0,
+              "timeMs": 11000,
+              "accuracyM": null
+            }
+          ],
+          "expect": {
+            "distanceM": [
+              0,
+              0
+            ],
+            "discoveryCount": 1
+          }
+        },
+        {
+          "id": "GPS-05",
+          "given": "An accepted start",
+          "when": "send out-of-range coordinates",
+          "then": "do not grant distance or discovery",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 1000,
+              "accuracyM": 5
+            },
+            {
+              "action": "sample",
+              "latitude": 91,
+              "longitude": 0,
+              "timeMs": 11000,
+              "accuracyM": 5
+            }
+          ],
+          "expect": {
+            "distanceM": [
+              0,
+              0
+            ],
+            "discoveryCount": 1
+          }
+        },
+        {
+          "id": "GPS-06",
+          "given": "A paused walk",
+          "when": "send location and timer updates",
+          "then": "do not count movement or active time",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 1000,
+              "accuracyM": 5
+            },
+            {
+              "action": "pause"
+            },
+            {
+              "action": "sample",
+              "latitude": 0.01,
+              "longitude": 0,
+              "timeMs": 11000,
+              "accuracyM": 5
+            },
+            {
+              "action": "elapsed",
+              "seconds": 10
+            }
+          ],
+          "expect": {
+            "distanceM": [
+              0,
+              0
+            ],
+            "discoveryCount": 1,
+            "elapsedSeconds": 0
+          }
+        },
+        {
+          "id": "GPS-07",
+          "given": "A paused walk",
+          "when": "resume at a distant location",
+          "then": "start from a new baseline",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 1000,
+              "accuracyM": 5
+            },
+            {
+              "action": "pause"
+            },
+            {
+              "action": "resume"
+            },
+            {
+              "action": "sample",
+              "latitude": 0.01,
+              "longitude": 0,
+              "timeMs": 11000,
+              "accuracyM": 5
+            }
+          ],
+          "expect": {
+            "distanceM": [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "GPS-08",
+          "given": "A finished walk",
+          "when": "attempt resume and send samples",
+          "then": "remain finished without progress",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 1000,
+              "accuracyM": 5
+            },
+            {
+              "action": "finish"
+            },
+            {
+              "action": "resume"
+            },
+            {
+              "action": "sample",
+              "latitude": 0.01,
+              "longitude": 0,
+              "timeMs": 11000,
+              "accuracyM": 5
+            }
+          ],
+          "expect": {
+            "distanceM": [
+              0,
+              0
+            ],
+            "finished": true,
+            "running": false,
+            "discoveryCount": 1
+          }
+        },
+        {
+          "id": "GPS-09",
+          "given": "A valid baseline",
+          "when": "send an older sample",
+          "then": "ignore it entirely",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 10000,
+              "accuracyM": 5
+            },
+            {
+              "action": "sample",
+              "latitude": 0.01,
+              "longitude": 0,
+              "timeMs": 9000,
+              "accuracyM": 5
+            }
+          ],
+          "expect": {
+            "distanceM": [
+              0,
+              0
+            ],
+            "discoveryCount": 1
+          }
+        },
+        {
+          "id": "GPS-10",
+          "given": "A weak-fix gap",
+          "when": "send a stale sample then recover",
+          "then": "do not reconnect through the stale sample",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 1000,
+              "accuracyM": 5
+            },
+            {
+              "action": "sample",
+              "latitude": 0.001,
+              "longitude": 0,
+              "timeMs": 20000,
+              "accuracyM": 100
+            },
+            {
+              "action": "sample",
+              "latitude": 0.0001,
+              "longitude": 0,
+              "timeMs": 10000,
+              "accuracyM": 5
+            },
+            {
+              "action": "sample",
+              "latitude": 0.001,
+              "longitude": 0,
+              "timeMs": 30000,
+              "accuracyM": 5
+            }
+          ],
+          "expect": {
+            "distanceM": [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "GPS-11",
+          "given": "A running walk",
+          "when": "send negative or zero elapsed updates then two valid seconds",
+          "then": "count exactly two seconds",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "elapsed",
+              "seconds": -1
+            },
+            {
+              "action": "elapsed",
+              "seconds": 0
+            },
+            {
+              "action": "elapsed",
+              "seconds": 2
+            }
+          ],
+          "expect": {
+            "elapsedSeconds": 2
+          }
+        },
+        {
+          "id": "GPS-12",
+          "given": "A valid starting point",
+          "when": "move about 3.34 meters in half a second",
+          "then": "reject movement faster than 4 m/s without discovery",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 1000,
+              "accuracyM": 5
+            },
+            {
+              "action": "sample",
+              "latitude": 3e-05,
+              "longitude": 0,
+              "timeMs": 1500,
+              "accuracyM": 5
+            }
+          ],
+          "expect": {
+            "distanceM": [
+              0,
+              0
+            ],
+            "discoveryCount": 1
+          }
+        },
+        {
+          "id": "GPS-13",
+          "given": "A valid starting point",
+          "when": "drift less than three meters",
+          "then": "do not add distance",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 1000,
+              "accuracyM": 5
+            },
+            {
+              "action": "sample",
+              "latitude": 1e-05,
+              "longitude": 0,
+              "timeMs": 11000,
+              "accuracyM": 5
+            }
+          ],
+          "expect": {
+            "distanceM": [
+              0,
+              0
+            ],
+            "discoveryCount": 1
+          }
+        },
+        {
+          "id": "GPS-14",
+          "given": "An accepted start followed by silence",
+          "when": "receive a plausible movement after 16 seconds",
+          "then": "start a new segment without connecting the unobserved interval",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 1000,
+              "accuracyM": 5
+            },
+            {
+              "action": "sample",
+              "latitude": 0.0001,
+              "longitude": 0,
+              "timeMs": 17000,
+              "accuracyM": 5
+            }
+          ],
+          "expect": {
+            "distanceM": [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "GPS-15",
+          "given": "An accepted start",
+          "when": "receive a location-service interruption then recover",
+          "then": "retain progress but establish a new baseline",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 1000,
+              "accuracyM": 5
+            },
+            {
+              "action": "interrupt"
+            },
+            {
+              "action": "sample",
+              "latitude": 0.0001,
+              "longitude": 0,
+              "timeMs": 11000,
+              "accuracyM": 5
+            }
+          ],
+          "expect": {
+            "distanceM": [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "GPS-16",
+          "given": "An accepted displayed position",
+          "when": "receive a speed jump",
+          "then": "keep the accepted displayed position instead of teleporting the marker",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 1000,
+              "accuracyM": 5
+            },
+            {
+              "action": "sample",
+              "latitude": 1,
+              "longitude": 0,
+              "timeMs": 2000,
+              "accuracyM": 5
+            }
+          ],
+          "expect": {
+            "latitude": 0,
+            "longitude": 0
+          }
+        },
+        {
+          "id": "GPS-17",
+          "given": "An accepted displayed position",
+          "when": "receive weak accuracy",
+          "then": "keep the accepted displayed position",
+          "level": "domain",
+          "steps": [
+            {
+              "action": "sample",
+              "latitude": 0,
+              "longitude": 0,
+              "timeMs": 1000,
+              "accuracyM": 5
+            },
+            {
+              "action": "sample",
+              "latitude": 0.001,
+              "longitude": 0,
+              "timeMs": 11000,
+              "accuracyM": 100
+            }
+          ],
+          "expect": {
+            "latitude": 0,
+            "longitude": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "LIFE",
+      "title": "Foreground expedition lifecycle",
+      "owner": "Hanan",
+      "wave": 1,
+      "status": "planned",
+      "goal": "Record only deliberately started foreground walking.",
+      "rules": [
+        "Start idle and request permission only through the start flow.",
+        "Permission alone is not a valid fix.",
+        "Pause, signal loss and actual tracking interruptions break segments. The M1 foreground alpha interrupts on backgrounding; validated M3 background recording may continue across screen lock without inventing gap samples.",
+        "Separate active time from wall-clock duration."
+      ],
+      "endResult": "Explicit idle/waiting/active/paused/interrupted/finished states with accurate statistics.",
+      "dependencies": [
+        "GPS",
+        "NAV"
+      ],
+      "scenarios": [
+        {
+          "id": "LIFE-01",
+          "given": "A fresh install with denied permission",
+          "when": "try to start",
+          "then": "show denial and permit browsing without recorded progress",
+          "level": "device"
+        },
+        {
+          "id": "LIFE-02",
+          "given": "An active walk",
+          "when": "pause, background, return and resume",
+          "then": "in the foreground alpha, no background gap earns progress and resume starts a new segment; full background support is separately gated by BACKGROUND",
+          "level": "device"
+        },
+        {
+          "id": "LIFE-03",
+          "given": "An idle screen",
+          "when": "wait before explicitly starting",
+          "then": "no expedition time, discovery or XP accrues",
+          "level": "ui"
+        }
+      ]
+    },
+    {
+      "id": "STORE",
+      "title": "Durable drafts and migrations",
+      "owner": "Ismar",
+      "wave": 1,
+      "status": "planned",
+      "goal": "Protect an unfinished walk from app termination.",
+      "rules": [
+        "Persist samples incrementally.",
+        "Finish and outbox insertion are atomic.",
+        "Migrations preserve existing drafts; define mobile and browser support separately."
+      ],
+      "endResult": "Recoverable account-owned drafts and a durable completed expedition.",
+      "dependencies": [
+        "AUTH"
+      ],
+      "scenarios": [
+        {
+          "id": "STORE-01",
+          "given": "A recorded active draft",
+          "when": "terminate the process and reopen",
+          "then": "offer recovery or explicit discard; recovery starts a fresh segment",
+          "level": "integration"
+        },
+        {
+          "id": "STORE-02",
+          "given": "A draft during finish",
+          "when": "interrupt the local transaction",
+          "then": "recover either the draft or the complete queued expedition, never a half-finished record",
+          "level": "integration"
+        },
+        {
+          "id": "STORE-03",
+          "given": "An existing database with pending work",
+          "when": "upgrade the schema",
+          "then": "preserve samples, account ownership and queue contents",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "ISOLATION",
+      "title": "Local account isolation",
+      "owner": "Ismar",
+      "wave": 1,
+      "status": "planned",
+      "goal": "Keep each player\u2019s private data and queue separate.",
+      "rules": [
+        "Partition local data by account.",
+        "Never submit under the wrong session."
+      ],
+      "endResult": "Switching accounts does not leak or lose another account\u2019s data.",
+      "dependencies": [
+        "STORE",
+        "AUTH"
+      ],
+      "scenarios": [
+        {
+          "id": "ISOLATION-01",
+          "given": "Account A has a pending walk",
+          "when": "sign out and enter account B",
+          "then": "B cannot read or submit A\u2019s walk",
+          "level": "integration"
+        },
+        {
+          "id": "ISOLATION-02",
+          "given": "A has preserved pending work",
+          "when": "sign back into A",
+          "then": "A can resume synchronization of the same expedition ID",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "FOG",
+      "title": "Persistent personal discovery",
+      "owner": "Hanan",
+      "wave": 2,
+      "status": "planned",
+      "goal": "Let players retain the world they have explored.",
+      "rules": [
+        "Use approved H3 traversal of valid segments.",
+        "Separate pending discovery from confirmed discovery.",
+        "Ownership changes never erase personal discovery.",
+        "Record the captured-interior discovery policy before M4; first-discovery rewards remain separate from seasonal capture rewards."
+      ],
+      "endResult": "Persistent, account-specific revealed cells across restarts and devices.",
+      "dependencies": [
+        "GEO",
+        "STORE",
+        "GPS"
+      ],
+      "scenarios": [
+        {
+          "id": "FOG-01",
+          "given": "A confirmed discovered cell",
+          "when": "restart or change its owner",
+          "then": "the cell remains personally discovered",
+          "level": "integration"
+        },
+        {
+          "id": "FOG-02",
+          "given": "A weak fix or interrupted segment",
+          "when": "process the trace",
+          "then": "no intervening cells become discovered",
+          "level": "integration"
+        },
+        {
+          "id": "FOG-03",
+          "given": "An already visited cell",
+          "when": "visit again",
+          "then": "do not count another first discovery",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "API",
+      "title": "Validated expedition submission",
+      "owner": "Ismar",
+      "wave": 2,
+      "status": "planned",
+      "goal": "Accept immutable authenticated traces within explicit limits.",
+      "rules": [
+        "Derive owner from auth; do not trust submitted XP/owners.",
+        "Validate coordinates, order, time, segments, mode, rules version and payload limits.",
+        "Define clock skew, rate limits and retryable versus terminal errors.",
+        "Discovery-only submission and result lookup must work before territory capture is available."
+      ],
+      "endResult": "An authorized accepted payload or actionable rejection without reward.",
+      "dependencies": [
+        "AUTH",
+        "GEO"
+      ],
+      "scenarios": [
+        {
+          "id": "API-01",
+          "given": "A payload claiming another user or fabricated rewards",
+          "when": "submit it",
+          "then": "deny impersonation and ignore/reject client reward authority",
+          "level": "integration"
+        },
+        {
+          "id": "API-02",
+          "given": "Invalid, oversized, reordered or unsupported-version input",
+          "when": "submit it",
+          "then": "reject with a stable reason and no database effects",
+          "level": "integration"
+        },
+        {
+          "id": "API-03",
+          "given": "An ID already submitted",
+          "when": "resubmit altered content",
+          "then": "reject the conflict without altering the original result",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "CAPTURE",
+      "title": "Territory capture and preview",
+      "owner": "Hanan",
+      "wave": 4,
+      "status": "planned",
+      "goal": "Convert eligible walking geometry into bounded territory.",
+      "rules": [
+        "Use approved closure, minimum distance, area and perimeter thresholds.",
+        "Small simple loops may capture interior; large/open routes capture only the approved path band.",
+        "Reject self-crossing interiors and gaps.",
+        "Client previews remain provisional; zero capture is valid."
+      ],
+      "endResult": "Deterministic eligible cell sets and clear reasons, confirmed only by the server.",
+      "dependencies": [
+        "GEO",
+        "GPS"
+      ],
+      "scenarios": [
+        {
+          "id": "CAPTURE-01",
+          "given": "A fixture within approved small-loop thresholds",
+          "when": "evaluate capture",
+          "then": "include the approved interior and route cells",
+          "level": "integration"
+        },
+        {
+          "id": "CAPTURE-02",
+          "given": "A large or open-route fixture",
+          "when": "evaluate capture",
+          "then": "include only the approved path band",
+          "level": "integration"
+        },
+        {
+          "id": "CAPTURE-03",
+          "given": "A self-crossing or interrupted loop",
+          "when": "evaluate capture",
+          "then": "do not capture the interior across crossings or gaps",
+          "level": "integration"
+        },
+        {
+          "id": "CAPTURE-04",
+          "given": "An expedition with no eligible cells",
+          "when": "finish and preview",
+          "then": "show zero capture without inventing a failure or reward",
+          "level": "ui"
+        }
+      ]
+    },
+    {
+      "id": "CLAIM",
+      "title": "Partial and concurrent takeover",
+      "owner": "Ismar",
+      "wave": 4,
+      "status": "planned",
+      "goal": "Transfer only legitimately captured cells.",
+      "rules": [
+        "Finalize discovery, ownership, reward and result atomically.",
+        "Lock contested cells in stable order; document commit ordering."
+      ],
+      "endResult": "Consistent cell-level ownership with no partial transactions.",
+      "dependencies": [
+        "CAPTURE",
+        "API"
+      ],
+      "scenarios": [
+        {
+          "id": "CLAIM-01",
+          "given": "A foreign territory with ten cells and a capture of two",
+          "when": "finalize capture",
+          "then": "only those two change owner",
+          "level": "integration"
+        },
+        {
+          "id": "CLAIM-02",
+          "given": "Two players capture overlapping cells concurrently",
+          "when": "commit both requests",
+          "then": "results obey documented ordering without deadlock-induced partial writes",
+          "level": "integration"
+        },
+        {
+          "id": "CLAIM-03",
+          "given": "A failure during finalization",
+          "when": "roll back",
+          "then": "no discovery, ownership, XP or final result is partially committed",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "XP",
+      "title": "Authoritative unique rewards",
+      "owner": "Ismar",
+      "wave": 2,
+      "status": "planned",
+      "goal": "Reward confirmed first discoveries exactly once.",
+      "rules": [
+        "First-discovery identity is user + cell + reason, independent of expedition.",
+        "Only authoritative expedition finalization updates confirmed totals. Discovery-only XP ships in M2 without capture; M4 extends that transaction with ownership.",
+        "Profile level derives from the approved reward/level schedule.",
+        "First-discovery base XP and uniqueness remain consistent per user/cell across all modes; mode-based activity/goal rewards are separate reward reasons."
+      ],
+      "endResult": "A durable ledger whose totals cannot be inflated by replay or concurrency.",
+      "dependencies": [
+        "API",
+        "FOG"
+      ],
+      "scenarios": [
+        {
+          "id": "XP-01",
+          "given": "Two different expeditions for one user reveal the same new cell",
+          "when": "finalize concurrently",
+          "then": "award one first-discovery reward total",
+          "level": "integration"
+        },
+        {
+          "id": "XP-02",
+          "given": "A finalized expedition",
+          "when": "submit its identical payload repeatedly",
+          "then": "return the same result without additional XP",
+          "level": "integration"
+        },
+        {
+          "id": "XP-03",
+          "given": "A pending expedition",
+          "when": "view profile",
+          "then": "pending XP is separate from confirmed XP",
+          "level": "ui"
+        },
+        {
+          "id": "XP-04",
+          "given": "A cell already rewarded during a walk",
+          "when": "revisit it during running and cycling",
+          "then": "grant no additional first-discovery reward in either mode",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "SYNC",
+      "title": "Durable outbox and retry",
+      "owner": "Ismar",
+      "wave": 2,
+      "status": "planned",
+      "goal": "Eventually deliver completed expeditions without duplicate effects.",
+      "rules": [
+        "Retry with bounded backoff under the original account and ID.",
+        "Continue after summary closes.",
+        "Preserve immutable payload; handle response loss, offline state and expired auth."
+      ],
+      "endResult": "Each queued walk reaches a visible confirmed or rejected state.",
+      "dependencies": [
+        "STORE",
+        "API",
+        "XP"
+      ],
+      "scenarios": [
+        {
+          "id": "SYNC-01",
+          "given": "A walk finished offline",
+          "when": "restart, close summary, then reconnect",
+          "then": "submit persisted work and show its authoritative result",
+          "level": "integration"
+        },
+        {
+          "id": "SYNC-02",
+          "given": "Server commits but its response is lost",
+          "when": "restart and retry",
+          "then": "recover one result and one reward",
+          "level": "integration"
+        },
+        {
+          "id": "SYNC-03",
+          "given": "A terminal rejection",
+          "when": "run the worker again",
+          "then": "show reason without retrying forever or blocking unrelated valid entries",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "RECONCILE",
+      "title": "Multi-device reconciliation",
+      "owner": "Hanan",
+      "wave": 2,
+      "status": "planned",
+      "goal": "Display current server state without losing personal progress.",
+      "rules": [
+        "Use versioned snapshots or cursors with pagination and deletion handling.",
+        "Stale caches cannot overwrite newer ownership.",
+        "Rollback rejected provisional overlays."
+      ],
+      "endResult": "Two devices converge to the same confirmed discoveries, ownership and totals.",
+      "dependencies": [
+        "SYNC",
+        "FOG"
+      ],
+      "scenarios": [
+        {
+          "id": "RECONCILE-01",
+          "given": "A second device with no local walks",
+          "when": "sign in and synchronize",
+          "then": "download existing confirmed discovery and XP",
+          "level": "integration"
+        },
+        {
+          "id": "RECONCILE-02",
+          "given": "A stale ownership cache",
+          "when": "apply newer results then an older response",
+          "then": "retain newer ownership and permanent personal discovery",
+          "level": "integration"
+        },
+        {
+          "id": "RECONCILE-03",
+          "given": "A rejected provisional claim",
+          "when": "reconcile the server result",
+          "then": "remove the claim preview without erasing confirmed discovery",
+          "level": "ui"
+        }
+      ]
+    },
+    {
+      "id": "PROFILE",
+      "title": "Profile, history and summaries",
+      "owner": "Ismar",
+      "wave": 5,
+      "status": "planned",
+      "goal": "Explain progress and every expedition outcome.",
+      "rules": [
+        "Validate profile edits.",
+        "Show pending, accepted and rejected outcomes distinctly.",
+        "History must paginate without duplicate or missing expeditions.",
+        "Full profile adds server-confirmed coin balance, inventory/shop links, achievements and statistics; never merge pending rewards into spendable balance.",
+        "Show the saved Walker, Runner or Cyclist specialization; allow free changes without resetting XP, wallet, inventory or history."
+      ],
+      "endResult": "Editable identity, confirmed level/XP and recoverable expedition history.",
+      "dependencies": [
+        "PROGRESS",
+        "WALLET"
+      ],
+      "scenarios": [
+        {
+          "id": "PROFILE-01",
+          "given": "Confirmed and pending expeditions",
+          "when": "open profile and history",
+          "then": "show confirmed totals and separately labeled pending estimates",
+          "level": "ui"
+        },
+        {
+          "id": "PROFILE-02",
+          "given": "A rejected result and an invalid display name",
+          "when": "open summary and save the edit",
+          "then": "show rejection reason and reject invalid profile input",
+          "level": "ui"
+        }
+      ]
+    },
+    {
+      "id": "PRIVACY",
+      "title": "Server access control",
+      "owner": "Ismar",
+      "wave": 2,
+      "status": "planned",
+      "goal": "Keep tracks, discovery and hidden ownership private.",
+      "rules": [
+        "RLS restricts private rows to their owner.",
+        "Public territory projection is bounded and anonymous by default even outside personal fog; private routes, exact live location, identity links and activity media remain audience-controlled.",
+        "Block direct reward/ownership writes; never ship server secrets."
+      ],
+      "endResult": "Two-user isolation verified against a real test backend.",
+      "dependencies": [
+        "AUTH",
+        "API"
+      ],
+      "scenarios": [
+        {
+          "id": "PRIVACY-01",
+          "given": "Two users with different discoveries and private activity histories",
+          "when": "query tracks, discoveries, identity links and public territory as the other user",
+          "then": "deny private rows and unauthorized identity/media; permit only bounded anonymous territory outside fog",
+          "level": "integration"
+        },
+        {
+          "id": "PRIVACY-02",
+          "given": "An authenticated client",
+          "when": "directly write XP or ownership",
+          "then": "database authorization rejects it",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "DELETE",
+      "title": "Retention and account deletion",
+      "owner": "Ismar",
+      "wave": 9,
+      "status": "planned",
+      "goal": "Let players remove private data with defined retention.",
+      "rules": [
+        "Define retention before production collection.",
+        "Deletion clears local data and handles server references deliberately.",
+        "Redact coordinates and credentials in routine logs."
+      ],
+      "endResult": "Documented, exercised removal of user data and expiration of retained tracks.",
+      "dependencies": [
+        "STORE",
+        "PRIVACY"
+      ],
+      "scenarios": [
+        {
+          "id": "DELETE-01",
+          "given": "A player with tracks and queued work",
+          "when": "delete the account",
+          "then": "remove private data and local queue under the documented ownership/reference policy",
+          "level": "integration"
+        },
+        {
+          "id": "DELETE-02",
+          "given": "Tracks older than the approved retention period",
+          "when": "run retention cleanup",
+          "then": "delete eligible tracks without corrupting retained reward totals",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "ACCESS",
+      "title": "Safe and accessible interaction",
+      "owner": "Ismar",
+      "wave": 1,
+      "status": "planned",
+      "goal": "Support understandable walking without unsafe attention demands.",
+      "rules": [
+        "Explain foreground location use and safe/private access boundaries.",
+        "Use readable text, accessible labels and adequate targets.",
+        "Do not promise safe/public routing."
+      ],
+      "endResult": "Core flows usable with a screen reader and without continuous map attention.",
+      "dependencies": [
+        "NAV"
+      ],
+      "scenarios": [
+        {
+          "id": "ACCESS-01",
+          "given": "A new player",
+          "when": "complete onboarding with a screen reader",
+          "then": "understand location use and safety; reach start/pause/finish controls",
+          "level": "device"
+        },
+        {
+          "id": "ACCESS-02",
+          "given": "Large text or a narrow screen",
+          "when": "open all core screens",
+          "then": "essential text and actions remain readable and reachable",
+          "level": "device"
+        }
+      ]
+    },
+    {
+      "id": "RELEASE",
+      "title": "Operational release readiness",
+      "owner": "Ismar",
+      "wave": 9,
+      "status": "planned",
+      "goal": "Ship a recoverable and measured mobile release.",
+      "rules": [
+        "Separate development/staging/production.",
+        "Prove backup/restore and rollback.",
+        "Measure long-walk memory, battery and responsiveness against recorded budgets.",
+        "Disable reward-producing development controls."
+      ],
+      "endResult": "A reproducible release with recorded device evidence and recovery procedures.",
+      "dependencies": [
+        "STARTUP",
+        "SYNC",
+        "BACKGROUND",
+        "TERRITORY",
+        "ACTIVITY",
+        "PROFILE",
+        "WALLET",
+        "GOALS",
+        "COSMETIC",
+        "CHALLENGE",
+        "FEED",
+        "TEAM",
+        "COMPETITION",
+        "EVENT",
+        "NOTIFY",
+        "DELETE",
+        "ACCESS",
+        "CYCLING",
+        "SPECIALIZATION",
+        "MODE_REWARDS"
+      ],
+      "scenarios": [
+        {
+          "id": "RELEASE-01",
+          "given": "A production build",
+          "when": "inspect configuration and developer controls",
+          "then": "no server secrets or reward-producing simulation controls are exposed",
+          "level": "integration"
+        },
+        {
+          "id": "RELEASE-02",
+          "given": "A staging backup and failed deployment",
+          "when": "restore and roll back",
+          "then": "recover consistent data and executable service",
+          "level": "integration"
+        },
+        {
+          "id": "RELEASE-03",
+          "given": "The maximum supported expedition",
+          "when": "walk on supported physical devices",
+          "then": "meet documented budgets and retain the full durable track",
+          "level": "device"
+        }
+      ]
+    },
+    {
+      "id": "CHALLENGE",
+      "title": "Challenges and achievements",
+      "owner": "Hanan",
+      "wave": 5,
+      "status": "planned",
+      "goal": "Recognize confirmed exploration milestones.",
+      "rules": [
+        "Derive completion from confirmed events.",
+        "Version challenge definitions; prevent repeated unlocks.",
+        "Achievements are permanent; daily/weekly objective windows and claims are specified by GOALS."
+      ],
+      "endResult": "Durable challenge progress and achievements.",
+      "dependencies": [
+        "XP"
+      ],
+      "scenarios": [
+        {
+          "id": "CHALLENGE-01",
+          "given": "A completed challenge event",
+          "when": "replay it after restart",
+          "then": "award and unlock once",
+          "level": "integration"
+        },
+        {
+          "id": "CHALLENGE-02",
+          "given": "A pending or rejected expedition",
+          "when": "evaluate challenge progress",
+          "then": "do not count it as confirmed completion",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "COSMETIC",
+      "title": "Inventory and cosmetics",
+      "owner": "Ismar",
+      "wave": 5,
+      "status": "planned",
+      "goal": "Let players personalize their character.",
+      "rules": [
+        "Persist earned unlocks across devices.",
+        "Cosmetics do not silently modify movement/capture rules.",
+        "No payments assumed.",
+        "Price and availability come from server catalog; purchase debits and unlocks atomically with a stable idempotency key."
+      ],
+      "endResult": "Authorized inventory and persistent selected appearance.",
+      "dependencies": [
+        "PROFILE",
+        "WALLET"
+      ],
+      "scenarios": [
+        {
+          "id": "COSMETIC-01",
+          "given": "An unlocked cosmetic",
+          "when": "equip then sign in on another device",
+          "then": "show the same selection",
+          "level": "integration"
+        },
+        {
+          "id": "COSMETIC-02",
+          "given": "A locked item",
+          "when": "attempt to equip by API",
+          "then": "reject without changing gameplay or selection",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "CHEST",
+      "title": "Exploration chests",
+      "owner": "Hanan",
+      "wave": 10,
+      "status": "planned",
+      "goal": "Provide optional exploration rewards after MVP.",
+      "rules": [
+        "Define placement, eligibility and reward balance before implementation.",
+        "Server verifies claim and grants each eligible reward once.",
+        "Use explicit chest visibility policy separate from public territory; private chest eligibility never leaks through public board queries."
+      ],
+      "endResult": "Server-confirmed eligible chest rewards without replay farming.",
+      "dependencies": [
+        "XP",
+        "PRIVACY"
+      ],
+      "scenarios": [
+        {
+          "id": "CHEST-01",
+          "given": "An eligible discovered chest",
+          "when": "claim concurrently twice",
+          "then": "grant one reward",
+          "level": "integration"
+        },
+        {
+          "id": "CHEST-02",
+          "given": "A hidden or ineligible chest",
+          "when": "query or claim it",
+          "then": "do not disclose hidden placement or award a reward",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "TEAM",
+      "title": "Teams and social privacy",
+      "owner": "Ismar",
+      "wave": 7,
+      "status": "planned",
+      "goal": "Enable opt-in group play without exposing raw movement.",
+      "rules": [
+        "Authorize membership, invitations and roles.",
+        "Define capture aggregation semantics before team ownership changes.",
+        "Provide privacy settings, blocking/reporting and moderation.",
+        "Display each member\u2019s saved Walker, Runner or Cyclist specialization separately from Leader, Officer or Member permissions.",
+        "Specialization changes update the guild badge and future defaults only; they never grant permissions or rewrite historical contributions."
+      ],
+      "endResult": "Consistent team views limited to authorized members and chosen visibility.",
+      "dependencies": [
+        "PRIVACY",
+        "CLAIM",
+        "FRIENDS",
+        "SPECIALIZATION"
+      ],
+      "scenarios": [
+        {
+          "id": "TEAM-01",
+          "given": "A removed member",
+          "when": "request team-only data",
+          "then": "deny access and reconcile cached membership",
+          "level": "integration"
+        },
+        {
+          "id": "TEAM-02",
+          "given": "A player who has not opted into social visibility",
+          "when": "view team maps or public APIs",
+          "then": "do not expose precise live location or raw traces",
+          "level": "integration"
+        },
+        {
+          "id": "TEAM-03",
+          "given": "An abusive interaction",
+          "when": "block and report the sender",
+          "then": "enforce blocking and create a reviewable moderation report",
+          "level": "integration"
+        },
+        {
+          "id": "TEAM-04",
+          "given": "A guild Member with Walker specialization",
+          "when": "switch specialization to Cyclist",
+          "then": "update the guild activity badge while permissions and recorded contributions remain unchanged",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "MODE",
+      "title": "Walk, Run and Cycle activity selection",
+      "owner": "Hanan",
+      "wave": 3,
+      "status": "planned",
+      "goal": "Choose a validated movement mode independently for each expedition.",
+      "rules": [
+        "Version walking, running and cycling validation independently; all three modes are required for full v1.",
+        "Validate on physical devices; reject unknown modes.",
+        "Before every start show Walk, Run and Cycle, defaulting to the saved specialization. A different choice changes this expedition only.",
+        "Lock activity mode and rules version on start; v1 mode changes require finishing the expedition and starting another. No mid-session relabeling or implicit mixed-mode segments.",
+        "Persist the chosen mode through pause, interruption, offline submission and retry. Reject conflicting mode changes under the same expedition ID.",
+        "Selecting a mode is not proof of effort and never grants a reward multiplier on its own."
+      ],
+      "endResult": "Correct mode-specific progress without weakening walking checks.",
+      "dependencies": [
+        "GEO",
+        "API",
+        "SPECIALIZATION"
+      ],
+      "scenarios": [
+        {
+          "id": "MODE-01",
+          "given": "A trace acceptable only for running under the approved running rules",
+          "when": "submit it first as walking then as running",
+          "then": "walking rejects disallowed movement and running uses its own approved rules",
+          "level": "integration"
+        },
+        {
+          "id": "MODE-02",
+          "given": "An unsupported mode",
+          "when": "submit",
+          "then": "reject without rewards",
+          "level": "integration"
+        },
+        {
+          "id": "MODE-03",
+          "given": "A player whose preferred specialization is Walker",
+          "when": "choose Cycle before starting",
+          "then": "record a cycling expedition while the saved specialization remains Walker",
+          "level": "ui"
+        },
+        {
+          "id": "MODE-04",
+          "given": "A started Run expedition saved offline",
+          "when": "change mode in a retry payload under the same ID",
+          "then": "reject the conflicting payload without changing original mode or rewards",
+          "level": "integration"
+        },
+        {
+          "id": "MODE-05",
+          "given": "A paused Run expedition",
+          "when": "resume or try changing mode",
+          "then": "resume as Run; require finish and a new expedition to switch",
+          "level": "ui"
+        }
+      ]
+    },
+    {
+      "id": "EVENT",
+      "title": "Ownership-reset events",
+      "owner": "Ismar",
+      "wave": 8,
+      "status": "planned",
+      "goal": "Refresh territory competition while preserving exploration.",
+      "rules": [
+        "Reset ownership, never personal discovery.",
+        "Define event boundaries for pending work and retries.",
+        "Preserve lifetime XP, wallet, cosmetics and historical activity snapshots.",
+        "Seasonal recapture rewards use a separate capped identity including season; never re-award first-discovery XP after ownership reset."
+      ],
+      "endResult": "Deterministic reset outcomes and stable expedition results.",
+      "dependencies": [
+        "CLAIM",
+        "SYNC",
+        "COMPETITION"
+      ],
+      "scenarios": [
+        {
+          "id": "EVENT-01",
+          "given": "A player with owned and discovered cells",
+          "when": "run the reset event twice",
+          "then": "clear affected ownership once and preserve discovery",
+          "level": "integration"
+        },
+        {
+          "id": "EVENT-02",
+          "given": "A pending expedition spanning an event boundary",
+          "when": "submit and replay after the event",
+          "then": "apply documented event policy and return the same result on replay",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "STARTUP",
+      "title": "Branded loading and map-first entry",
+      "owner": "Ismar",
+      "wave": 1,
+      "status": "planned",
+      "goal": "Open into a useful map quickly without pretending that browsing starts an expedition.",
+      "rules": [
+        "Use the landing-page cream/navy/gold pixel-art style; respect reduced motion.",
+        "No forced animation delay, permission loop or infinite network-dependent splash.",
+        "Restore local active work before following deep links; first-time account/location requests are contextual."
+      ],
+      "endResult": "A restored map/home with clear preview, loading, offline and recovery states.",
+      "dependencies": [
+        "NAV"
+      ],
+      "scenarios": [
+        {
+          "id": "STARTUP-01",
+          "given": "A returning player with cached state and slow network",
+          "when": "open the app",
+          "then": "show a usable map or labeled offline preview within D10 budget; no automatic recording",
+          "level": "ui"
+        },
+        {
+          "id": "STARTUP-02",
+          "given": "Reduced motion and an interrupted activity",
+          "when": "launch from a notification",
+          "then": "show static loading, recover activity and safely open the linked detail",
+          "level": "ui"
+        }
+      ]
+    },
+    {
+      "id": "BACKGROUND",
+      "title": "Screen-lock activity recording",
+      "owner": "Hanan",
+      "wave": 3,
+      "status": "planned",
+      "goal": "Allow a real run with the phone in a pocket.",
+      "rules": [
+        "Only an explicitly active session records in background.",
+        "Use supported native builds and platform permissions; foreground fallback is labeled.",
+        "OS termination cannot be promised uninterrupted tracking; recover persisted work with explicit gaps.",
+        "Screen-lock evidence must cover walking, running and cycling before full release."
+      ],
+      "endResult": "Measured walking/running recording through lock/unlock on the supported device matrix.",
+      "dependencies": [
+        "LIFE",
+        "STORE",
+        "MODE"
+      ],
+      "scenarios": [
+        {
+          "id": "BACKGROUND-01",
+          "given": "An active permitted native run",
+          "when": "lock for ten minutes, unlock and finish",
+          "then": "retain accepted samples and correct stats without duplicate segments or rewards",
+          "level": "device"
+        },
+        {
+          "id": "BACKGROUND-02",
+          "given": "Background access is denied or revoked",
+          "when": "start or continue recording",
+          "then": "explain foreground-only/interrupted behavior and retain prior samples",
+          "level": "device"
+        },
+        {
+          "id": "BACKGROUND-03",
+          "given": "OS terminates the app",
+          "when": "reopen",
+          "then": "recover persisted draft without connecting the missing interval",
+          "level": "device"
+        }
+      ]
+    },
+    {
+      "id": "TERRITORY",
+      "title": "Public territory map and detail",
+      "owner": "Hanan",
+      "wave": 4,
+      "status": "planned",
+      "goal": "Show competition on the map without publishing private movement.",
+      "rules": [
+        "Separate personal fog from public game-board cells.",
+        "Use anonymous ownership by default and explicit identity visibility.",
+        "Filter mine/others/guild; limit viewport size and pagination."
+      ],
+      "endResult": "Current simplified captured areas with correct authorized detail.",
+      "dependencies": [
+        "CLAIM",
+        "PRIVACY",
+        "MAP"
+      ],
+      "scenarios": [
+        {
+          "id": "TERRITORY-01",
+          "given": "An unexplored viewport containing foreign territory",
+          "when": "open the map",
+          "then": "show anonymous territory but no raw path, exact live marker or private identity",
+          "level": "integration"
+        },
+        {
+          "id": "TERRITORY-02",
+          "given": "A newer takeover followed by a stale response",
+          "when": "refresh detail",
+          "then": "keep current version and correct own/foreign style",
+          "level": "ui"
+        }
+      ]
+    },
+    {
+      "id": "ACTIVITY",
+      "title": "Personal capture cards and zone images",
+      "owner": "Ismar",
+      "wave": 4,
+      "status": "planned",
+      "goal": "Make every completed activity understandable and reviewable.",
+      "rules": [
+        "Cards use confirmed capture geometry, area, duration, mode and reward result.",
+        "Area is derived from the union of confirmed cells, not a bounding box.",
+        "Preserve historical snapshots after later takeovers/reset; mark pending results clearly.",
+        "Private by default; thumbnails cannot expose raw endpoints or bypass audience checks."
+      ],
+      "endResult": "A personal activity feed and detail with accurate zone image, area and time.",
+      "dependencies": [
+        "SYNC",
+        "CLAIM",
+        "PROGRESS"
+      ],
+      "scenarios": [
+        {
+          "id": "ACTIVITY-01",
+          "given": "A confirmed irregular capture",
+          "when": "open its activity card",
+          "then": "image depicts the confirmed cell union with its area and active/elapsed duration clearly labeled",
+          "level": "integration"
+        },
+        {
+          "id": "ACTIVITY-02",
+          "given": "That territory is later lost or reset",
+          "when": "open the old card",
+          "then": "preserve historical capture and label current ownership separately",
+          "level": "ui"
+        },
+        {
+          "id": "ACTIVITY-03",
+          "given": "An unauthorized user with a private thumbnail URL",
+          "when": "request the image",
+          "then": "deny access, including after audience revocation",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "WALLET",
+      "title": "Earned coins and wallet ledger",
+      "owner": "Ismar",
+      "wave": 5,
+      "status": "planned",
+      "goal": "Provide a durable currency balance that cannot be duplicated or overspent.",
+      "rules": [
+        "Server-authoritative append-only transaction ledger with stable reward/purchase keys.",
+        "Amounts are bounded nonnegative integers; balance never goes negative.",
+        "No paid currency, trading or client-priced purchases in v1."
+      ],
+      "endResult": "Confirmed coin balance with auditable rewards/spending and safe concurrent transactions.",
+      "dependencies": [
+        "XP"
+      ],
+      "scenarios": [
+        {
+          "id": "WALLET-01",
+          "given": "A reward event delivered twice",
+          "when": "apply it concurrently",
+          "then": "credit exactly once",
+          "level": "integration"
+        },
+        {
+          "id": "WALLET-02",
+          "given": "Two purchases exceed the available balance together",
+          "when": "submit concurrently",
+          "then": "only affordable transactions succeed; balance remains nonnegative",
+          "level": "integration"
+        },
+        {
+          "id": "WALLET-03",
+          "given": "A client proposes a cheaper price or negative amount",
+          "when": "purchase",
+          "then": "use server price or reject without changing balance/inventory",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "GOALS",
+      "title": "Daily and weekly objectives",
+      "owner": "Hanan",
+      "wave": 5,
+      "status": "planned",
+      "goal": "Offer repeatable goals with understandable XP/coin rewards.",
+      "rules": [
+        "Define server-time windows, timezone presentation, late-offline policy and eligibility.",
+        "Use confirmed activity events only; reward once per user/objective/window.",
+        "Show progress, completion, claimed state and time remaining; do not double-credit replays.",
+        "Mode-specific distance/time targets use the confirmed expedition mode, not the player\u2019s current specialization. Shared and mode-specific goals have explicit eligibility and caps."
+      ],
+      "endResult": "Daily/weekly goals that roll over predictably and grant each eligible reward once.",
+      "dependencies": [
+        "XP",
+        "WALLET",
+        "CHALLENGE"
+      ],
+      "scenarios": [
+        {
+          "id": "GOALS-01",
+          "given": "One confirmed expedition meets two distinct objectives",
+          "when": "process and replay its event",
+          "then": "advance each eligible goal once and grant each reward once",
+          "level": "integration"
+        },
+        {
+          "id": "GOALS-02",
+          "given": "A client changes timezone/clock across rollover",
+          "when": "claim rewards",
+          "then": "server windows prevent duplicate daily/weekly rewards",
+          "level": "integration"
+        },
+        {
+          "id": "GOALS-03",
+          "given": "An offline expedition arrives after a goal cutoff",
+          "when": "submit",
+          "then": "apply the published late-arrival rule and explain eligibility",
+          "level": "integration"
+        },
+        {
+          "id": "GOALS-04",
+          "given": "A running goal and a completed walking expedition",
+          "when": "change specialization to Runner and replay the event",
+          "then": "do not make the walking expedition eligible or grant another reward",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "FRIENDS",
+      "title": "Friendship and social access",
+      "owner": "Ismar",
+      "wave": 6,
+      "status": "planned",
+      "goal": "Let players intentionally connect and control access.",
+      "rules": [
+        "Explicit request/accept/remove/block lifecycle with server authorization.",
+        "Blocked users lose social access and notifications; anonymous public territory remains public.",
+        "Provide reporting and reviewable moderation; no chat required."
+      ],
+      "endResult": "A controlled friend graph usable by feed and notifications.",
+      "dependencies": [
+        "AUTH",
+        "PRIVACY"
+      ],
+      "scenarios": [
+        {
+          "id": "FRIENDS-01",
+          "given": "A pending friend request",
+          "when": "try to fetch friend-only activity",
+          "then": "deny access until accepted",
+          "level": "integration"
+        },
+        {
+          "id": "FRIENDS-02",
+          "given": "An accepted friend is removed or blocked",
+          "when": "query cached feed and image endpoints",
+          "then": "revoke social access and future relevant notifications",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "FEED",
+      "title": "Friends activity feed and sharing",
+      "owner": "Ismar",
+      "wave": 6,
+      "status": "planned",
+      "goal": "See friends\u2019 captured areas without sharing raw movement by default.",
+      "rules": [
+        "Audience private/friends/public is explicit; private is default.",
+        "Enforce audience on cards, media and pagination, not only UI.",
+        "Show historical zone snapshots; no live tracking or raw route endpoints."
+      ],
+      "endResult": "A paginated own/friends feed with safe sharing and revocation.",
+      "dependencies": [
+        "ACTIVITY",
+        "FRIENDS"
+      ],
+      "scenarios": [
+        {
+          "id": "FEED-01",
+          "given": "A private confirmed activity",
+          "when": "choose friends sharing",
+          "then": "authorized friends see its sanitized card and strangers cannot fetch it",
+          "level": "integration"
+        },
+        {
+          "id": "FEED-02",
+          "given": "A post is unshared while its image is cached",
+          "when": "refresh or fetch again",
+          "then": "server revokes access according to the defined cache-expiry policy",
+          "level": "integration"
+        },
+        {
+          "id": "FEED-03",
+          "given": "New events arrive during pagination",
+          "when": "load more",
+          "then": "avoid duplicate or missing stable card IDs",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "NOTIFY",
+      "title": "Territory-loss alerts and event inbox",
+      "owner": "Ismar",
+      "wave": 6,
+      "status": "planned",
+      "goal": "Inform players of important changes without duplicate or invasive alerts.",
+      "rules": [
+        "Persist inbox event with stable ID from committed server event outbox.",
+        "Push is optional transport; retry delivery cannot repeat game effects.",
+        "Preferences, quiet hours, token/account isolation, grouping and safe deep links are required.",
+        "Reset events do not emit a per-cell territory-loss storm."
+      ],
+      "endResult": "An inbox and optional grouped push that opens current relevant detail.",
+      "dependencies": [
+        "CLAIM",
+        "FRIENDS"
+      ],
+      "scenarios": [
+        {
+          "id": "NOTIFY-01",
+          "given": "Another player takes several adjacent owned cells in one expedition",
+          "when": "commit and retry event delivery",
+          "then": "create one grouped territory-loss event with no live attacker position",
+          "level": "integration"
+        },
+        {
+          "id": "NOTIFY-02",
+          "given": "Push delivery fails and the user changes account",
+          "when": "retry sending",
+          "then": "retain inbox truth and do not send the old account\u2019s alert to the new session",
+          "level": "integration"
+        },
+        {
+          "id": "NOTIFY-03",
+          "given": "A player opens a loss alert during recording",
+          "when": "follow the deep link",
+          "then": "retain the active recording and show current territory",
+          "level": "ui"
+        }
+      ]
+    },
+    {
+      "id": "COMPETITION",
+      "title": "Guild competitions and standings",
+      "owner": "Ismar",
+      "wave": 8,
+      "status": "planned",
+      "goal": "Run scheduled fair competitions with understandable progress and rewards.",
+      "rules": [
+        "Server UTC schedule and published scoring, ties, eligibility, cutoff and offline rules.",
+        "Snapshot roster/eligibility so switching guilds cannot transfer earned competition score.",
+        "Use confirmed events; standings finalize once and rewards are idempotent.",
+        "Publish mode-specific objectives or scoring normalization so walking remains a useful contribution alongside running/cycling.",
+        "Record contribution mode when earned and snapshot competition eligibility under published rules. Free specialization changes never relabel scores, move categories retroactively or duplicate rewards."
+      ],
+      "endResult": "Upcoming/active/completed competitions, guild standings and archived results.",
+      "dependencies": [
+        "TEAM",
+        "NOTIFY",
+        "WALLET"
+      ],
+      "scenarios": [
+        {
+          "id": "COMPETITION-01",
+          "given": "Two guilds capture overlapping territory during a scheduled event",
+          "when": "score and replay events",
+          "then": "use documented score/overlap rules without double counting",
+          "level": "integration"
+        },
+        {
+          "id": "COMPETITION-02",
+          "given": "A member switches guild before finalization",
+          "when": "compute results",
+          "then": "apply the eligibility snapshot and prevent score transfer",
+          "level": "integration"
+        },
+        {
+          "id": "COMPETITION-03",
+          "given": "The event closes with a tie and late offline submission",
+          "when": "finalize twice",
+          "then": "apply published tie/cutoff rules and pay rewards once",
+          "level": "integration"
+        },
+        {
+          "id": "COMPETITION-04",
+          "given": "A scored walking contribution and a later specialization change",
+          "when": "change to Cyclist before finalization and replay the contribution",
+          "then": "retain the original mode/category and award once",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "CYCLING",
+      "title": "Validated cycling gameplay",
+      "owner": "Hanan",
+      "wave": 3,
+      "status": "planned",
+      "goal": "Deliver cycling as a balanced, physically validated full-release mode.",
+      "rules": [
+        "Do not advertise cycling as delivered until field tests and balance are accepted.",
+        "Use independent mode limits and capture policy.",
+        "Cycling is required for full v1, not an optional post-launch expansion. Larger travel reach must not automatically dominate capture or rewards."
+      ],
+      "endResult": "A validated cycling mode that does not weaken walking/running rules.",
+      "dependencies": [
+        "MODE",
+        "BACKGROUND",
+        "GEO"
+      ],
+      "scenarios": [
+        {
+          "id": "CYCLING-01",
+          "given": "A cycling-speed trace",
+          "when": "submit under walking and cycling rules",
+          "then": "walking rejects it and cycling follows its approved policy",
+          "level": "integration"
+        },
+        {
+          "id": "CYCLING-02",
+          "given": "A permitted active cycling session on each supported reference device",
+          "when": "lock the screen, pause/resume, then finish a representative ride",
+          "then": "meet approved cycling recording/battery budgets and preserve chosen mode and accepted track",
+          "level": "device"
+        }
+      ]
+    },
+    {
+      "id": "PROGRESS",
+      "title": "Confirmed discovery progress and private history",
+      "owner": "Ismar",
+      "wave": 2,
+      "status": "planned",
+      "goal": "Prove the complete walk-to-confirmed-XP loop before capture or economy.",
+      "rules": [
+        "Show confirmed XP and level using the approved versioned schedule.",
+        "Pending rewards remain separate; account data is private and recoverable on a second device.",
+        "Basic private history can exist without capture cards, coins or cosmetics."
+      ],
+      "endResult": "A durable confirmed profile total and private expedition result history.",
+      "dependencies": [
+        "AUTH",
+        "SYNC"
+      ],
+      "scenarios": [
+        {
+          "id": "PROGRESS-01",
+          "given": "A walk finished offline and restored after restart",
+          "when": "reconnect and retry submission",
+          "then": "show one confirmed reward and one private expedition entry",
+          "level": "integration"
+        },
+        {
+          "id": "PROGRESS-02",
+          "given": "Confirmed progress on one device",
+          "when": "sign in on a second device",
+          "then": "show the same confirmed XP and history without needing a new local walk",
+          "level": "integration"
+        }
+      ]
+    },
+    {
+      "id": "SPECIALIZATION",
+      "title": "Changeable player and guild activity specialization",
+      "owner": "Ismar",
+      "wave": 3,
+      "status": "planned",
+      "goal": "Express a preferred activity without restricting what the player can do.",
+      "rules": [
+        "Choose Walker, Runner or Cyclist at setup or in profile settings; Walker is the initial default if setup is skipped.",
+        "Changing specialization is free and does not reset progress, currency, inventory or history. Persist it across devices.",
+        "Use the preference to preselect the next activity mode, but allow any supported mode before starting.",
+        "Guilds display this specialization separately from permission roles. An ongoing activity retains its original mode after preference changes.",
+        "Specialization is descriptive, not an administrative permission, reward entitlement or retroactive competition category."
+      ],
+      "endResult": "A durable, freely changeable specialization displayed on profile and guild roster, with independent activity choice.",
+      "dependencies": [
+        "AUTH"
+      ],
+      "scenarios": [
+        {
+          "id": "SPECIALIZATION-01",
+          "given": "A player with XP, coins, inventory and history",
+          "when": "change Walker to Runner then sign in on another device",
+          "then": "retain all progress and show Runner as the saved preference",
+          "level": "integration"
+        },
+        {
+          "id": "SPECIALIZATION-02",
+          "given": "A running expedition is active",
+          "when": "change the saved specialization to Cyclist",
+          "then": "keep the current expedition Run and default the next expedition to Cycle",
+          "level": "integration"
+        },
+        {
+          "id": "SPECIALIZATION-03",
+          "given": "A player without a chosen specialization",
+          "when": "open activity setup",
+          "then": "show Walk as the editable default without forcing onboarding",
+          "level": "ui"
+        }
+      ]
+    },
+    {
+      "id": "MODE_REWARDS",
+      "title": "Effort-balanced mode rewards and capture limits",
+      "owner": "Hanan",
+      "wave": 5,
+      "status": "planned",
+      "goal": "Keep walking, running and cycling rewarding without rewarding speed or role switching by itself.",
+      "rules": [
+        "Separate first-discovery XP from activity/goal/season rewards; first-discovery XP cannot be repeated by changing modes.",
+        "Publish versioned mode-specific distance/time targets, eligibility, capture limits and reward caps after representative field tests. Do not invent production multipliers before evidence.",
+        "Server recomputes eligibility from validated activity and immutable recorded mode/rules version; the saved specialization never determines historical rewards.",
+        "Compare equal-duration representative walks, runs and rides against an approved fairness tolerance (D14). More distance must not automatically mean proportionally greater coins or guild score.",
+        "Cycling capture limits are reviewed in M4; combined XP/coin/goal pacing is reviewed in M5 before economy release.",
+        "Reject implausible traces under their selected mode; do not silently reclassify a rejected activity into a more lucrative one. GPS validation alone is not proof against all spoofing."
+      ],
+      "endResult": "Reviewed mode-specific progression and capture rules with reproducible fairness fixtures and no duplicate reward path.",
+      "dependencies": [
+        "MODE",
+        "CYCLING",
+        "XP",
+        "WALLET",
+        "CLAIM"
+      ],
+      "scenarios": [
+        {
+          "id": "MODE_REWARDS-01",
+          "given": "Approved equal-duration walking, running and cycling fixtures and fairness tolerance",
+          "when": "calculate server-authoritative rewards",
+          "then": "stay within the approved normalized reward bounds and published caps",
+          "level": "integration"
+        },
+        {
+          "id": "MODE_REWARDS-02",
+          "given": "A fixed recorded Walk activity and rules version",
+          "when": "change preference to Runner or Cyclist before submitting and retrying",
+          "then": "return the same Walk rewards exactly once",
+          "level": "integration"
+        },
+        {
+          "id": "MODE_REWARDS-03",
+          "given": "A trace outside selected walking limits",
+          "when": "submit as Walk with a claimed bonus",
+          "then": "reject ineligible movement/bonus without auto-upgrading its mode",
+          "level": "integration"
+        },
+        {
+          "id": "MODE_REWARDS-04",
+          "given": "A cycling capture exceeding its approved area or reward cap",
+          "when": "finalize and replay it",
+          "then": "enforce mode-specific capture/reward limits and return an unchanged final result",
+          "level": "integration"
+        }
+      ]
+    }
+  ]
+}

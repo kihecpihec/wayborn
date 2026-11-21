@@ -1,0 +1,164 @@
+{
+  "changes": [
+    {
+      "feature": "XP",
+      "before": "0cd7fcef9cb33c339027b12dfb6793e1257a806ce06321797eea01cad23f9afd",
+      "after": "31eadfdbaac8f147f7d5e21f7679a2b1721c92ea44c9b9574a3b575f94f97d9f",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "XP",
+      "before": "5ce4308b3467dce547e1da939faff6a002955faa95077a521dedefaeeeeb67d0",
+      "after": "31eadfdbaac8f147f7d5e21f7679a2b1721c92ea44c9b9574a3b575f94f97d9f",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "PROFILE",
+      "before": "cbe80bf2c9aa7d14d57c0afac3899cba1888bb40d07f5bf3659205fcf09c766f",
+      "after": "99e9f2d34abb768b6c613578c4de1d0554e7f1463d3dc55d484a20de6776877c",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "PROFILE",
+      "before": "d7b390b02ceeb52e96b18c5e538d3d29bf913ebbe6cf18cd8939181cf92871c2",
+      "after": "99e9f2d34abb768b6c613578c4de1d0554e7f1463d3dc55d484a20de6776877c",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "RELEASE",
+      "before": "40e191012882ac527bae329ce0405dc295daaf012ac4d3871e80e394616028c1",
+      "after": "9c16da52d921e2ee17c4e25259ca4e5fcae881601d37d2895483ef6ee715aee7",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "RELEASE",
+      "before": "f695bc58b3f221ce14a5d54081f156594ed9cc2770ec8ae19946ff3fe2813de3",
+      "after": "9c16da52d921e2ee17c4e25259ca4e5fcae881601d37d2895483ef6ee715aee7",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "TEAM",
+      "before": "46393a357ff9411269ba2be012742368813815624fddc70ef5dac8dfe54a6442",
+      "after": "19a8d51b315427a452635ff6de4faa52176d050b2e5eb201965ce17bdab6af09",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "TEAM",
+      "before": "6c081c66039af3f00f67c2133684c784cfbd5a6614d9b043e7ecc336a6345b8f",
+      "after": "19a8d51b315427a452635ff6de4faa52176d050b2e5eb201965ce17bdab6af09",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "MODE",
+      "before": "2553e0e9c7a9a601ca0fa0e5a065f379a2972365555120375865d504472af50c",
+      "after": "2265492cd7446f4d780a29a1ea36773f19662ad97c83ad4328cd08d2a9ab77b1",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "MODE",
+      "before": "f31a41274583a9e4ef05c484e4098e114b059b7f45fbb82ac31c6c78acf90592",
+      "after": "2265492cd7446f4d780a29a1ea36773f19662ad97c83ad4328cd08d2a9ab77b1",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "BACKGROUND",
+      "before": null,
+      "after": "996e6e64c37420d29f100550033350e6da3f1e0028d56749b5dab2621c150b97",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "BACKGROUND",
+      "before": "740a731693f292f05679930cc12db2d639712fc87c06e6df745ff8d1af174a6d",
+      "after": "996e6e64c37420d29f100550033350e6da3f1e0028d56749b5dab2621c150b97",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "GOALS",
+      "before": null,
+      "after": "142c440f1b9209262c9d52a910c3d04877f640d588fb76252353cf94b0249af8",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "GOALS",
+      "before": "13888c5e0f536ae7d8503a24af8a621db4fda2797db41e4d2a5b730c907e0121",
+      "after": "142c440f1b9209262c9d52a910c3d04877f640d588fb76252353cf94b0249af8",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "COMPETITION",
+      "before": null,
+      "after": "d2fb58ae238ab72da5d89b6ee1160dfddec584bb5db41e8821ad12058dfe5550",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "COMPETITION",
+      "before": "77f9cbef06c1b29fba0428c52b0cad804d4cc3e679a2211971e64b4b06792359",
+      "after": "d2fb58ae238ab72da5d89b6ee1160dfddec584bb5db41e8821ad12058dfe5550",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "CYCLING",
+      "before": null,
+      "after": "92cee483e6d763567877ac9779830b8566a42f55e64b9923e1470af959869315",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "CYCLING",
+      "before": "94c479a34ee4f82f4c0c314b755d5567b4ab9bbcb4a041d646573a331077de1f",
+      "after": "92cee483e6d763567877ac9779830b8566a42f55e64b9923e1470af959869315",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "SPECIALIZATION",
+      "before": null,
+      "after": "3671cf12bc3bb83639cb6773c62e076aff6b2b5220ebc669a315ef8a3615ad50",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    },
+    {
+      "feature": "MODE_REWARDS",
+      "before": null,
+      "after": "3bb55260e8bc2346b2be6b3477ccf6f2aa3c7b0ce1f87f8bb4c994ca8baf96c0",
+      "rationale": "User explicitly requested changeable Walker/Runner/Cyclist specializations, per-activity modes and balanced rewards; cycling joins full v1.",
+      "impact": "Planned contracts only; adds role/mode isolation and fairness cases without claiming implemented gameplay. Existing executable GPS baseline is unchanged.",
+      "review": "User authorized this product addition; second-developer contract review and D13/D14 balancing evidence remain required."
+    }
+  ]
+}

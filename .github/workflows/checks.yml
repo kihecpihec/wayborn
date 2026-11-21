@@ -1,4 +1,4 @@
-name: Začetna preverjanja
+name: Baseline checks
 on:
   push:
   pull_request:
@@ -10,22 +10,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: python scripts/check_docs.py
+      - run: python scripts/specifications.py
+      - run: python scripts/test_baseline.py
+      - run: python scripts/check_baseline.py
+      - name: Review specification changes against PR base
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: python scripts/check_baseline.py --base-ref "$BASE_SHA"
   map-prototype:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: prototip/mapa
+        working-directory: prototype/map
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
-          cache-dependency-path: prototip/mapa/package-lock.json
+          cache-dependency-path: prototype/map/package-lock.json
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint

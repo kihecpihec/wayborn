@@ -1,0 +1,6 @@
+# Review routing only. Required approvals/status checks must also be enabled in repository settings.
+/docs/specifications/ @ismarM @kihecpihec
+/docs/decisions/ @ismarM @kihecpihec
+/scripts/check_baseline.py @ismarM @kihecpihec
+/scripts/test_baseline.py @ismarM @kihecpihec
+/.github/ @ismarM @kihecpihec

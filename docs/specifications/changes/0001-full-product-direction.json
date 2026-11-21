@@ -1,0 +1,300 @@
+{
+  "changes": [
+    {
+      "feature": "ACCESS",
+      "before": "4c495bf930b0677f0350ad795c2411f902fac36c1acd546579f340617aed86c6",
+      "after": "5fdcc62dd169b5100172ef1f0c543e6160d69733ff8b85b6f9e6aae922b26e1e",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "ACTIVITY",
+      "before": null,
+      "after": "265828518dcbb5773f7ed9500b43bbb70e78208fba0d1dff9eeb36b2742bcccb",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "API",
+      "before": "a8de381c821e26bf69e66b63ecdbb6153b21c68489e83ecddfc8c8ce236f30ee",
+      "after": "e41400d94766444bd3649f46abeb14e15b4fae64395d9b98396659795cfbf692",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "AUTH",
+      "before": "294c02cec563dffda73e411042bb93c1c28a69b5a9bd9f252619ba8ec563e14a",
+      "after": "57b7453a963167cc9c53a50cc0d357deb03b39101e1ddf36dd61782154b04015",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "BACKGROUND",
+      "before": null,
+      "after": "740a731693f292f05679930cc12db2d639712fc87c06e6df745ff8d1af174a6d",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "CAPTURE",
+      "before": "5153fa1d153856139ad81244b31076f1f492b177f197ff74919f973e0e50a6c2",
+      "after": "fe263a760ee7d9c233ac003eb04a9217e22dd5d02534b62a01afb02649b9f494",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "CHALLENGE",
+      "before": "c4ffe487e54cc10840b16f5fae611a4ede327bad89609c0e7b680612feb19c98",
+      "after": "45695fa49e924964141c9bab3abc66ce84942fb60f38be0bd76523288de6d1d8",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "CHEST",
+      "before": "3b4110fc7c9ac8a8ba156432a3235b4f1dd3dd61ff04604b38a740e3895377da",
+      "after": "b781e14816598eaaf20b636a211b14a33667596c77076e53613263a1775adec3",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "COMPETITION",
+      "before": null,
+      "after": "77f9cbef06c1b29fba0428c52b0cad804d4cc3e679a2211971e64b4b06792359",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "COSMETIC",
+      "before": "23635e1ee033728cb53e1d453130210a67cb88fbfb64eeac7befc4eb8be306bd",
+      "after": "aae10053d75430e18edea3ef9072bbed4122d6a683eefa86cf7004a600c74af9",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "CYCLING",
+      "before": null,
+      "after": "94c479a34ee4f82f4c0c314b755d5567b4ab9bbcb4a041d646573a331077de1f",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "DELETE",
+      "before": "9ee425ece375007430beaecc1a72d00d63f78a28db50772e47f198004db5ce31",
+      "after": "affa1fdeb14b507e0ca91b88c0ac66aedbe163efcc0116de93cb61c60da0f7f4",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "EVENT",
+      "before": "2c4baa5cc4fd7b4ce9c14d41a7c2ae633746165df6d696b0588c52c07e1b5c9b",
+      "after": "b9673f569d87b516a4c020094a1cbf47f8781d1df66c49655aab17c4be7b2852",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "FEED",
+      "before": null,
+      "after": "9e52c032e9a7c661ed332aa94919b7692d109c10ee220d6ccff5b29c913567a9",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "FOG",
+      "before": "0b5de5d75ec294f3070afc861bed473484c9af5920118994d045c5fd153797ab",
+      "after": "1781bab9ad769c06ecf57ae11f81b66a670e5287d7d3d9d382147bdcad625fd4",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "FRIENDS",
+      "before": null,
+      "after": "082bb501c79e26578c6ef142d3b38754910dba0ef011bf9e4ca01f1d77e9787e",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "GEO",
+      "before": "65bf2da6f2131d1f7d4d8ee1bf3a3433c31af1f633b6b002d35f9ef7ceb740df",
+      "after": "824ece0759060498dcbfd9d896a7eec5c2f17395b93c64ac8f63a21a50de9bc8",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "GOALS",
+      "before": null,
+      "after": "13888c5e0f536ae7d8503a24af8a621db4fda2797db41e4d2a5b730c907e0121",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "GPS",
+      "before": "76b672211165e4bd7969996e9e3dff844d4a04dcf79eaf085c529a6cbf78c800",
+      "after": "f50803c6d84ee2c07203b936eed8a39b0a0535ba541609b33dfd192c36e11ac3",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "ISOLATION",
+      "before": "e986416811d1a130652652c90568087aaa9b6c9ee19777da1e4370da76da95fd",
+      "after": "14cb1518ab74eec7674fba2b19ecbd3eef43683d361aed8c41be465d2a586bb0",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "LIFE",
+      "before": "8a34bc3224fa5d2c229577bf3f196fa4919a227575f6f910bedf48fc7d5ee606",
+      "after": "fda076ecf93940ff6f3e2e81ca28df0dad17d5cd088284cbf11df3bf438d7696",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "MAP",
+      "before": "aa0656c2ddedde346166286c40e6cbf6ec2863eb6e7f6003a5fa11bcaa610a56",
+      "after": "68da20e83172d07f6cedf6dd773f4977ad20372255feb6ba02c39adc004564f8",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "MODE",
+      "before": "2553e0e9c7a9a601ca0fa0e5a065f379a2972365555120375865d504472af50c",
+      "after": "f31a41274583a9e4ef05c484e4098e114b059b7f45fbb82ac31c6c78acf90592",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "NAV",
+      "before": "6b25163d7bf379e4cc44abcdb93a3e5298708dd191817e3e5e645881aaef5563",
+      "after": "eda55db820601eb957775c680eea15e5c70d55ae61e097df61de0602630feea8",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "NOTIFY",
+      "before": null,
+      "after": "094c8288a237c958a13b95e35b6ffd2e4666408bf3275c6d6dd3340b8aa8d5dc",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "PRIVACY",
+      "before": "4e6d62c77bde98cdf342f1ed92cd409162345b32ccfa94f63e7060abfc452734",
+      "after": "2fc8a20a90ff1bd57077e256b574127d17e74921c38898e13fd3fbec508bf196",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "PROFILE",
+      "before": "d7b390b02ceeb52e96b18c5e538d3d29bf913ebbe6cf18cd8939181cf92871c2",
+      "after": "cbe80bf2c9aa7d14d57c0afac3899cba1888bb40d07f5bf3659205fcf09c766f",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "PROGRESS",
+      "rationale": "Full user-requested product flow and early discovery-only integrated milestone.",
+      "impact": "Split core progress from full economy/profile so M2 is not blocked by later milestones.",
+      "review": "Second-developer contract review required before merge; user authorized full plan direction.",
+      "before": null,
+      "after": "6e95bf5185deedfcc9d4268aee54e239ff6bb7d530ea32b88dfe562f6edad757"
+    },
+    {
+      "feature": "RECONCILE",
+      "before": "b1dddf31e210df8f91e294cfa4b8a9ef62e7f0eb1fe87aaef65f9b7967964702",
+      "after": "bd9389eb39da1b06bc59058bee66cbdcb0d512f4b562ed7c77094bcbf5a70d07",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "RELEASE",
+      "before": "40e191012882ac527bae329ce0405dc295daaf012ac4d3871e80e394616028c1",
+      "after": "f695bc58b3f221ce14a5d54081f156594ed9cc2770ec8ae19946ff3fe2813de3",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "STARTUP",
+      "before": null,
+      "after": "0ba70fb4cd3c2b8ffe857e014daea78022692560440309f1393ab677ce30ea30",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "STORE",
+      "before": "4b829d67849c62be91ea8272534f3a8482ff8f5f0398a12a8b8eebd38371099c",
+      "after": "77a6d89c65e590b0275599c6ca140963d80f4dabe85623b7254af88edd81c566",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "SYNC",
+      "before": "b7508499f5a022187c21ee4dfe49ea66c6506c0e6b4ce77a7842b646e752d2a1",
+      "after": "834e4ccae3c516131f2271d36e7d6ddf8faa94e63f4a1c8374255c866afe4f19",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "TEAM",
+      "before": "6c081c66039af3f00f67c2133684c784cfbd5a6614d9b043e7ecc336a6345b8f",
+      "after": "46393a357ff9411269ba2be012742368813815624fddc70ef5dac8dfe54a6442",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "TERRITORY",
+      "before": null,
+      "after": "3acac7b5fd9d4f75649d86b20f8694e6b0c69d86b3063fe46342d57f07307805",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "WALLET",
+      "before": null,
+      "after": "ac1caa50cb74d8e283898c4cc2a4522abe4437a479760b6b922b682a6f5d4588",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    },
+    {
+      "feature": "XP",
+      "before": "0cd7fcef9cb33c339027b12dfb6793e1257a806ce06321797eea01cad23f9afd",
+      "after": "5ce4308b3467dce547e1da939faff6a002955faa95077a521dedefaeeeeb67d0",
+      "rationale": "User requested full social territory game and implementation of workflow review recommendations.",
+      "impact": "Replaces exploration-only milestone ordering; preserves existing GPS scenarios and adds explicit gaps/display cases. Future features remain planned.",
+      "review": "Product direction authorized in the current user request; second-developer review of implementation and numeric trial decisions is still required before merge."
+    }
+  ]
+}
