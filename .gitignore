@@ -6,3 +6,7 @@ dist-native/
 .env.*
 !.env.example
 .DS_Store
+
+# Python validation scripts
+__pycache__/
+*.pyc

@@ -1,0 +1,371 @@
+{
+  "version": 1,
+  "features": {
+    "MAP": {
+      "digest": "68da20e83172d07f6cedf6dd773f4977ad20372255feb6ba02c39adc004564f8",
+      "status": "planned",
+      "scenarios": [
+        "MAP-01",
+        "MAP-02",
+        "MAP-03"
+      ]
+    },
+    "AUTH": {
+      "digest": "57b7453a963167cc9c53a50cc0d357deb03b39101e1ddf36dd61782154b04015",
+      "status": "planned",
+      "scenarios": [
+        "AUTH-01",
+        "AUTH-02",
+        "AUTH-03"
+      ]
+    },
+    "NAV": {
+      "digest": "eda55db820601eb957775c680eea15e5c70d55ae61e097df61de0602630feea8",
+      "status": "planned",
+      "scenarios": [
+        "NAV-01",
+        "NAV-02"
+      ]
+    },
+    "GEO": {
+      "digest": "824ece0759060498dcbfd9d896a7eec5c2f17395b93c64ac8f63a21a50de9bc8",
+      "status": "planned",
+      "scenarios": [
+        "GEO-01",
+        "GEO-02"
+      ]
+    },
+    "GPS": {
+      "digest": "f50803c6d84ee2c07203b936eed8a39b0a0535ba541609b33dfd192c36e11ac3",
+      "status": "implemented",
+      "scenarios": [
+        "GPS-01",
+        "GPS-02",
+        "GPS-03",
+        "GPS-04",
+        "GPS-05",
+        "GPS-06",
+        "GPS-07",
+        "GPS-08",
+        "GPS-09",
+        "GPS-10",
+        "GPS-11",
+        "GPS-12",
+        "GPS-13",
+        "GPS-14",
+        "GPS-15",
+        "GPS-16",
+        "GPS-17"
+      ]
+    },
+    "LIFE": {
+      "digest": "fda076ecf93940ff6f3e2e81ca28df0dad17d5cd088284cbf11df3bf438d7696",
+      "status": "planned",
+      "scenarios": [
+        "LIFE-01",
+        "LIFE-02",
+        "LIFE-03"
+      ]
+    },
+    "STORE": {
+      "digest": "77a6d89c65e590b0275599c6ca140963d80f4dabe85623b7254af88edd81c566",
+      "status": "planned",
+      "scenarios": [
+        "STORE-01",
+        "STORE-02",
+        "STORE-03"
+      ]
+    },
+    "ISOLATION": {
+      "digest": "14cb1518ab74eec7674fba2b19ecbd3eef43683d361aed8c41be465d2a586bb0",
+      "status": "planned",
+      "scenarios": [
+        "ISOLATION-01",
+        "ISOLATION-02"
+      ]
+    },
+    "FOG": {
+      "digest": "1781bab9ad769c06ecf57ae11f81b66a670e5287d7d3d9d382147bdcad625fd4",
+      "status": "planned",
+      "scenarios": [
+        "FOG-01",
+        "FOG-02",
+        "FOG-03"
+      ]
+    },
+    "API": {
+      "digest": "e41400d94766444bd3649f46abeb14e15b4fae64395d9b98396659795cfbf692",
+      "status": "planned",
+      "scenarios": [
+        "API-01",
+        "API-02",
+        "API-03"
+      ]
+    },
+    "CAPTURE": {
+      "digest": "fe263a760ee7d9c233ac003eb04a9217e22dd5d02534b62a01afb02649b9f494",
+      "status": "planned",
+      "scenarios": [
+        "CAPTURE-01",
+        "CAPTURE-02",
+        "CAPTURE-03",
+        "CAPTURE-04"
+      ]
+    },
+    "CLAIM": {
+      "digest": "053304dcbd6bef005b71c7d35a5e8c35a5364e0b7be8284aa275ae2393a5ffcb",
+      "status": "planned",
+      "scenarios": [
+        "CLAIM-01",
+        "CLAIM-02",
+        "CLAIM-03"
+      ]
+    },
+    "XP": {
+      "digest": "31eadfdbaac8f147f7d5e21f7679a2b1721c92ea44c9b9574a3b575f94f97d9f",
+      "status": "planned",
+      "scenarios": [
+        "XP-01",
+        "XP-02",
+        "XP-03",
+        "XP-04"
+      ]
+    },
+    "SYNC": {
+      "digest": "834e4ccae3c516131f2271d36e7d6ddf8faa94e63f4a1c8374255c866afe4f19",
+      "status": "planned",
+      "scenarios": [
+        "SYNC-01",
+        "SYNC-02",
+        "SYNC-03"
+      ]
+    },
+    "RECONCILE": {
+      "digest": "bd9389eb39da1b06bc59058bee66cbdcb0d512f4b562ed7c77094bcbf5a70d07",
+      "status": "planned",
+      "scenarios": [
+        "RECONCILE-01",
+        "RECONCILE-02",
+        "RECONCILE-03"
+      ]
+    },
+    "PROFILE": {
+      "digest": "99e9f2d34abb768b6c613578c4de1d0554e7f1463d3dc55d484a20de6776877c",
+      "status": "planned",
+      "scenarios": [
+        "PROFILE-01",
+        "PROFILE-02"
+      ]
+    },
+    "PRIVACY": {
+      "digest": "2fc8a20a90ff1bd57077e256b574127d17e74921c38898e13fd3fbec508bf196",
+      "status": "planned",
+      "scenarios": [
+        "PRIVACY-01",
+        "PRIVACY-02"
+      ]
+    },
+    "DELETE": {
+      "digest": "affa1fdeb14b507e0ca91b88c0ac66aedbe163efcc0116de93cb61c60da0f7f4",
+      "status": "planned",
+      "scenarios": [
+        "DELETE-01",
+        "DELETE-02"
+      ]
+    },
+    "ACCESS": {
+      "digest": "5fdcc62dd169b5100172ef1f0c543e6160d69733ff8b85b6f9e6aae922b26e1e",
+      "status": "planned",
+      "scenarios": [
+        "ACCESS-01",
+        "ACCESS-02"
+      ]
+    },
+    "RELEASE": {
+      "digest": "9c16da52d921e2ee17c4e25259ca4e5fcae881601d37d2895483ef6ee715aee7",
+      "status": "planned",
+      "scenarios": [
+        "RELEASE-01",
+        "RELEASE-02",
+        "RELEASE-03"
+      ]
+    },
+    "CHALLENGE": {
+      "digest": "45695fa49e924964141c9bab3abc66ce84942fb60f38be0bd76523288de6d1d8",
+      "status": "planned",
+      "scenarios": [
+        "CHALLENGE-01",
+        "CHALLENGE-02"
+      ]
+    },
+    "COSMETIC": {
+      "digest": "aae10053d75430e18edea3ef9072bbed4122d6a683eefa86cf7004a600c74af9",
+      "status": "planned",
+      "scenarios": [
+        "COSMETIC-01",
+        "COSMETIC-02"
+      ]
+    },
+    "CHEST": {
+      "digest": "b781e14816598eaaf20b636a211b14a33667596c77076e53613263a1775adec3",
+      "status": "planned",
+      "scenarios": [
+        "CHEST-01",
+        "CHEST-02"
+      ]
+    },
+    "TEAM": {
+      "digest": "19a8d51b315427a452635ff6de4faa52176d050b2e5eb201965ce17bdab6af09",
+      "status": "planned",
+      "scenarios": [
+        "TEAM-01",
+        "TEAM-02",
+        "TEAM-03",
+        "TEAM-04"
+      ]
+    },
+    "MODE": {
+      "digest": "2265492cd7446f4d780a29a1ea36773f19662ad97c83ad4328cd08d2a9ab77b1",
+      "status": "planned",
+      "scenarios": [
+        "MODE-01",
+        "MODE-02",
+        "MODE-03",
+        "MODE-04",
+        "MODE-05"
+      ]
+    },
+    "EVENT": {
+      "digest": "b9673f569d87b516a4c020094a1cbf47f8781d1df66c49655aab17c4be7b2852",
+      "status": "planned",
+      "scenarios": [
+        "EVENT-01",
+        "EVENT-02"
+      ]
+    },
+    "STARTUP": {
+      "digest": "0ba70fb4cd3c2b8ffe857e014daea78022692560440309f1393ab677ce30ea30",
+      "status": "planned",
+      "scenarios": [
+        "STARTUP-01",
+        "STARTUP-02"
+      ]
+    },
+    "BACKGROUND": {
+      "digest": "996e6e64c37420d29f100550033350e6da3f1e0028d56749b5dab2621c150b97",
+      "status": "planned",
+      "scenarios": [
+        "BACKGROUND-01",
+        "BACKGROUND-02",
+        "BACKGROUND-03"
+      ]
+    },
+    "TERRITORY": {
+      "digest": "3acac7b5fd9d4f75649d86b20f8694e6b0c69d86b3063fe46342d57f07307805",
+      "status": "planned",
+      "scenarios": [
+        "TERRITORY-01",
+        "TERRITORY-02"
+      ]
+    },
+    "ACTIVITY": {
+      "digest": "265828518dcbb5773f7ed9500b43bbb70e78208fba0d1dff9eeb36b2742bcccb",
+      "status": "planned",
+      "scenarios": [
+        "ACTIVITY-01",
+        "ACTIVITY-02",
+        "ACTIVITY-03"
+      ]
+    },
+    "WALLET": {
+      "digest": "ac1caa50cb74d8e283898c4cc2a4522abe4437a479760b6b922b682a6f5d4588",
+      "status": "planned",
+      "scenarios": [
+        "WALLET-01",
+        "WALLET-02",
+        "WALLET-03"
+      ]
+    },
+    "GOALS": {
+      "digest": "142c440f1b9209262c9d52a910c3d04877f640d588fb76252353cf94b0249af8",
+      "status": "planned",
+      "scenarios": [
+        "GOALS-01",
+        "GOALS-02",
+        "GOALS-03",
+        "GOALS-04"
+      ]
+    },
+    "FRIENDS": {
+      "digest": "082bb501c79e26578c6ef142d3b38754910dba0ef011bf9e4ca01f1d77e9787e",
+      "status": "planned",
+      "scenarios": [
+        "FRIENDS-01",
+        "FRIENDS-02"
+      ]
+    },
+    "FEED": {
+      "digest": "9e52c032e9a7c661ed332aa94919b7692d109c10ee220d6ccff5b29c913567a9",
+      "status": "planned",
+      "scenarios": [
+        "FEED-01",
+        "FEED-02",
+        "FEED-03"
+      ]
+    },
+    "NOTIFY": {
+      "digest": "094c8288a237c958a13b95e35b6ffd2e4666408bf3275c6d6dd3340b8aa8d5dc",
+      "status": "planned",
+      "scenarios": [
+        "NOTIFY-01",
+        "NOTIFY-02",
+        "NOTIFY-03"
+      ]
+    },
+    "COMPETITION": {
+      "digest": "d2fb58ae238ab72da5d89b6ee1160dfddec584bb5db41e8821ad12058dfe5550",
+      "status": "planned",
+      "scenarios": [
+        "COMPETITION-01",
+        "COMPETITION-02",
+        "COMPETITION-03",
+        "COMPETITION-04"
+      ]
+    },
+    "CYCLING": {
+      "digest": "92cee483e6d763567877ac9779830b8566a42f55e64b9923e1470af959869315",
+      "status": "planned",
+      "scenarios": [
+        "CYCLING-01",
+        "CYCLING-02"
+      ]
+    },
+    "PROGRESS": {
+      "digest": "6e95bf5185deedfcc9d4268aee54e239ff6bb7d530ea32b88dfe562f6edad757",
+      "status": "planned",
+      "scenarios": [
+        "PROGRESS-01",
+        "PROGRESS-02"
+      ]
+    },
+    "SPECIALIZATION": {
+      "digest": "3671cf12bc3bb83639cb6773c62e076aff6b2b5220ebc669a315ef8a3615ad50",
+      "status": "planned",
+      "scenarios": [
+        "SPECIALIZATION-01",
+        "SPECIALIZATION-02",
+        "SPECIALIZATION-03"
+      ]
+    },
+    "MODE_REWARDS": {
+      "digest": "3bb55260e8bc2346b2be6b3477ccf6f2aa3c7b0ce1f87f8bb4c994ca8baf96c0",
+      "status": "planned",
+      "scenarios": [
+        "MODE_REWARDS-01",
+        "MODE_REWARDS-02",
+        "MODE_REWARDS-03",
+        "MODE_REWARDS-04"
+      ]
+    }
+  }
+}
