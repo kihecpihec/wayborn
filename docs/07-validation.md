@@ -141,3 +141,20 @@ parity tests pass. M0 remains open for field evidence and final path-coverage
 decisions. The sample-only evaluator is a local contract check. M1 remains open
 for authentication and native persistence integration. The SQLite adapter is
 tested independently and has not been connected to the phone recording flow.
+
+### User-reported iPhone test update
+
+The user identified an iPhone 13 Pro Max and reported trying walking, pause/resume,
+and screen lock successfully in Expo Go. They described iOS as the newest version.
+The exact version and whether screen lock interrupted or continued recording are
+awaiting clarification. No Android phone is currently available. The user has an
+Apple Developer account.
+
+A dedicated `location-test` EAS profile and screen are now prepared. The profile
+enables background location in a separate application identifier. Its task stores
+only counts, error count, and the most recent GPS timestamp in local SQLite.
+To collect measured evidence, start outdoors, record counts, lock and walk for
+two minutes, unlock, stop, and record the resulting counts and fix time. Background
+delivery count measures when the task callback ran. Compare it with the reported
+lock interval to assess screen-lock delivery. A completed iOS JS export verifies
+bundling; installation, signing and actual execution still require the device.

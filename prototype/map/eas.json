@@ -1,0 +1,11 @@
+{
+  "build": {
+    "location-test": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_LOCATION_SPIKE": "1"
+      }
+    }
+  }
+}

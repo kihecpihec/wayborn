@@ -89,6 +89,7 @@ Rules:
 - Record resolution, units, supported region and rules version.
 - Field-test thresholds; define path coverage, boundaries and captured-interior discovery before persistence.
 - The M0 sample-only trial uses h3-samples-v1 at resolution 11. Use H3 point containment for globally valid coordinates, deduplicate in first-seen order, and reject invalid coordinates or unknown versions. This trial derives no traversed or captured interior.
+- h3-walk-segments-v1 reveals cells touched by reliable segments, using resolution 11 and straight lines in locally unwrapped WGS84 coordinates between accepted fixes. Segment changes, poor fixes, gaps over 15 seconds and speeds over 4 m/s break continuity. Latitude beyond 85 degrees is explicitly unsupported for this trial.
 
 End result: Documented rule decisions and shared deterministic geographic fixtures.
 
@@ -100,6 +101,7 @@ Acceptance scenarios:
 - **GEO-02** (integration): Given A boundary/antimeridian or unsupported-region trace; when evaluate coverage; then apply the documented boundary policy or explicit rejection without giant accidental capture.
 - **GEO-03** (domain): Given Synthetic street, park, antimeridian and high-latitude samples; when index them with H3 at trial resolutions 10 and 11; then return valid string IDs at the requested resolution and match the documented H3 reference coordinate.
 - **GEO-04** (domain): Given The versioned H3 sample-only rules; when evaluate duplicates, an antimeridian trace, invalid coordinates and an unknown version; then return first-seen unique string cells for valid samples, one local cell for the fixture crossing, and explicit reasons for incompatible input.
+- **GEO-05** (integration): Given A reliable walking segment crosses three cells and its endpoints occupy two; when evaluate normally and with a pause, poor fix, long gap, jump or unsupported latitude; then include the middle cell only for the reliable segment, reject unsupported latitude, and match the local server result.
 
 ## GPS: Accepted walking samples
 

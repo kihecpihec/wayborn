@@ -30,7 +30,8 @@
           "locationWhenInUsePermission": "Wayborn uses your location to follow your walk and show your trail on OpenStreetMap."
         }
       ],
-      "expo-router"
+      "expo-router",
+      "expo-sqlite"
     ]
   }
 }

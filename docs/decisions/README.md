@@ -49,3 +49,26 @@ claim captured interiors. GEO-03 and GEO-04 cover sample indexing. Final
 resolution, coverage, and client/server parity need Hanan and Ismar review
 before M2 persistence. No stored gameplay uses this trial version, so changing the
 version during evaluation requires no data migration.
+
+### D02 reliable segment trial
+
+The user selected discovery of every cell crossed by a reliable walking segment.
+The new version is `h3-walk-segments-v1`; the sample-only version remains available
+for its existing callers and fixtures. Resolution 11 remains a trial choice.
+
+Between accepted fixes, the trial intersects the straight line in locally
+unwrapped WGS84 latitude/longitude with H3 cell boundaries. Touching a boundary
+counts the adjacent cell. Longitudes wrap over the antimeridian. The current
+segment trial explicitly rejects latitudes beyond 85 degrees because it uses
+this local planar approximation. Numeric resolution and supported-region
+parameters require review before persistent gameplay uses them.
+
+D05 walking limits apply. Accuracy over 50 m breaks continuity. Segment ID changes,
+gaps over 15 s, invalid or out-of-order fixes, and speeds above 4 m/s break it too.
+Jitter below 3 m is ignored. After a rejected jump, the next valid fix starts
+a fresh baseline. Every rejected segment leaves its interior undiscovered.
+GEO-05 fixes an equatorial three-cell crossing independently from the production
+coverage function and checks the separate Node evaluator against the same result.
+
+The implementation is ready for later client/server integration. It does not
+change the current phone map's saved progress, which still awaits M2 discovery.

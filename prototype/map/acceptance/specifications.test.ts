@@ -1,3 +1,4 @@
+import { exerciseSegmentCoverage } from "./exerciseSegmentCoverage";
 import { exerciseGeographyBoundary, exerciseGeographyParity } from "./exerciseGeographyParity";
 import { exerciseH3Trial, exerciseVersionedGeography } from "./exerciseH3Trial";
 import { exerciseWalkStorage } from "./exerciseWalkStorage";
@@ -192,6 +193,7 @@ executable["GEO-01"] = exerciseGeographyParity;
 executable["GEO-02"] = exerciseGeographyBoundary;
 executable["GEO-03"] = exerciseH3Trial;
 executable["GEO-04"] = exerciseVersionedGeography;
+executable["GEO-05"] = exerciseSegmentCoverage;
 
 test("specification baseline has complete implemented coverage and no orphan tests", () => {
   const ids = new Set<string>();
