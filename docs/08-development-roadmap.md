@@ -65,6 +65,23 @@ only in explicitly labeled development mode; begin a deliberate foreground activ
 - Exit: map opens without network-dependent infinite loading; start is explicit; denial
   allows browsing; recording survives restart; resume cannot bridge a gap.
 
+**Open M1 work after the account PR (#15), 22 November 2026:**
+
+- Accounts: AUTH-02 (invalid credentials, expired session, pending work kept); Google
+  sign-in via a hosted development Supabase project and `wayborn-field-demo://auth/callback`;
+  hosted development backend; keyboard layout, secure-store development build and sign-out
+  on the iPhone; confirm the CI account backend runs remotely.
+- Storage and identity: account-partitioned local storage wired to the signed-in user
+  (STORE, ISOLATION), and server-derived identity for expeditions.
+- Carried over from the earlier shell branch `t3/check-m0-start-m1` (commits `55fadde`,
+  `11f932c`), not merged because `dev` has its own shell. Check each against `dev` first:
+  the Activity list of several completed walks in one session (`dev` shows only the current
+  walk); browser tests NAV-03 (all five tabs reachable with no GPS request) and NAV-04
+  (full-height map, finished walk appears in Activity); map-document fixes (stale tile job
+  cleanup race, clearer pixel-map status text, pan only when the position moves, zoom and
+  status controls clear of the walk panel); tests `mapUpdates`, `pixelReload` and
+  `tileLoading`; NAV-03 wording "signed-in player launches the development shell".
+
 ## Milestone 2 — First complete walking-and-discovery alpha
 
 Required feature IDs: `FOG, API, XP, SYNC, RECONCILE, PRIVACY, PROGRESS`.
