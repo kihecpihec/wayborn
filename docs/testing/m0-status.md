@@ -31,3 +31,23 @@ Changing these values requires a versioned decision and fixture update.
 The current phone build supports foreground recording. The screen-lock spike
 will determine the native implementation path for M3. Its result must be recorded
 even if background recording is unavailable on a tested configuration.
+
+## M1 handoff: account entry (22 November 2026)
+
+Done and tested locally against a Supabase stack on the developer machine:
+required sign-in/sign-up, email-code verification, password recovery, private
+`profiles` table with row-level security, secure session storage, sign-out, and the
+landing-page styled entry screens (see [accounts](accounts.md)). AUTH-01, AUTH-03
+and AUTH-04 run in a real browser against the local service. AUTH-02 (invalid
+credentials, expired session, pending work preserved) remains planned.
+
+Not done: Google sign-in (plan: hosted dev Supabase project, Google web OAuth
+client, `wayborn-field-demo://auth/callback`), a hosted development backend, the
+account-partitioned storage check (STORE/ISOLATION), and the server-side expedition
+API. The keyboard layout on the iPhone sign-up screen and a development build with
+`expo-secure-store` still need physical-device confirmation. CI starts the local
+backend, but this workflow has not run remotely yet.
+
+Contract changes: AUTH-04 added (change record 0009). `app.json` slug is now
+`wayborn-field-demo` with a URL scheme, EAS owner and project ID. Next task:
+account-partitioned storage and server-derived identity for expeditions (M1).

@@ -92,6 +92,13 @@
           "when": "complete the supported recovery flow",
           "then": "regain only their own account",
           "level": "integration"
+        },
+        {
+          "id": "AUTH-04",
+          "given": "A signed-out player",
+          "when": "open Map or a destination directly",
+          "then": "show account entry before any gameplay or location request",
+          "level": "ui"
         }
       ]
     },

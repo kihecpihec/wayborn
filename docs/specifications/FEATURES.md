@@ -52,6 +52,7 @@ Acceptance scenarios:
 - **AUTH-01** (integration): Given A new user; when register and verify using the chosen auth flow; then a single profile is created and map entry succeeds.
 - **AUTH-02** (integration): Given Invalid credentials or expired session; when attempt sign-in or submission; then deny access, show a useful error, and preserve pending work.
 - **AUTH-03** (integration): Given A player who lost access; when complete the supported recovery flow; then regain only their own account.
+- **AUTH-04** (ui): Given A signed-out player; when open Map or a destination directly; then show account entry before any gameplay or location request.
 
 ## NAV: Navigation and app shell
 

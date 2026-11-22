@@ -13,12 +13,13 @@
       ]
     },
     "AUTH": {
-      "digest": "57b7453a963167cc9c53a50cc0d357deb03b39101e1ddf36dd61782154b04015",
+      "digest": "e8effbbf56a023dcdabadc7618469602d8088b70ba0f630572df5fb8bc91cc7e",
       "status": "planned",
       "scenarios": [
         "AUTH-01",
         "AUTH-02",
-        "AUTH-03"
+        "AUTH-03",
+        "AUTH-04"
       ]
     },
     "NAV": {
