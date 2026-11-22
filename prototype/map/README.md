@@ -83,3 +83,21 @@ The on-disk acceptance test uses Node SQLite and checks reopen, cross-account
 access, a failed completion write and a retried finish. The Expo UI still uses its
 in-memory session while native database opening, authenticated session wiring, and
 restart recovery are pending.
+
+## M0 screen-lock test build
+
+The `location-test` EAS profile creates a separate development app named
+Wayborn Location Test with background location enabled. It is used to collect
+M0 feasibility evidence. Its screen stores update counts and timestamps locally.
+The ordinary Expo Go start command continues to open the foreground app.
+
+After linking an EAS project and registering the iPhone for internal distribution:
+
+```sh
+npx eas-cli@latest build --platform ios --profile location-test
+EXPO_PUBLIC_LOCATION_SPIKE=1 npx expo start --dev-client --tunnel
+```
+
+Install the signed build using its EAS link. Start the test outdoors, lock and walk
+for two minutes, unlock, then stop. Record total/background updates, errors, last
+fix time, device model and exact iOS version in the validation record.

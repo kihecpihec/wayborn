@@ -31,13 +31,14 @@
       ]
     },
     "GEO": {
-      "digest": "38f815f59d40306227c243bd4019a4ceda5b7923e73f33cfb72dbe3e471d3978",
+      "digest": "ff2967ddc29dfdfa6839d6c62750a437c76c2db8680f6f2c8160cb133b3545c3",
       "status": "planned",
       "scenarios": [
         "GEO-01",
         "GEO-02",
         "GEO-03",
-        "GEO-04"
+        "GEO-04",
+        "GEO-05"
       ]
     },
     "GPS": {

@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { segmentCells, SEGMENT_RULES_VERSION, type SegmentFix } from "../src/segmentCells";
 import { candidateCells } from "../src/candidateCells";
 import type { Coordinate } from "../src/geo";
 
@@ -18,6 +19,15 @@ function evaluate(request: unknown) {
   if (!("samples" in request) || !Array.isArray(request.samples) ||
       !request.samples.every(isCoordinate)) {
     return { cells: [], reason: "invalid_coordinate" };
+  }
+  if (request.version === SEGMENT_RULES_VERSION) {
+    const samples = request.samples;
+    if (!samples.every((sample) =>
+      "timestamp" in sample && typeof sample.timestamp === "number" &&
+      "accuracy" in sample && (typeof sample.accuracy === "number" || sample.accuracy === null) &&
+      "segment" in sample && typeof sample.segment === "string"
+    )) return { cells: [], reason: "invalid_coordinate" };
+    return segmentCells(request.version, samples as SegmentFix[]);
   }
   return candidateCells(request.version, request.samples);
 }

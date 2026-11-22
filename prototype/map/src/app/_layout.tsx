@@ -1,3 +1,4 @@
+import LocationSpikeScreen from "../LocationSpikeScreen";
 import React from "react";
 import { Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -5,6 +6,7 @@ import App from "../../App";
 import { WalkSessionProvider } from "../WalkSession";
 
 export default function Layout() {
+  if (process.env.EXPO_PUBLIC_LOCATION_SPIKE === "1") return <LocationSpikeScreen />;
   if (__DEV__ && process.env.EXPO_PUBLIC_WALKING_DEMO === "1") return <App />;
   return (
     <WalkSessionProvider>
