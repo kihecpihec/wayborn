@@ -1,0 +1,12 @@
+{
+  "changes": [
+    {
+      "feature": "AUTH",
+      "before": "57b7453a963167cc9c53a50cc0d357deb03b39101e1ddf36dd61782154b04015",
+      "after": "e8effbbf56a023dcdabadc7618469602d8088b70ba0f630572df5fb8bc91cc7e",
+      "rationale": "Player requests mandatory accounts before gameplay.",
+      "impact": "Adds AUTH-04 so signed-out visitors see account entry before the map, any destination or any location request.",
+      "review": "Review the signed-out and signed-in UI boundaries; AUTH-04 is an added scenario and no existing expectation was weakened."
+    }
+  ]
+}

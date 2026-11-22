@@ -5,6 +5,8 @@ import { exerciseWalkStorage } from "./exerciseWalkStorage";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { runInNewContext } from "node:vm";
 import { foregroundWalk, idleWalk } from "../src/foregroundWalk";
 import { initial, walkReducer } from "../src/walkState";
@@ -194,6 +196,14 @@ executable["GEO-02"] = exerciseGeographyBoundary;
 executable["GEO-03"] = exerciseH3Trial;
 executable["GEO-04"] = exerciseVersionedGeography;
 executable["GEO-05"] = exerciseSegmentCoverage;
+
+for (const id of ["AUTH-01", "AUTH-03", "AUTH-04"]) {
+  executable[id] = async () => {
+    await promisify(execFile)(process.execPath, ["node_modules/@playwright/test/cli.js", "test", "--grep", id], {
+      cwd: new URL("..", import.meta.url), timeout: 180000,
+    });
+  };
+}
 
 test("specification baseline has complete implemented coverage and no orphan tests", () => {
   const ids = new Set<string>();

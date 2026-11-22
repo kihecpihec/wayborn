@@ -1,25 +1,27 @@
 {
   "expo": {
     "name": "Wayborn · Field Demo",
-    "slug": "demo1",
+    "slug": "wayborn-field-demo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/wayborn-icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "app.wayborn.fielddemo",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#f3f4ee",
+        "foregroundImage": "./assets/wayborn-icon.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png",
+      "favicon": "./assets/wayborn-icon.png",
       "name": "Wayborn · Field Demo"
     },
     "plugins": [
@@ -31,7 +33,15 @@
         }
       ],
       "expo-router",
-      "expo-sqlite"
-    ]
+      "expo-sqlite",
+      "expo-secure-store"
+    ],
+    "owner": "ismar_m",
+    "extra": {
+      "eas": {
+        "projectId": "0bfd9468-d134-4fb5-872c-6eaf677f9b36"
+      }
+    },
+    "scheme": "wayborn-field-demo"
   }
 }
