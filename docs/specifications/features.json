@@ -90,6 +90,13 @@
           "when": "complete the supported recovery flow",
           "then": "regain only their own account",
           "level": "integration"
+        },
+        {
+          "id": "AUTH-04",
+          "given": "A signed-out player",
+          "when": "open Map or a destination directly",
+          "then": "show account entry before any gameplay or location request",
+          "level": "ui"
         }
       ]
     },
@@ -126,7 +133,7 @@
         },
         {
           "id": "NAV-03",
-          "given": "A fresh browser launch of the development shell",
+          "given": "A signed-in player launches the development shell",
           "when": "browse Map, Activity, Guild, Goals and Profile then return to Map",
           "then": "all five destinations are reachable without location permission; unavailable services are explained and no walk starts",
           "level": "ui"

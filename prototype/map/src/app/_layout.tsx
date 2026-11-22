@@ -1,3 +1,4 @@
+import { AccountGate } from "../AccountGate";
 import React from "react";
 import { Tabs, Link, usePathname } from "expo-router";
 import { Text, View } from "react-native";
@@ -18,5 +19,5 @@ function Navigation() {
   </View>;
 }
 export default function Layout() {
-  return <SafeAreaProvider><WalkProvider><StatusBar style="dark" /><Navigation /></WalkProvider></SafeAreaProvider>;
+  return <SafeAreaProvider><AccountGate><WalkProvider><StatusBar style="dark" /><Navigation /></WalkProvider></AccountGate></SafeAreaProvider>;
 }

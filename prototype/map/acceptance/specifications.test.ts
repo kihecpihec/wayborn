@@ -123,6 +123,11 @@ const executable: Record<string, (scenario: Scenario) => void | Promise<void>> =
     ].map((id) => [id, exerciseWalk]),
   );
 
+for (const id of ["AUTH-01","AUTH-03","AUTH-04"]) {
+  executable[id] = async () => {
+    await promisify(execFile)(process.execPath, ["node_modules/@playwright/test/cli.js","test","--grep",id], {cwd:new URL("..",import.meta.url),timeout:180000});
+  };
+}
 executable["NAV-03"] = async () => {
   await promisify(execFile)(process.execPath, ["node_modules/@playwright/test/cli.js", "test", "--grep", "NAV-03"], {
     cwd: new URL("..", import.meta.url), timeout: 180000,

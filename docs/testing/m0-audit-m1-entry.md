@@ -108,7 +108,7 @@ Preserve the existing renderer; coordinate any hook interface edits with Hanan.
 
 Rules and expected results:
 
-- Browsing requires neither sign-in nor location permission. Mounting Map must not
+- Account entry now precedes all tabs. Signed-in browsing requires no location permission. Mounting Map must not
   start a watcher, timer, discovery or XP. Developer coordinates cannot earn progress.
 - Startup cannot wait indefinitely for tiles or an unconfigured service. Show a
   labeled preview/offline state and actionable retry when unavailable.

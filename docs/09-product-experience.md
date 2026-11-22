@@ -8,13 +8,13 @@ older exploration-only MVP scope. It describes the target, not delivered functio
 1. **Open:** a brief branded pixel-art loading transition restores the session and
    local state. No artificial minimum delay. Reduced-motion users get a static
    version. Slow networks must not trap the player behind a splash screen.
+   Players without a restored session sign in or create and verify an account before entering any tab.
 2. **Map home:** show the player's location after permission and a valid fix; show
    a labeled preview otherwise. Show nearby confirmed territory, including other
    players' and guilds' territory. Personal exploration fog remains a separate layer.
    Start is prominent; browsing never starts a recording or earns rewards.
 3. **Start activity:** returning authenticated players choose Walk, Run or Cycle and start
-   immediately when prerequisites are met. First use asks for permissions and account
-   access contextually. Do not put repeated onboarding between player and activity.
+   immediately when prerequisites are met. First use asks for location permission when recording starts. Do not put repeated onboarding between player and activity.
 4. **Record:** distance, active time, trail, discoveries and provisional captures update.
    Pause/resume, permission loss, poor signal, app interruptions and offline recording
    have explicit states. Full-release runs support screen locking after native validation.

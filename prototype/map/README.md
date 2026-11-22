@@ -1,8 +1,10 @@
 # Wayborn · Demo 01
 
-An Expo / React Native walking demo for iOS, Android, and web. The desktop web view presents the app inside a phone, with developer location controls beside it. Small screens show the app full width; open **Developer tools** below the walking panel to override location.
+Wayborn opens to account entry on iOS, Android and web. A verified player can browse the map and explicitly start a foreground walk.
 
 ## Run
+
+Start the [local accounts backend and configure the app](../../docs/testing/accounts.md) first.
 
 Use Node **22.13+** (the included `.nvmrc` selects 22.23.2):
 
@@ -13,7 +15,7 @@ npm ci
 npm run web
 ```
 
-Open the URL printed by Expo. The demo opens idle; press **Start walk** to request location access and record. Until a fix arrives, the map shows an explicitly labeled Ljubljana preview **without a user marker**. Browser location requires localhost or HTTPS. When testing over a LAN on a phone, use the native app or HTTPS rather than an insecure browser URL.
+Open the URL printed by Expo. After sign-in the map opens idle; press **Start walk** to request location access and record. Until a fix arrives, the map shows an explicitly labeled Ljubljana preview **without a user marker**. Browser location requires localhost or HTTPS. When testing over a LAN on a phone, use the native app or HTTPS rather than an insecure browser URL.
 
 For a phone, run `npm start`, then open with an Expo Go version supporting SDK 58. Alternatively use `npm run ios` / `npm run android` with an installed simulator/emulator. A native development build can be created using `npx expo run:ios` or `npx expo run:android` if Expo Go on your device has a different SDK version. Native builds require the appropriate Xcode/Android toolchain.
 

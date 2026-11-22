@@ -1,0 +1,20 @@
+{
+  "changes": [
+    {
+      "feature": "AUTH",
+      "before": "57b7453a963167cc9c53a50cc0d357deb03b39101e1ddf36dd61782154b04015",
+      "after": "e8effbbf56a023dcdabadc7618469602d8088b70ba0f630572df5fb8bc91cc7e",
+      "rationale": "Player requests mandatory accounts before gameplay.",
+      "impact": "Gate every route and exercise navigation after authentication.",
+      "review": "Review the signed-out and signed-in UI boundaries."
+    },
+    {
+      "feature": "NAV",
+      "before": "0bc8f29ae996314d6291bfcea248b6a2e3e02d059fc2b7f3412f9d288ef4eee0",
+      "after": "1c9c0304fa135852a45630ef7e5ec8869675143252fdcb25112cd307238a9d24",
+      "rationale": "Player requests mandatory accounts before gameplay.",
+      "impact": "Gate every route and exercise navigation after authentication.",
+      "review": "Review the signed-out and signed-in UI boundaries."
+    }
+  ]
+}

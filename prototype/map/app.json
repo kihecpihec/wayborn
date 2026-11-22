@@ -5,7 +5,7 @@
     "owner": "ismar_m",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/wayborn-icon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "bundleIdentifier": "app.wayborn.fielddemo",
@@ -16,15 +16,13 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#f3f4ee",
+        "foregroundImage": "./assets/wayborn-icon.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png",
+      "favicon": "./assets/wayborn-icon.png",
       "name": "Wayborn \u00b7 Field Demo"
     },
     "plugins": [
@@ -35,7 +33,8 @@
           "locationWhenInUsePermission": "Wayborn uses your location to follow your walk and show your trail on OpenStreetMap."
         }
       ],
-      "expo-router"
+      "expo-router",
+      "expo-secure-store"
     ],
     "extra": {
       "eas": {

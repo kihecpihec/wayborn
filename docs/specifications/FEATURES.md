@@ -50,6 +50,7 @@ Acceptance scenarios:
 - **AUTH-01** (integration): Given A new user; when register and verify using the chosen auth flow; then a single profile is created and map entry succeeds.
 - **AUTH-02** (integration): Given Invalid credentials or expired session; when attempt sign-in or submission; then deny access, show a useful error, and preserve pending work.
 - **AUTH-03** (integration): Given A player who lost access; when complete the supported recovery flow; then regain only their own account.
+- **AUTH-04** (ui): Given A signed-out player; when open Map or a destination directly; then show account entry before any gameplay or location request.
 
 ## NAV: Navigation and app shell
 
@@ -73,7 +74,7 @@ Acceptance scenarios:
 
 - **NAV-01** (ui): Given An active or paused expedition; when open finish confirmation and cancel; then restore the exact preceding lifecycle state and totals.
 - **NAV-02** (ui): Given A persisted pending summary; when return to map then reopen the summary; then the same expedition remains queued and visible.
-- **NAV-03** (ui): Given A fresh browser launch of the development shell; when browse Map, Activity, Guild, Goals and Profile then return to Map; then all five destinations are reachable without location permission; unavailable services are explained and no walk starts.
+- **NAV-03** (ui): Given A signed-in player launches the development shell; when browse Map, Activity, Guild, Goals and Profile then return to Map; then all five destinations are reachable without location permission; unavailable services are explained and no walk starts.
 - **NAV-04** (ui): Given The full-screen map and a deliberately started demo walk; when finish then open Activity and start another walk; then show one completed session-only demo summary and preserve it across tabs; the map has a prominent Start walk control.
 
 ## GEO: Versioned geographic rules
