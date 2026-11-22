@@ -1,0 +1,12 @@
+{
+  "changes": [
+    {
+      "feature": "STORE",
+      "before": "77a6d89c65e590b0275599c6ca140963d80f4dabe85623b7254af88edd81c566",
+      "after": "098b1fcd8b52490c00e4238385ea97bedc6a5a2b8b1cc86c27eef9e166bced5a",
+      "rationale": "Verify the account-scoped SQLite storage layer before wiring device recovery.",
+      "impact": "Adds an on-disk SQLite acceptance case. Device recovery and account integration remain planned.",
+      "review": "Review migration 001 and schema ownership before enabling storage in the app."
+    }
+  ]
+}

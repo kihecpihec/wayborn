@@ -16,6 +16,8 @@ Rules:
 - Camera changes never change gameplay position or rewards.
 - Unavailable tiles must not lose recorded walks.
 - Map opening does not start recording. Show labeled preview without a valid permitted fix.
+- The first Expo entry slice opens a Ljubljana preview in pixel mode without requesting location or creating a walk.
+- Give the initial basemap attempt 3 seconds to show a drawable raster or pixel tile, then offer retry. Keep the preview shell usable throughout.
 
 End result: A usable map with explicit loading/error states and independently controlled camera.
 
@@ -26,6 +28,8 @@ Acceptance scenarios:
 - **MAP-01** (ui): Given A visible map and active walk; when pan, change style, and recenter; then position, discoveries and XP remain unchanged.
 - **MAP-02** (integration): Given The tile provider is unavailable; when open the map and record a walk; then show failure/retry state and retain the walk.
 - **MAP-03** (ui): Given A loaded map; when switch between pixel and normal styles; then both styles retain provider attribution.
+- **MAP-04** (domain): Given An initial basemap attempt with no drawable tiles; when 3 seconds pass; then offer retry; retry begins a fresh loading attempt and the first visible tile clears the message.
+- **MAP-05** (domain): Given The first drawable raster or pixel tile arrives before the deadline; when the initial deadline passes; then keep the map visible without an unavailable message.
 
 ## AUTH: Accounts and session recovery
 
@@ -71,6 +75,7 @@ Acceptance scenarios:
 
 - **NAV-01** (ui): Given An active or paused expedition; when open finish confirmation and cancel; then restore the exact preceding lifecycle state and totals.
 - **NAV-02** (ui): Given A persisted pending summary; when return to map then reopen the summary; then the same expedition remains queued and visible.
+- **NAV-03** (ui): Given Map Home is open with a walk paused; when visit Activity and return to Map; then show the current session in Activity and retain the paused walk and totals on Map.
 
 ## GEO: Versioned geographic rules
 
@@ -83,6 +88,7 @@ Rules:
 - H3 IDs are strings; never reinterpret demo cell keys.
 - Record resolution, units, supported region and rules version.
 - Field-test thresholds; define path coverage, boundaries and captured-interior discovery before persistence.
+- The M0 sample-only trial uses h3-samples-v1 at resolution 11. Use H3 point containment for globally valid coordinates, deduplicate in first-seen order, and reject invalid coordinates or unknown versions. This trial derives no traversed or captured interior.
 
 End result: Documented rule decisions and shared deterministic geographic fixtures.
 
@@ -92,6 +98,8 @@ Acceptance scenarios:
 
 - **GEO-01** (integration): Given The same trace and rules version; when evaluate on client and server; then candidate cells and reasons agree exactly.
 - **GEO-02** (integration): Given A boundary/antimeridian or unsupported-region trace; when evaluate coverage; then apply the documented boundary policy or explicit rejection without giant accidental capture.
+- **GEO-03** (domain): Given Synthetic street, park, antimeridian and high-latitude samples; when index them with H3 at trial resolutions 10 and 11; then return valid string IDs at the requested resolution and match the documented H3 reference coordinate.
+- **GEO-04** (domain): Given The versioned H3 sample-only rules; when evaluate duplicates, an antimeridian trace, invalid coordinates and an unknown version; then return first-seen unique string cells for valid samples, one local cell for the fixture crossing, and explicit reasons for incompatible input.
 
 ## GPS: Accepted walking samples
 
@@ -159,6 +167,8 @@ Acceptance scenarios:
 - **LIFE-01** (device): Given A fresh install with denied permission; when try to start; then show denial and permit browsing without recorded progress.
 - **LIFE-02** (device): Given An active walk; when pause, background, return and resume; then in the foreground alpha, no background gap earns progress and resume starts a new segment; full background support is separately gated by BACKGROUND.
 - **LIFE-03** (ui): Given An idle screen; when wait before explicitly starting; then no expedition time, discovery or XP accrues.
+- **LIFE-04** (domain): Given The walk is idle; when submit a sample, then explicitly start and receive poor followed by usable GPS; then stay idle until start and start recording only on the usable sample.
+- **LIFE-05** (domain): Given An active walk with about 11 metres recorded; when interrupt, wait, resume and receive a fix far away; then preserve distance, exclude interrupted time and begin a new display segment.
 
 ## STORE: Durable drafts and migrations
 
@@ -181,6 +191,7 @@ Acceptance scenarios:
 - **STORE-01** (integration): Given A recorded active draft; when terminate the process and reopen; then offer recovery or explicit discard; recovery starts a fresh segment.
 - **STORE-02** (integration): Given A draft during finish; when interrupt the local transaction; then recover either the draft or the complete queued expedition, never a half-finished record.
 - **STORE-03** (integration): Given An existing database with pending work; when upgrade the schema; then preserve samples, account ownership and queue contents.
+- **STORE-04** (integration): Given An account has a draft with a stored sample; when reopen SQLite, try a different account, then fail and retry finalization; then the owner retains the draft after the failed write and one pending result after retry, and the other account sees neither.
 
 ## ISOLATION: Local account isolation
 

@@ -1,8 +1,9 @@
 import { pixelRendererSource } from "./pixelRenderer";
 import { tileEngineSource } from "./tileEngine";
+import { mapLoadingSource } from "./mapLoading";
 
 const style = `
-html,body,#map{height:100%;margin:0;background:#e4eadc} .leaflet-container{font-family:system-ui,sans-serif}.leaflet-control-attribution{font-size:11px!important}.hero{width:28px;height:35px;filter:drop-shadow(0 2px 2px rgba(20,28,48,.3))}.halo{background:#ffcc4355;border:2px solid #eeb839;border-radius:50%}.leaflet-control-zoom{border:1px solid rgba(20,28,48,.1)!important;box-shadow:none!important;border-radius:10px!important;overflow:hidden}.leaflet-control-zoom a{color:#141c30!important;background:#fcfbf8!important}.leaflet-control-zoom a:hover{background:#f4f2ec!important}.leaflet-bottom.leaflet-left{bottom:40px}.leaflet-bottom.leaflet-right{bottom:12px}#error{position:absolute;top:45%;left:10%;right:10%;z-index:1000;background:#fcfbf8;padding:16px;border:1px solid rgba(20,28,48,.1);border-radius:12px;color:#141c30;font:14px system-ui;display:none}
+html,body,#map{height:100%;margin:0;background:#e4eadc} .leaflet-container{font-family:system-ui,sans-serif}.leaflet-control-attribution{font-size:11px!important}.hero{width:28px;height:35px;filter:drop-shadow(0 2px 2px rgba(20,28,48,.3))}.halo{background:#ffcc4355;border:2px solid #eeb839;border-radius:50%}.leaflet-control-zoom{border:1px solid rgba(20,28,48,.1)!important;box-shadow:none!important;border-radius:10px!important;overflow:hidden}.leaflet-control-zoom a{color:#141c30!important;background:#fcfbf8!important}.leaflet-control-zoom a:hover{background:#f4f2ec!important}.leaflet-bottom.leaflet-left{bottom:40px}.leaflet-bottom.leaflet-right{bottom:12px}#map-feedback{position:absolute;top:12px;left:12px;right:12px;width:max-content;max-width:calc(100% - 24px);box-sizing:border-box;z-index:1000;background:#fcfbf8;padding:10px 12px;border-left:4px solid #ffcc43;border-radius:8px;color:#141c30;font:14px system-ui}#map-feedback button{margin-left:8px;min-height:44px;color:#141c30;background:#ffcc43;border:0;border-radius:6px;padding:0 12px;font:inherit;cursor:pointer}
 .pixel-tile{image-rendering:pixelated;image-rendering:crisp-edges;pointer-events:none}
 #pixel-status{position:absolute;left:12px;bottom:108px;z-index:1000;display:none;max-width:60%;background:#fcfbf8;color:#141c30;border:1px solid rgba(20,28,48,.1);border-radius:8px;padding:8px 12px;font:500 11px/1.4 system-ui,sans-serif;font-variant-numeric:tabular-nums;pointer-events:none}
 `;
@@ -65,12 +66,11 @@ const dJobs=new Map(),dReady=new Set();let dFlight=0;const DFLIGHT=2;
 let pixelOn=false,inflight=0,ahead=[],pathPts=[],planTimer=0,statTimer=0;
 function lruGet(k){const e=lru.get(k);if(e){lru.delete(k);lru.set(k,e)}return e}
 function lruSet(k,e){lru.delete(k);lru.set(k,e);while(lru.size>CAP)lru.delete(lru.keys().next().value)}
-function paint(c,e){const x=c.getContext('2d');x.imageSmoothingEnabled=false;x.clearRect(0,0,TS,TS);x.drawImage(e.cv,S*e.ax0-TS*c._x,S*e.ay0-TS*c._y,e.aw*S,e.ah*S);if(c._done){const d=c._done;c._done=null;d(null,c)}}
+function paint(c,e){const x=c.getContext('2d');x.imageSmoothingEnabled=false;x.clearRect(0,0,TS,TS);x.drawImage(e.cv,S*e.ax0-TS*c._x,S*e.ay0-TS*c._y,e.aw*S,e.ah*S);loading.tileDrawn();if(c._done){const d=c._done;c._done=null;d(null,c)}}
 function showStatus(){statTimer=0;
   if(!pixelOn){status('');return}
   if(map.getZoom()<MINZ){status('Zoom in to enter the pixel world');return}
-  const n=stats.drawn;
-  status('Pixel world · '+n+' tiles drawn · '+stats.hits+' cached · '+(n?(stats.sumMs/n).toFixed(1):'–')+' ms/tile · detail '+dReady.size+(dJobs.size?' (+'+dJobs.size+' loading)':'')+(stats.retries?' · '+stats.retries+' retries':''))}
+  status(stats.drawn || stats.hits ? '' : stats.retries ? 'Pixel tiles delayed · standard map shown where available' : 'Loading pixel tiles…')}
 function soonStatus(){if(!statTimer)statTimer=setTimeout(showStatus,150)}
 
 const PixelGrid=L.GridLayer.extend({
@@ -79,7 +79,13 @@ const PixelGrid=L.GridLayer.extend({
     const key=coords.z+'/'+coords.x+'/'+coords.y;c._k=key;c._x=coords.x;c._y=coords.y;c._done=done;
     let set=live.get(key);if(!set)live.set(key,set=new Set());set.add(c);
     const e=lruGet(key);
-    if(e){paint(c,e);if(e.pass===2){stats.hits++;soonStatus()}}
+    // Leaflet registers the tile after createTile returns, before accepting done().
+    if(e)requestAnimationFrame(()=>{
+      if(!live.get(key)?.has(c)||!c._done)return;
+      const cached=lru.get(key)||e;
+      paint(c,cached);
+      if(cached.pass===2){stats.hits++;soonStatus()}
+    });
     needDetail(cellsOf(coords.z,coords.x,coords.y),0);
     want(coords.z,coords.x,coords.y,true,0);
     return c;
@@ -191,13 +197,67 @@ map.on('moveend',soonPlan);
 map.on('zoomend',()=>{showStatus();soonPlan()});
 `;
 
-export const mapDocument = `<!doctype html><html><head><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><style>${style}</style></head><body><div id="map"></div><div id="pixel-status"></div><div id="error">Map could not load. Check your internet connection and reload.</div><script id="wb-renderer">${pixelRendererSource}</script><script id="wb-engine">${tileEngineSource}</script><script>${backendBoot}</script><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script>
-if(!window.L){document.getElementById('error').style.display='block'}else{
-const map=L.map('map',{zoomControl:false}).setView([46.0514,14.506],17);
+export const mapDocument = `<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1"><style>${style}</style></head>
+<body><div id="map"></div><div id="pixel-status"></div>
+<div id="map-feedback"><span id="map-status" role="status">Loading map…</span><button id="map-retry" type="button" hidden>Retry map</button></div>
+<script id="wb-renderer">${pixelRendererSource}</script><script id="wb-engine">${tileEngineSource}</script><script>${backendBoot}</script>
+<script>
+const feedback=document.getElementById('map-feedback');
+const message=document.getElementById('map-status');
+const retry=document.getElementById('map-retry');
+const loading=${mapLoadingSource}(state=>{
+  feedback.hidden=state==='ready';
+  retry.hidden=state!=='unavailable';
+  message.textContent=state==='unavailable'?'Map tiles unavailable. Check your connection.':'Loading map…';
+});
+let latest;
+let applyUpdate;
+window.updateWayborn=data=>{
+  if(!data||data.type!=='wayborn-location')return;
+  latest=data;
+  if(applyUpdate)applyUpdate(data);
+};
+window.addEventListener('message',e=>{
+  if(e.source!==window.parent)return;
+  try{window.updateWayborn(typeof e.data==='string'?JSON.parse(e.data):e.data)}catch{}
+});
+const leafletUrl='https://unpkg.com/leaflet@1.9.4/dist/';
+let leafletStyle;
+let leafletScript;
+let redraw;
+function initializeWhenReady(){
+  if(!redraw&&window.L&&leafletStyle?.sheet)initializeMap();
+}
+function loadMap(){
+  loading.begin();
+  if(redraw){redraw();return}
+  if(!leafletStyle?.sheet){
+    leafletStyle?.remove();
+    leafletStyle=document.createElement('link');
+    leafletStyle.rel='stylesheet';
+    leafletStyle.href=leafletUrl+'leaflet.css';
+    leafletStyle.onload=initializeWhenReady;
+    document.head.append(leafletStyle);
+  }
+  if(!window.L){
+    leafletScript?.remove();
+    leafletScript=document.createElement('script');
+    leafletScript.src=leafletUrl+'leaflet.js';
+    leafletScript.onload=initializeWhenReady;
+    document.head.append(leafletScript);
+  }
+  initializeWhenReady();
+}
+retry.addEventListener('click',loadMap);
+function initializeMap(){
+const preview=[46.0514,14.506];
+const map=L.map('map',{zoomControl:false}).setView(preview,17);
 map.attributionControl.setPrefix(false);
 L.control.zoom({position:'bottomleft'}).addTo(map);
-const tiles=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'}).addTo(map);
-let failures=0; tiles.on('tileerror',()=>{if(++failures>5)document.getElementById('error').style.display='block'});tiles.on('tileload',()=>{failures=0;document.getElementById('error').style.display='none'});
+const tiles=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'});
+tiles.on('tileload',loading.tileDrawn).addTo(map);
+redraw=()=>tiles.redraw();
 ${pixelController}
 window.wbPerf.backend=wbBackend.mode();setPixel(true);
 const icon=L.divIcon({className:'',iconSize:[28,35],iconAnchor:[14,30],html:'<svg class="hero" viewBox="0 0 16 20" shape-rendering="crispEdges"><path fill="#182641" d="M4 0h8v2h2v9h-2v2h2v5h-3v2H9v-3H7v3H4v-2H2v-5h2v-2H2V2h2z"/><path fill="#ffcc43" d="M4 2h8v3H4z"/><path fill="#f6d69a" d="M4 5h8v6H4z"/><path fill="#182641" d="M5 6h1v2H5zm5 0h1v2h-1z"/><path fill="#65cba3" d="M4 12h8v4H4z"/><path fill="#ffcc43" d="M6 14h4v2H6z"/></svg>'});
@@ -207,10 +267,11 @@ const route=L.polyline([],{color:'#248a65',weight:5,dashArray:'2 10',lineCap:'sq
 let following=true,last=null,nonce=-1;map.on('dragstart',()=>{following=false});
 function update(data){if(!data||data.type!=='wayborn-location')return;
 setPixel(data.pixel);
-if(data.recenter!==nonce){following=true;nonce=data.recenter}
+if(data.recenter!==nonce){following=true;if(nonce!==-1&&!data.point)map.panTo(preview,{animate:false});nonce=data.recenter}
 if(data.point){last=[data.point.latitude,data.point.longitude];if(!map.hasLayer(marker)){halo.addTo(map);marker.addTo(map)}marker.setLatLng(last);halo.setLatLng(last);if(following)map.panTo(last,{animate:true})}else{map.removeLayer(marker);map.removeLayer(halo)}
 pathPts=data.path.map(p=>[p.latitude,p.longitude]);route.setLatLngs(pathPts);if(pixelOn)soonPlan();}
-window.updateWayborn=update;window.addEventListener('message',e=>{try{update(typeof e.data==='string'?JSON.parse(e.data):e.data)}catch{}});
+applyUpdate=update;if(latest)update(latest);
 window.addEventListener('resize',()=>map.invalidateSize());
 }
+loadMap();
 </script></body></html>`;

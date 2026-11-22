@@ -14,7 +14,7 @@ export default function MapView(props: MapProps) {
   return (
     <iframe
       ref={frame}
-      title="OpenStreetMap walking map"
+      title="Wayborn map"
       srcDoc={mapDocument}
       onLoad={() => setLoaded(true)}
       style={{ width: "100%", height: "100%", border: 0 }}

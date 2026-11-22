@@ -2,12 +2,14 @@
   "version": 1,
   "features": {
     "MAP": {
-      "digest": "68da20e83172d07f6cedf6dd773f4977ad20372255feb6ba02c39adc004564f8",
+      "digest": "20a756a7de9e04acc564d4c570f2011b8efc64998d3b6aac2a006914584461e8",
       "status": "planned",
       "scenarios": [
         "MAP-01",
         "MAP-02",
-        "MAP-03"
+        "MAP-03",
+        "MAP-04",
+        "MAP-05"
       ]
     },
     "AUTH": {
@@ -20,19 +22,22 @@
       ]
     },
     "NAV": {
-      "digest": "eda55db820601eb957775c680eea15e5c70d55ae61e097df61de0602630feea8",
+      "digest": "352c21133715b7f2573eeb4ea78d2b2a6d18e64e534d195ff94a590db5caa81a",
       "status": "planned",
       "scenarios": [
         "NAV-01",
-        "NAV-02"
+        "NAV-02",
+        "NAV-03"
       ]
     },
     "GEO": {
-      "digest": "824ece0759060498dcbfd9d896a7eec5c2f17395b93c64ac8f63a21a50de9bc8",
+      "digest": "38f815f59d40306227c243bd4019a4ceda5b7923e73f33cfb72dbe3e471d3978",
       "status": "planned",
       "scenarios": [
         "GEO-01",
-        "GEO-02"
+        "GEO-02",
+        "GEO-03",
+        "GEO-04"
       ]
     },
     "GPS": {
@@ -59,21 +64,24 @@
       ]
     },
     "LIFE": {
-      "digest": "fda076ecf93940ff6f3e2e81ca28df0dad17d5cd088284cbf11df3bf438d7696",
+      "digest": "7ff72031ffb3107cf1a9c6990822f4e27e3655f87c436d698c6f3a96b7151cd8",
       "status": "planned",
       "scenarios": [
         "LIFE-01",
         "LIFE-02",
-        "LIFE-03"
+        "LIFE-03",
+        "LIFE-04",
+        "LIFE-05"
       ]
     },
     "STORE": {
-      "digest": "77a6d89c65e590b0275599c6ca140963d80f4dabe85623b7254af88edd81c566",
+      "digest": "098b1fcd8b52490c00e4238385ea97bedc6a5a2b8b1cc86c27eef9e166bced5a",
       "status": "planned",
       "scenarios": [
         "STORE-01",
         "STORE-02",
-        "STORE-03"
+        "STORE-03",
+        "STORE-04"
       ]
     },
     "ISOLATION": {

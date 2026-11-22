@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useReducer, useState } from "react";
 import * as Location from "expo-location";
 import { Coordinate, Fix } from "./geo";
-import { initial, walkReducer } from "./walkState";
+import { initial, walkReducer, type WalkAction } from "./walkState";
 
 export function useWalk() {
-  const [walk, dispatch] = useReducer(walkReducer, initial);
+  const [walk, dispatch] = useReducer((state: typeof initial, action: WalkAction) => walkReducer(state, action), initial);
   const [source, setSource] = useState<"gps" | "spoof">("gps");
   const fix = walk.position;
   const [status, setStatus] = useState("Requesting location permission…");

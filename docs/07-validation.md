@@ -72,3 +72,72 @@ cover preference changes, mode locking, role/permission separation, historical
 scoring, cycling device validation and reward fairness. The exact contract change
 record is 0002-activity-specializations.json. No runtime role/economy implementation
 or device validation is claimed by this documentation update.
+
+## M0 H3 trial and M1 field evidence
+
+The synthetic traces in [h3-trial.json](../prototype/map/fixtures/h3-trial.json) are
+shared input for the H3 comparison. `npm run test:acceptance` from `prototype/map`
+runs GEO-03. With H3 4.x, the unique sample-cell counts were:
+
+| Synthetic trace | Resolution 10 | Resolution 11 |
+| --- | ---: | ---: |
+| Dense street | 1 | 3 |
+| Park loop | 2 | 3 |
+| Antimeridian | 1 | 2 |
+| High latitude | 1 | 2 |
+
+These counts describe the fixture sample locations. Path traversal, boundary
+policy, supported region, and independent server parity still require D02
+review and implementation.
+
+An iPhone Expo Go launch over the tunnel was reported by the user. The device model,
+OS, build identifier, timing, and Android reference device are still to be recorded.
+For the M0 and M1 field run, record these details alongside observations for permission
+denial, outdoor fix, weak signal, pause and resume, lock and unlock, app backgrounding,
+and termination and reopen after native recovery is wired. Record whether the active
+timer or distance changes in each gap. Keep exact locations out of the validation log.
+
+### M0 phone procedure
+
+Run `npm run start:iphone` from `prototype/map` and scan its QR code. Use the
+same build on an Android reference phone when available. Record the device, OS,
+Expo Go version, Git revision and whether the working tree contains local changes.
+
+1. Open Map and wait before tapping Start walk. Record whether a permission prompt
+   or walk timer appears on its own.
+2. Tap Start walk and deny location. Record the message and whether map browsing
+   and a later retry remain available.
+3. Grant location and start outdoors. Record time to the first usable fix. Walk a
+   short route, pause, move, resume, and verify that the paused gap adds no distance.
+4. With a walk active, lock the phone or background the app, move, and reopen
+   Wayborn. Record the interruption message, active time, and distance before
+   and after. Resume and verify that the route begins a separate segment.
+5. Attempt a walk with poor reception. Record the waiting or interrupted state,
+   and whether a later start or resume works when reception improves.
+
+Record elapsed time and distance without attaching coordinates. This procedure
+measures the foreground build's behavior. A native screen-lock feasibility spike
+also needs a device build configured for background location and a separately
+recorded result. Expo Go testing of the foreground build does not supply that evidence.
+
+### Geographic parity check
+
+GEO-01 runs the shared rule twice: once through the client-callable function and
+once through the local Node evaluator in `prototype/map/server/evaluateGeography.ts`.
+The Node process receives JSON and returns cell IDs or a rejection reason. GEO-02
+checks a fixed cell across the antimeridian, rejects longitude 181, and verifies
+that malformed coordinates are rejected at the process boundary. This is evidence
+for the sample-only contract. The authenticated backend, trace validation, and
+deployed parity are still pending.
+
+### Review before integration
+
+The user confirmed that the current app works on an iPhone through Expo Go.
+This confirms the tested foreground app can be launched on the device. Device
+model, OS, measured GPS interruptions and a native screen-lock test were not supplied.
+
+The automated baseline, GPS cases, H3 sample evaluation and separate-process
+parity tests pass. M0 remains open for field evidence and final path-coverage
+decisions. The sample-only evaluator is a local contract check. M1 remains open
+for authentication and native persistence integration. The SQLite adapter is
+tested independently and has not been connected to the phone recording flow.

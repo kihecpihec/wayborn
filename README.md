@@ -29,7 +29,7 @@ npm run web
 ```
 
 For a phone use `npm start` and a compatible Expo Go or development build.
-See the [demo README](prototype/map/README.md). Map tiles require internet;
+See the [Expo app README](prototype/map/README.md). Map tiles require internet;
 browser GPS requires localhost or HTTPS.
 
 ## Baseline checks
@@ -51,6 +51,7 @@ npm run build:web
 as TODO, never as working functionality. CI fails for missing coverage of a feature
 marked implemented. Existing renderer/unit tests remain useful secondary checks.
 
-The app is still a technical map/GPS prototype. Accounts, persistent gameplay,
-H3 discovery, capture, and backend synchronization are not implemented. Mockups use
+The Expo app opens into a browsable Map Home preview. The walking prototype is available
+through a development flag. Foreground walks can be started from Map Home. Accounts, persistent gameplay, H3 discovery, capture, and
+backend synchronization are not implemented. Mockups use
 sample data; a green baseline does not mean the finished MVP is available.

@@ -1,6 +1,11 @@
+import { exerciseGeographyBoundary, exerciseGeographyParity } from "./exerciseGeographyParity";
+import { exerciseH3Trial, exerciseVersionedGeography } from "./exerciseH3Trial";
+import { exerciseWalkStorage } from "./exerciseWalkStorage";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
+import { runInNewContext } from "node:vm";
+import { foregroundWalk, idleWalk } from "../src/foregroundWalk";
 import { initial, walkReducer } from "../src/walkState";
 
 type Step = {
@@ -94,6 +99,38 @@ function exerciseWalk(scenario: Scenario) {
   }
 }
 
+// Execute the same JavaScript used by the iframe and WebView with a controlled clock.
+async function exerciseMapLoading(scenario: Scenario) {
+  const { mapLoadingSource } = await import("../src/mapLoading");
+  const states: string[] = [];
+  let expire: (() => void) | undefined;
+  const create = runInNewContext(mapLoadingSource, {
+    setTimeout(callback: () => void, delay: number) {
+      assert.equal(delay, 3000);
+      expire = callback;
+      return 1;
+    },
+    clearTimeout() {
+      expire = undefined;
+    },
+  }) as (show: (state: string) => void) => { begin(): void; tileDrawn(): void };
+  const loading = create((state) => states.push(state));
+  loading.begin();
+  if (scenario.id === "MAP-04") {
+    assert.ok(expire);
+    expire();
+    loading.begin();
+  }
+  loading.tileDrawn();
+  expire?.();
+  assert.deepEqual(
+    states,
+    scenario.id === "MAP-04"
+      ? ["loading", "unavailable", "loading", "ready"]
+      : ["loading", "ready"],
+  );
+}
+
 // Explicit per-scenario registration prevents a new implemented case from being
 // accidentally counted as covered. Future integration/UI adapters belong here or
 // in their real service test suite; never use a mock as proof of the real feature.
@@ -119,6 +156,42 @@ const executable: Record<string, (scenario: Scenario) => void | Promise<void>> =
       "GPS-17",
     ].map((id) => [id, exerciseWalk]),
   );
+
+executable["MAP-04"] = exerciseMapLoading;
+executable["MAP-05"] = exerciseMapLoading;
+
+const sample = (latitude: number, timestamp: number, accuracy = 5) =>
+  ({ type: "fix", fix: { latitude, longitude: 0, timestamp, accuracy } }) as const;
+
+executable["LIFE-04"] = () => {
+  assert.deepEqual(foregroundWalk(idleWalk, sample(0, 1000)), idleWalk);
+  const waiting = foregroundWalk(idleWalk, { type: "start" });
+  assert.equal(waiting.phase, "waiting");
+  assert.equal(foregroundWalk(waiting, sample(0, 1000, 60)).phase, "waiting");
+  assert.equal(foregroundWalk(waiting, sample(0, 2000)).phase, "active");
+};
+
+executable["LIFE-05"] = () => {
+  let walk = foregroundWalk(idleWalk, { type: "start" });
+  walk = foregroundWalk(walk, sample(0, 1000));
+  walk = foregroundWalk(walk, sample(0.0001, 11000));
+  assert.ok(walk.track.meters > 11 && walk.track.meters < 12);
+  walk = foregroundWalk(walk, { type: "interrupt" });
+  assert.equal(walk.phase, "interrupted");
+  assert.equal(walk.track.path.length, 0);
+  assert.deepEqual(foregroundWalk(walk, { type: "tick", seconds: 60 }), walk);
+  walk = foregroundWalk(walk, { type: "start" });
+  walk = foregroundWalk(walk, sample(0.01, 71000));
+  assert.ok(walk.track.meters > 11 && walk.track.meters < 12);
+  assert.equal(walk.track.path.length, 1);
+  assert.deepEqual(walk.track.cells, []);
+};
+
+executable["STORE-04"] = exerciseWalkStorage;
+executable["GEO-01"] = exerciseGeographyParity;
+executable["GEO-02"] = exerciseGeographyBoundary;
+executable["GEO-03"] = exerciseH3Trial;
+executable["GEO-04"] = exerciseVersionedGeography;
 
 test("specification baseline has complete implemented coverage and no orphan tests", () => {
   const ids = new Set<string>();

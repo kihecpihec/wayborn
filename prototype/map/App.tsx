@@ -486,7 +486,7 @@ function Demo() {
     </ScrollView>
   );
 }
-export default function App() {
+function WalkingDemo() {
   const [loaded, error] = useFonts({
     Nunito_400Regular,
     Nunito_500Medium,
@@ -500,13 +500,18 @@ export default function App() {
         <ActivityIndicator color={C.ink} />
       </View>
     );
+  return <Demo />;
+}
+
+export default function App() {
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />
-      <Demo />
+      <WalkingDemo />
     </SafeAreaProvider>
   );
 }
+
 const s = StyleSheet.create({
   page: { flex: 1, backgroundColor: C.paper },
   pageContent: {

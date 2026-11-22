@@ -1,0 +1,12 @@
+{
+  "changes": [
+    {
+      "feature": "LIFE",
+      "before": "fda076ecf93940ff6f3e2e81ca28df0dad17d5cd088284cbf11df3bf438d7696",
+      "after": "7ff72031ffb3107cf1a9c6990822f4e27e3655f87c436d698c6f3a96b7151cd8",
+      "rationale": "Add executable domain cases for the M1 foreground recording slice.",
+      "impact": "Device cases and the overall feature remain planned pending field evidence.",
+      "review": "Second-developer review of the lifecycle and device evidence required."
+    }
+  ]
+}
