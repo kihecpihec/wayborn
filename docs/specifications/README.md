@@ -20,6 +20,11 @@ they are not passing tests and must not be called working features. Existing map
 and unit tests remain complementary regression checks, not proof of the planned
 map UI, backend, or device acceptance criteria.
 
+Five partial domain cases under planned MAP/LIFE now run: explicit demo Start,
+pause/reset marker retention, map-document state replay and optional-cache
+fallback. The other cases under those features remain TODO; domain adapters do
+not complete the native/UI/device feature contracts.
+
 The baseline deliberately preserves an honest green starting point without pretending
 the whole app is complete. No tests are silently skipped because a service is absent.
 Marking a feature implemented without executable cases fails the coverage gate.

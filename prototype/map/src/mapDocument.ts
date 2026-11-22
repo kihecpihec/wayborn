@@ -2,9 +2,9 @@ import { pixelRendererSource } from "./pixelRenderer";
 import { tileEngineSource } from "./tileEngine";
 
 const style = `
-html,body,#map{height:100%;margin:0;background:#e4eadc} .leaflet-container{font-family:system-ui,sans-serif}.leaflet-control-attribution{font-size:11px!important}.hero{width:28px;height:35px;filter:drop-shadow(0 2px 2px rgba(20,28,48,.3))}.halo{background:#ffcc4355;border:2px solid #eeb839;border-radius:50%}.leaflet-control-zoom{border:1px solid rgba(20,28,48,.1)!important;box-shadow:none!important;border-radius:10px!important;overflow:hidden}.leaflet-control-zoom a{color:#141c30!important;background:#fcfbf8!important}.leaflet-control-zoom a:hover{background:#f4f2ec!important}.leaflet-bottom.leaflet-left{bottom:40px}.leaflet-bottom.leaflet-right{bottom:12px}#error{position:absolute;top:45%;left:10%;right:10%;z-index:1000;background:#fcfbf8;padding:16px;border:1px solid rgba(20,28,48,.1);border-radius:12px;color:#141c30;font:14px system-ui;display:none}
+html,body,#map{height:100%;margin:0;background:#e4eadc} .leaflet-container{font-family:system-ui,sans-serif}.leaflet-control-attribution{font-size:11px!important}.hero{width:28px;height:35px;filter:drop-shadow(0 2px 2px rgba(20,28,48,.3))}.halo{background:#ffcc4355;border:2px solid #eeb839;border-radius:50%}.leaflet-control-zoom{border:1px solid rgba(20,28,48,.1)!important;box-shadow:none!important;border-radius:10px!important;overflow:hidden}.leaflet-control-zoom a{color:#141c30!important;background:#fcfbf8!important}.leaflet-control-zoom a:hover{background:#f4f2ec!important}.leaflet-bottom.leaflet-left{top:110px;bottom:auto}.leaflet-bottom.leaflet-right{bottom:12px}#error{position:absolute;top:45%;left:10%;right:10%;z-index:1000;background:#fcfbf8;padding:16px;border:1px solid rgba(20,28,48,.1);border-radius:12px;color:#141c30;font:14px system-ui;display:none}
 .pixel-tile{image-rendering:pixelated;image-rendering:crisp-edges;pointer-events:none}
-#pixel-status{position:absolute;left:12px;bottom:108px;z-index:1000;display:none;max-width:60%;background:#fcfbf8;color:#141c30;border:1px solid rgba(20,28,48,.1);border-radius:8px;padding:8px 12px;font:500 11px/1.4 system-ui,sans-serif;font-variant-numeric:tabular-nums;pointer-events:none}
+#pixel-status{position:absolute;left:12px;top:190px;z-index:1000;display:none;max-width:60%;background:#fcfbf8;color:#141c30;border:1px solid rgba(20,28,48,.1);border-radius:8px;padding:8px 12px;font:500 11px/1.4 system-ui,sans-serif;font-variant-numeric:tabular-nums;pointer-events:none}
 `;
 
 /*
@@ -68,9 +68,11 @@ function lruSet(k,e){lru.delete(k);lru.set(k,e);while(lru.size>CAP)lru.delete(lr
 function paint(c,e){const x=c.getContext('2d');x.imageSmoothingEnabled=false;x.clearRect(0,0,TS,TS);x.drawImage(e.cv,S*e.ax0-TS*c._x,S*e.ay0-TS*c._y,e.aw*S,e.ah*S);if(c._done){const d=c._done;c._done=null;d(null,c)}}
 function showStatus(){statTimer=0;
   if(!pixelOn){status('');return}
-  if(map.getZoom()<MINZ){status('Zoom in to enter the pixel world');return}
+  if(map.getZoom()<MINZ){status('Overview map · zoom in for pixel detail');return}
   const n=stats.drawn;
-  status('Pixel world · '+n+' tiles drawn · '+stats.hits+' cached · '+(n?(stats.sumMs/n).toFixed(1):'–')+' ms/tile · detail '+dReady.size+(dJobs.size?' (+'+dJobs.size+' loading)':'')+(stats.retries?' · '+stats.retries+' retries':''))}
+  if(!n&&stats.retries){status('Pixel map unavailable · showing standard map · retrying');return}
+  status(n ? '' : 'Loading pixel map · standard map remains available')}
+
 function soonStatus(){if(!statTimer)statTimer=setTimeout(showStatus,150)}
 
 const PixelGrid=L.GridLayer.extend({
@@ -79,7 +81,7 @@ const PixelGrid=L.GridLayer.extend({
     const key=coords.z+'/'+coords.x+'/'+coords.y;c._k=key;c._x=coords.x;c._y=coords.y;c._done=done;
     let set=live.get(key);if(!set)live.set(key,set=new Set());set.add(c);
     const e=lruGet(key);
-    if(e){paint(c,e);if(e.pass===2){stats.hits++;soonStatus()}}
+    if(e){setTimeout(()=>paint(c,e),0);if(e.pass===2){stats.hits++;soonStatus()}}
     needDetail(cellsOf(coords.z,coords.x,coords.y),0);
     want(coords.z,coords.x,coords.y,true,0);
     return c;
@@ -114,7 +116,7 @@ function pump(){
 }
 async function run(j){
   j.running=true;inflight++;
-  try{const r=await wbBackend.draw({z:j.z,x:j.x,y:j.y,pass:j.pass});jobs.delete(j.jk);done(j,r)}
+  try{const r=await wbBackend.draw({z:j.z,x:j.x,y:j.y,pass:j.pass});done(j,r);if(jobs.get(j.jk)===j)jobs.delete(j.jk)}
   catch(err){
     j.running=false;j.tries++;perf.fails++;stats.retries++;
     j.at=Date.now()+Math.min(10000,400*Math.pow(2,j.tries));setTimeout(pump,j.at-Date.now()+20);
@@ -207,8 +209,10 @@ const route=L.polyline([],{color:'#248a65',weight:5,dashArray:'2 10',lineCap:'sq
 let following=true,last=null,nonce=-1;map.on('dragstart',()=>{following=false});
 function update(data){if(!data||data.type!=='wayborn-location')return;
 setPixel(data.pixel);
-if(data.recenter!==nonce){following=true;nonce=data.recenter}
-if(data.point){last=[data.point.latitude,data.point.longitude];if(!map.hasLayer(marker)){halo.addTo(map);marker.addTo(map)}marker.setLatLng(last);halo.setLatLng(last);if(following)map.panTo(last,{animate:true})}else{map.removeLayer(marker);map.removeLayer(halo)}
+const recentered=data.recenter!==nonce;
+if(recentered){following=true;nonce=data.recenter}
+const moved=data.point&&(!last||last[0]!==data.point.latitude||last[1]!==data.point.longitude);
+if(data.point){last=[data.point.latitude,data.point.longitude];if(!map.hasLayer(marker)){halo.addTo(map);marker.addTo(map)}marker.setLatLng(last);halo.setLatLng(last);if(following&&(moved||recentered))map.panTo(last,{animate:true})}else{map.removeLayer(marker);map.removeLayer(halo)}
 pathPts=data.path.map(p=>[p.latitude,p.longitude]);route.setLatLngs(pathPts);if(pixelOn)soonPlan();}
 window.updateWayborn=update;window.addEventListener('message',e=>{try{update(typeof e.data==='string'?JSON.parse(e.data):e.data)}catch{}});
 window.addEventListener('resize',()=>map.invalidateSize());

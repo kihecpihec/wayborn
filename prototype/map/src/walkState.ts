@@ -1,6 +1,9 @@
 import { cellKey, Coordinate, distance, Fix } from "./geo";
 
 type Walk = {
+  history: { session: number; meters: number; elapsed: number }[];
+  session: number;
+  started: boolean;
   running: boolean;
   ended: boolean;
   meters: number;
@@ -12,6 +15,7 @@ type Walk = {
   lastTimestamp: number | null;
 };
 type Action =
+  | { type: "start" }
   | { type: "fix"; fix: Fix }
   | { type: "tick"; seconds: number }
   | { type: "pause" }
@@ -19,6 +23,9 @@ type Action =
   | { type: "interrupt" }
   | { type: "reset" };
 export const initial: Walk = {
+  history: [],
+  session: 0,
+  started: true,
   running: true,
   ended: false,
   meters: 0,
@@ -29,14 +36,20 @@ export const initial: Walk = {
   position: null,
   lastTimestamp: null,
 };
+// The sample reducer's `initial` represents an explicitly started demo walk.
+// App entry uses idle: opening the map never starts recording or GPS permission.
+export const idle: Walk = { ...initial, started: false, running: false };
 export function walkReducer(state: Walk, action: Action): Walk {
-  if (action.type === "reset") return { ...initial };
+  if (action.type === "reset") return { ...initial, session: state.session + 1, history: state.history, position: state.position };
+  if (action.type === "start")
+    return state.started ? state : { ...initial, position: state.position };
   if (state.ended) return state;
+  if (!state.started) return state;
   if (action.type === "interrupt") return { ...state, last: null, path: [] };
   if (action.type === "pause")
     return { ...state, running: !state.running, last: null };
   if (action.type === "end")
-    return { ...state, running: false, ended: true, last: null };
+    return { ...state, running: false, ended: true, last: null, history: [...state.history, { session: state.session, meters: state.meters, elapsed: state.elapsed }] };
   if (action.type === "tick")
     return state.running &&
       Number.isFinite(action.seconds) &&

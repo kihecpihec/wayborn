@@ -89,3 +89,7 @@ old clients and queued expeditions. Avoid premature microservices: one modular b
 with explicit transaction boundaries is the starting design.
 
 For M3–M8, test free preference changes independently from activity mode, permissions and historical rewards. Use D14 fairness fixtures for walking/running/cycling; cycling is a required full-release gate.
+
+The M1 shell uses Playwright for rendered web acceptance. In `prototype/map`,
+run `npx playwright install chromium`, then `npm run test:ui`. Its isolated Expo
+server uses port 8093. Browser tests do not substitute for native device evidence.

@@ -61,7 +61,9 @@ test("pause and end exclude movement; resume establishes a fresh baseline", () =
   state = walkReducer(state, { type: "end" });
   assert.equal(state.ended, true);
   assert.equal(state.running, false);
-  assert.deepEqual(walkReducer(state, { type: "reset" }), initial);
+  assert.deepEqual(walkReducer(state, { type: "reset" }), {
+    ...initial, session: 1, history: [{ session: 0, meters: 0, elapsed: 0 }], position: fix(46.001, 11000),
+  });
 });
 
 test("weak GPS breaks continuity and stale fixes cannot restore it", () => {
@@ -112,4 +114,28 @@ test("elapsed time rejects invalid or negative timer deltas", () => {
   for (const seconds of [-1, NaN, Infinity, 0])
     assert.equal(walkReducer(initial, { type: "tick", seconds }), initial);
   assert.equal(walkReducer(initial, { type: "tick", seconds: 2 }).elapsed, 2);
+});
+
+test("each rapid new walk requests a fresh GPS session and counts stationary time", () => {
+  let state = initial;
+  for (let i = 1; i <= 30; i++) {
+    state = walkReducer(state, { type: "end" });
+    state = walkReducer(state, { type: "reset" });
+    assert.equal(state.session, i);
+    state = walkReducer(state, { type: "fix", fix: fix(46, i * 10000) });
+    state = walkReducer(state, { type: "tick", seconds: 2 });
+    assert.equal(state.elapsed, 2);
+    assert.equal(state.meters, 0);
+  }
+});
+
+test('finish adds one session summary and new walk preserves history', () => {
+  let state = walkReducer(initial, { type: 'tick', seconds: 12 });
+  state = walkReducer(state, { type: 'end' });
+  state = walkReducer(state, { type: 'end' });
+  assert.equal(state.history.length, 1);
+  assert.equal(state.history[0].elapsed, 12);
+  state = walkReducer(state, { type: 'reset' });
+  assert.equal(state.history.length, 1);
+  assert.equal(state.elapsed, 0);
 });

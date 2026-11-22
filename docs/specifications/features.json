@@ -38,6 +38,20 @@
           "when": "switch between pixel and normal styles",
           "then": "both styles retain provider attribution",
           "level": "ui"
+        },
+        {
+          "id": "MAP-04",
+          "given": "The native map document reloads while the walk is paused",
+          "when": "the document finishes loading without any new GPS fix",
+          "then": "replay the latest position, trail, pixel setting and camera request into the map",
+          "level": "domain"
+        },
+        {
+          "id": "MAP-05",
+          "given": "The optional map cache never completes opening",
+          "when": "request pixel tiles",
+          "then": "fall back to uncached rendering rather than wait indefinitely for storage",
+          "level": "domain"
         }
       ]
     },
@@ -108,6 +122,20 @@
           "given": "A persisted pending summary",
           "when": "return to map then reopen the summary",
           "then": "the same expedition remains queued and visible",
+          "level": "ui"
+        },
+        {
+          "id": "NAV-03",
+          "given": "A fresh browser launch of the development shell",
+          "when": "browse Map, Activity, Guild, Goals and Profile then return to Map",
+          "then": "all five destinations are reachable without location permission; unavailable services are explained and no walk starts",
+          "level": "ui"
+        },
+        {
+          "id": "NAV-04",
+          "given": "The full-screen map and a deliberately started demo walk",
+          "when": "finish then open Activity and start another walk",
+          "then": "show one completed session-only demo summary and preserve it across tabs; the map has a prominent Start walk control",
           "level": "ui"
         }
       ]
@@ -745,6 +773,27 @@
           "when": "wait before explicitly starting",
           "then": "no expedition time, discovery or XP accrues",
           "level": "ui"
+        },
+        {
+          "id": "LIFE-04",
+          "given": "The demo recording state is idle",
+          "when": "receive a sample and timer tick before Start, then explicitly start",
+          "then": "idle earns no progress; only explicit Start enables recording",
+          "level": "domain"
+        },
+        {
+          "id": "LIFE-05",
+          "given": "An accepted displayed position and an active demo walk",
+          "when": "pause and resume before another valid fix",
+          "then": "retain the displayed position and totals and break movement continuity",
+          "level": "domain"
+        },
+        {
+          "id": "LIFE-06",
+          "given": "A finished demo walk with a valid displayed position",
+          "when": "explicitly start a new walk before another GPS fix",
+          "then": "reset progress and continuity while keeping the last valid displayed position",
+          "level": "domain"
         }
       ]
     },

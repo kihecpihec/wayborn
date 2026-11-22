@@ -24,7 +24,7 @@ import {
 } from "@expo-google-fonts/nunito";
 import MapView from "./src/MapView";
 import { parseCoordinate } from "./src/geo";
-import { useWalk } from "./src/useWalk";
+import { useWalkSession } from "./src/WalkProvider";
 
 // One warm-neutral ramp around the logo's navy ink. Gold is the only accent;
 // mint appears only as a live-GPS dot.
@@ -119,12 +119,12 @@ function BatteryIcon() {
     </View>
   );
 }
-function Demo() {
+export function Demo() {
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const desktop = Platform.OS === "web" && width >= 1200;
   const framed = Platform.OS === "web" && width >= 600;
-  const { walk, fix, status, source, spoof, enableGPS, dispatch } = useWalk();
+  const { walk, fix, status, source, spoof, enableGPS, dispatch } = useWalkSession();
   const [latitude, setLatitude] = useState("46.0514");
   const [longitude, setLongitude] = useState("14.5060");
   const [error, setError] = useState("");
@@ -342,12 +342,14 @@ function Demo() {
                     accessibilityLabel={
                       walk.ended
                         ? "Start new walk"
+                        : !walk.started
+                          ? "Start walk"
                         : walk.running
                           ? "Pause walk"
                           : "Resume walk"
                     }
                     onPress={() =>
-                      dispatch({ type: walk.ended ? "reset" : "pause" })
+                      dispatch({ type: walk.ended ? "reset" : !walk.started ? "start" : "pause" })
                     }
                     style={({ pressed }) => [
                       s.pause,
@@ -397,6 +399,8 @@ function Demo() {
               <Text style={s.sheetTitle}>
                 {walk.ended
                   ? "Walk finished"
+                  : !walk.started
+                    ? "Ready to walk"
                   : walk.running
                     ? "Today’s walk"
                     : "Walk paused"}
@@ -437,8 +441,8 @@ function Demo() {
                 </View>
               </View>
               <Button
-                label={walk.ended ? "Start new walk" : "End walk"}
-                onPress={() => dispatch({ type: walk.ended ? "reset" : "end" })}
+                label={walk.ended ? "Start new walk" : !walk.started ? "Start walk" : "End walk"}
+                onPress={() => dispatch({ type: walk.ended ? "reset" : !walk.started ? "start" : "end" })}
               />
               {status ? (
                 <Text numberOfLines={2} style={s.gpsStatus}>

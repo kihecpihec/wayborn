@@ -1,0 +1,12 @@
+{
+  "changes": [
+    {
+      "feature": "NAV",
+      "before": "eda55db820601eb957775c680eea15e5c70d55ae61e097df61de0602630feea8",
+      "after": "09e243316888c90d37be4bd66fedf41ff24af0c13d3188d3514f8b6b0a726f8e",
+      "rationale": "User requested starting M1 after successful iPhone demo retest.",
+      "impact": "Adds real browser navigation coverage for five destinations and idle browsing. Retains existing scenarios and planned status; authentication and durable history remain unavailable.",
+      "review": "Second-developer review and rebuilt native-device retest required; no approval claimed."
+    }
+  ]
+}

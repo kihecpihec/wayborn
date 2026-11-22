@@ -1,29 +1,30 @@
 import React, { useEffect, useRef, useState } from "react";
 import { WebView } from "react-native-webview";
-import { Coordinate } from "./geo";
 import { mapDocument } from "./mapDocument";
-export type MapProps = {
-  point: Coordinate | null;
-  path: Coordinate[];
-  recenter: number;
-  /** Render OSM features as Wayborn pixel art instead of raster tiles. */
-  pixel: boolean;
-};
+import { createMapBridge, MapProps } from "./mapBridge";
+export type { MapProps } from "./mapBridge";
+const source = { html: mapDocument, baseUrl: "https://wayborn.demo/" };
 export default function MapView(props: MapProps) {
   const ref = useRef<WebView<object>>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [bridge] = useState(() => createMapBridge());
   useEffect(() => {
-    if (loaded)
-      ref.current?.injectJavaScript(
-        `window.updateWayborn && window.updateWayborn(${JSON.stringify({ type: "wayborn-location", ...props })});true;`,
-      );
-  }, [props, loaded]);
+    bridge.connect((script) => ref.current?.injectJavaScript(script));
+    return () => { bridge.loading(); bridge.connect(() => {}); };
+  }, [bridge]);
+  useEffect(() => {
+    bridge.update(props);
+  }, [props, bridge]);
   return (
     <WebView<object>
       ref={ref}
       style={{ flex: 1, backgroundColor: "#e4eadc" }}
-      source={{ html: mapDocument, baseUrl: "https://wayborn.demo/" }}
-      onLoadEnd={() => setLoaded(true)}
+      source={source}
+      onLoadStart={() => bridge.loading()}
+      onLoadEnd={() => bridge.loaded()}
+      onContentProcessDidTerminate={() => {
+        bridge.loading();
+        ref.current?.reload();
+      }}
       originWhitelist={["https://*"]}
       javaScriptEnabled
       scrollEnabled={false}

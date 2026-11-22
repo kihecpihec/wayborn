@@ -1,0 +1,20 @@
+{
+  "changes": [
+    {
+      "feature": "MAP",
+      "before": "68da20e83172d07f6cedf6dd773f4977ad20372255feb6ba02c39adc004564f8",
+      "after": "56589d41444701fbea5eedfb347fd8110fd677a207c9e391d55749a80ce062df",
+      "rationale": "User reported automatic demo recording, marker disappearance after rapid pause/end/new-walk, and pixel-map failure on iPhone. Define additional regression cases before fixes.",
+      "impact": "Retains every existing scenario and planned status. Adds domain cases for idle Start, position retention, native document-state replay and optional-cache fallback; does not certify physical WebView or full M1 behavior.",
+      "review": "Hanan must review expected behavior and phone retest evidence; no review or milestone completion claimed."
+    },
+    {
+      "feature": "LIFE",
+      "before": "fda076ecf93940ff6f3e2e81ca28df0dad17d5cd088284cbf11df3bf438d7696",
+      "after": "f1bd908754147f4a729676265156e6c93c2245d6db999d2e97a616a46d595521",
+      "rationale": "User reported automatic demo recording, marker disappearance after rapid pause/end/new-walk, and pixel-map failure on iPhone. Define additional regression cases before fixes.",
+      "impact": "Retains every existing scenario and planned status. Adds domain cases for idle Start, position retention, native document-state replay and optional-cache fallback; does not certify physical WebView or full M1 behavior.",
+      "review": "Hanan must review expected behavior and phone retest evidence; no review or milestone completion claimed."
+    }
+  ]
+}

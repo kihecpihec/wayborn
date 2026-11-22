@@ -26,6 +26,8 @@ Acceptance scenarios:
 - **MAP-01** (ui): Given A visible map and active walk; when pan, change style, and recenter; then position, discoveries and XP remain unchanged.
 - **MAP-02** (integration): Given The tile provider is unavailable; when open the map and record a walk; then show failure/retry state and retain the walk.
 - **MAP-03** (ui): Given A loaded map; when switch between pixel and normal styles; then both styles retain provider attribution.
+- **MAP-04** (domain): Given The native map document reloads while the walk is paused; when the document finishes loading without any new GPS fix; then replay the latest position, trail, pixel setting and camera request into the map.
+- **MAP-05** (domain): Given The optional map cache never completes opening; when request pixel tiles; then fall back to uncached rendering rather than wait indefinitely for storage.
 
 ## AUTH: Accounts and session recovery
 
@@ -71,6 +73,8 @@ Acceptance scenarios:
 
 - **NAV-01** (ui): Given An active or paused expedition; when open finish confirmation and cancel; then restore the exact preceding lifecycle state and totals.
 - **NAV-02** (ui): Given A persisted pending summary; when return to map then reopen the summary; then the same expedition remains queued and visible.
+- **NAV-03** (ui): Given A fresh browser launch of the development shell; when browse Map, Activity, Guild, Goals and Profile then return to Map; then all five destinations are reachable without location permission; unavailable services are explained and no walk starts.
+- **NAV-04** (ui): Given The full-screen map and a deliberately started demo walk; when finish then open Activity and start another walk; then show one completed session-only demo summary and preserve it across tabs; the map has a prominent Start walk control.
 
 ## GEO: Versioned geographic rules
 
@@ -159,6 +163,9 @@ Acceptance scenarios:
 - **LIFE-01** (device): Given A fresh install with denied permission; when try to start; then show denial and permit browsing without recorded progress.
 - **LIFE-02** (device): Given An active walk; when pause, background, return and resume; then in the foreground alpha, no background gap earns progress and resume starts a new segment; full background support is separately gated by BACKGROUND.
 - **LIFE-03** (ui): Given An idle screen; when wait before explicitly starting; then no expedition time, discovery or XP accrues.
+- **LIFE-04** (domain): Given The demo recording state is idle; when receive a sample and timer tick before Start, then explicitly start; then idle earns no progress; only explicit Start enables recording.
+- **LIFE-05** (domain): Given An accepted displayed position and an active demo walk; when pause and resume before another valid fix; then retain the displayed position and totals and break movement continuity.
+- **LIFE-06** (domain): Given A finished demo walk with a valid displayed position; when explicitly start a new walk before another GPS fix; then reset progress and continuity while keeping the last valid displayed position.
 
 ## STORE: Durable drafts and migrations
 

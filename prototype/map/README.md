@@ -13,20 +13,84 @@ npm ci
 npm run web
 ```
 
-Open the URL printed by Expo. Allow location access. Until a fix arrives, the map shows an explicitly labeled Ljubljana preview **without a user marker**. Browser location requires localhost or HTTPS. When testing over a LAN on a phone, use the native app or HTTPS rather than an insecure browser URL.
+Open the URL printed by Expo. The demo opens idle; press **Start walk** to request location access and record. Until a fix arrives, the map shows an explicitly labeled Ljubljana preview **without a user marker**. Browser location requires localhost or HTTPS. When testing over a LAN on a phone, use the native app or HTTPS rather than an insecure browser URL.
 
 For a phone, run `npm start`, then open with an Expo Go version supporting SDK 58. Alternatively use `npm run ios` / `npm run android` with an installed simulator/emulator. A native development build can be created using `npx expo run:ios` or `npx expo run:android` if Expo Go on your device has a different SDK version. Native builds require the appropriate Xcode/Android toolchain.
+
+## iPhone development build
+
+The field demo is linked to
+[@ismar_m/wayborn-field-demo](https://expo.dev/accounts/ismar_m/projects/wayborn-field-demo),
+with bundle identifier `app.wayborn.fielddemo`. This is a development identity,
+not an App Store release. `eas.json` has one `development` profile for physical
+devices with `expo-dev-client` and internal distribution. Background recording
+is not enabled. Web remains a demo, and Android device validation is pending.
+
+From `prototype/map`, run:
+
+```sh
+npx eas-cli@latest whoami
+npx eas-cli@latest build --platform ios --profile development
+```
+
+If Expo is signed out, use `npx eas-cli@latest login`. Complete Apple sign-in and
+any two-factor verification directly in the interactive terminal. Do not paste
+passwords, session cookies, signing keys or verification codes into chat or git.
+The CLI creates/selects signing credentials and registered devices. Ensure the
+iPhone 13 Pro Max is included; one enabled iPhone in the team's EAS inventory has
+not yet been matched to the tester's phone. If needed, register the phone using
+`npx eas-cli@latest device:create`, follow its link on the phone, then build again.
+
+Open the completed build's installation link in Safari on the registered iPhone.
+Enable Developer Mode if iOS requests it. Start Metro with `npx expo start --dev-client`
+and open its QR/link in the installed Wayborn app. The phone needs network access
+to Metro; this development build is not a standalone offline test release.
+
+If the phone cannot reach the computer's LAN address, stop Metro and run
+`npx expo start --dev-client --tunnel`, accept the `@expo/ngrok` installation if
+prompted, wait for tunnel readiness and scan the new QR. Keep Metro running;
+both devices need internet access. The tester successfully opened the installed
+demo on the reference iPhone through a tunnel.
+
+Share the Expo build installation link rather than committing the `.ipa`, signing
+credentials or generated native directories. An iOS teammate's device must be
+included in the provisioning profile. Register additional phones with
+`npx eas-cli@latest device:create` and then rebuild or use
+`npx eas-cli@latest build:resign`. A development app still needs a reachable Metro
+server serving the matching source; sharing the binary alone does not share
+uncommitted code. Android cannot install the iOS build.
+
+On 22 November 2026, project linking and local iOS/web bundle exports succeeded,
+but signing setup stopped because the cached Apple session had expired. No cloud
+build or installation succeeded in that attempt. The reference device is
+user-reported iPhone 13 Pro Max / iOS 27.0.1; compatibility remains untested.
+Record build ID, OS/device, permission denial, poor signal, pause/resume,
+background/foreground and restart observations in the
+[validation record](../../docs/07-validation.md). The current demo does not save
+walks across restarts; durable recovery is M1 work, not a passing baseline claim.
+
+See [Expo development builds](https://docs.expo.dev/develop/development-builds/introduction/)
+and [internal distribution](https://docs.expo.dev/build/internal-distribution/).
 
 ## Live location and spoofing
 
 - **Device GPS** subscribes to foreground OS location updates with `expo-location`. Physically walking updates the explorer, camera, and dotted trail. Dragging the map changes only its camera; the target button restores following.
-- In **Developer tools**, type latitude/longitude (decimal degrees) or choose a city preset, then press **Apply location**. Presets only populate the fields. Applying stops GPS, labels the location as spoofed, and starts a fresh walk. **Use device GPS / retry** restores the OS location source and resets the session.
+- In **Developer tools**, type latitude/longitude (decimal degrees) or choose a city preset, then press **Apply location**. Presets only populate the fields. Applying stops GPS and labels a camera preview as spoofed; it grants no distance, time, discoveries or XP. **Use device GPS / retry** restores GPS and breaks track continuity without clearing totals.
 - To simulate actual movement through the **same OS location pipeline**, leave Device GPS enabled and use simulator location controls: on iOS Simulator choose **Features → Location**, or replay `fixtures/ljubljana-walk.gpx` through Xcode’s location simulation. On Android Emulator use **Extended controls → Location** to set points or play a route. For browser GPS testing, Chrome DevTools **Sensors → Location** overrides browser geolocation. A browser watcher may require the GPS retry button after changing its override.
-- No movement joystick or map-tap relocation is implemented. Manual coordinate overrides are teleports and reset distance; simulated OS routes behave like walks.
+- No movement joystick or map-tap relocation is implemented. Manual coordinate overrides are previews; simulated OS routes behave like walks only after explicit Start.
 
 ## Walk behavior
 
-Pause/resume and end/new-walk controls work. GPS fixes with accuracy worse than 50 m, jitter under 3 m, and walking speeds above 4 m/s do not add distance. A large jump starts a new trail segment. The map still shows the most recent location, including low-accuracy fixes; the status explains weak GPS. Pausing continues map following but suspends distance, discovery, and timer. Resuming establishes a new baseline and fresh trail segment, preserving totals. The displayed trail retains at most 2,000 points.
+Start is explicit. Pause retains the accepted marker and suspends progress.
+Resume starts a fresh movement baseline. End/New Walk resets progress and
+continuity while retaining the marker until another valid fix. Fixes worse than
+50 m accuracy, jitter under 3 m and speeds above 4 m/s do not add distance. Weak
+fixes and jumps keep the accepted displayed position. Time begins after an
+accepted baseline and stops on tracking interruptions and developer previews.
+The displayed trail retains at most 2,000 points. Native map reloads replay the
+latest marker/trail/style settings; a stalled cache open falls back to uncached
+rendering. Pixel errors show retry status with standard tiles underneath.
+These recovery changes still need a physical-device retest.
 
 Steps are **estimates** using 0.75 m per step, not pedometer readings. “Places” are unique approximately 40 m grid cells visited during this session; each earns 25 demo XP, with 500 XP per level. These are illustrative game mechanics, not named real-world POIs or persistent exploration data. The coordinate grid is a simple prototype approximation. All progress resets on reload. Walk time measures the active session, including stationary time. Keep the app in the foreground: background location recording is not configured.
 
@@ -62,3 +126,25 @@ npx expo export --platform ios --platform android --output-dir dist-native
 ```
 
 Tests cover OpenMapTiles classification, decoding a real tile (`fixtures/ljubljana-14-8852-5825.pbf`), z14→z17 rescaling, seamless tile edges, the OSM detail layer (classifier, query, seam-free tiles with detail, tree thinning, path replacement), cache keys/version invalidation/size cap, fills, thin lines, palette-only output and world-anchored rendering, as well as coordinate validation, walking distance, GPS jitter/accuracy, teleports, and pause/resume/end/reset behavior. Bundle export verifies compilation; real-device permissions and outdoor GPS need physical device testing. No native simulator is available in the current workspace environment.
+
+## M1 navigation shell
+
+Entry uses Expo Router with Map, Activity, Guild, Goals and Profile tabs. Recording
+state is held above routes; the other destinations currently explain unavailable
+services. This remains a temporary foreground demo without accounts or storage.
+
+This navigation change adds native dependencies. Rebuild the iPhone development
+client with `npx eas-cli@latest build --platform ios --profile development`, install
+it, then restart Metro with `npx expo start --dev-client --tunnel --clear`.
+An older field-demo binary may not contain the navigation native modules.
+
+Browser acceptance requires `npx playwright install chromium` once after `npm ci`.
+`npm test` invokes the NAV-03 browser adapter; `npm run test:ui` runs it directly.
+The runner starts its own Expo web server on port 8093. Do not occupy that port.
+
+The Map tab now fills its available screen with a yellow Start/Pause/Resume
+control. End adds a temporary summary to Activity; summaries survive tab changes
+and new walks, but not app reload or termination. No server-confirmed rewards or
+persistent history are implied. Wide zoom uses standard overview tiles; zoom
+back to street level (16–19) for pixel detail. Cached pixel tiles now complete
+asynchronously so Leaflet can register them before showing them.

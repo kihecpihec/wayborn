@@ -1,16 +1,18 @@
 import { useCallback, useEffect, useReducer, useState } from "react";
 import * as Location from "expo-location";
 import { Coordinate, Fix } from "./geo";
-import { initial, walkReducer } from "./walkState";
+import { idle, walkReducer } from "./walkState";
 
 export function useWalk() {
-  const [walk, dispatch] = useReducer(walkReducer, initial);
+  const [walk, dispatch] = useReducer(walkReducer, idle);
   const [source, setSource] = useState<"gps" | "spoof">("gps");
+  const [preview, setPreview] = useState<Fix | null>(null);
   const fix = walk.position;
-  const [status, setStatus] = useState("Requesting location permission…");
+  const [status, setStatus] = useState("Map preview · press Start walk to use GPS.");
   const [retry, setRetry] = useState(0);
+  const trackingReady = walk.running && walk.last !== null && source === "gps";
   useEffect(() => {
-    if (!walk.running) return;
+    if (!trackingReady) return;
     let last = Date.now();
     const id = setInterval(() => {
       const now = Date.now();
@@ -18,9 +20,9 @@ export function useWalk() {
       last = now;
     }, 1000);
     return () => clearInterval(id);
-  }, [walk.running]);
+  }, [trackingReady, walk.session]);
   useEffect(() => {
-    if (source !== "gps") return;
+    if (source !== "gps" || !walk.started || !walk.running) return;
     let cancelled = false;
     let subscription: Location.LocationSubscription | undefined;
     async function start() {
@@ -35,7 +37,7 @@ export function useWalk() {
         const watcher = await Location.watchPositionAsync(
           {
             accuracy: Location.Accuracy.High,
-            distanceInterval: 3,
+            distanceInterval: 0,
             timeInterval: 2000,
           },
           (location) => {
@@ -79,19 +81,18 @@ export function useWalk() {
       cancelled = true;
       subscription?.remove();
     };
-  }, [source, retry]);
+  }, [source, retry, walk.started, walk.running, walk.session]);
   const spoof = useCallback((point: Coordinate) => {
     const next: Fix = { ...point, accuracy: 0, timestamp: Date.now() };
-    // Each manual relocation starts a fresh walk, so a teleport never counts as walking.
-    dispatch({ type: "reset" });
-    dispatch({ type: "fix", fix: next });
+    // Developer coordinates are camera previews and never accepted track samples.
     setSource("spoof");
     setStatus("Developer coordinates active · GPS disconnected");
+    setPreview(next);
   }, []);
   const enableGPS = useCallback(() => {
-    dispatch({ type: "reset" });
+    dispatch({ type: "interrupt" });
     setSource("gps");
     setRetry((value) => value + 1);
   }, []);
-  return { walk, source, fix, status, spoof, enableGPS, dispatch };
+  return { walk, source, fix: source === "spoof" ? preview : fix, status, spoof, enableGPS, dispatch };
 }

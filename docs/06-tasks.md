@@ -3,6 +3,10 @@
 Remote assignments have not been updated by this work. Use these umbrella issues
 and split implementation into the task/scenario IDs in the roadmap/specifications.
 
+See the [M0 audit and first M1 task](testing/m0-audit-m1-entry.md) for the current
+entry blockers, shell acceptance scope and interface handoff. M0 remains incomplete;
+M1 runtime implementation awaits D11's reference-device/build plan.
+
 | Issue | Priority | Owner |
 | --- | --- | --- |
 | [1: Milestone and assistant access](https://github.com/kihecpihec/wayborn/issues/1) | P0 | Hanan |

@@ -1,0 +1,20 @@
+{
+  "changes": [
+    {
+      "feature": "NAV",
+      "before": "09e243316888c90d37be4bd66fedf41ff24af0c13d3188d3514f8b6b0a726f8e",
+      "after": "0bc8f29ae996314d6291bfcea248b6a2e3e02d059fc2b7f3412f9d288ef4eee0",
+      "rationale": "User requests edge-to-edge Map with a yellow Start walk control and expects completed walks in Activity.",
+      "impact": "Adds session-only demo history and full-map UI coverage. Existing scenarios retained; durable history and accounts remain planned.",
+      "review": "Peer review and physical retest required."
+    },
+    {
+      "feature": "NAV",
+      "before": "eda55db820601eb957775c680eea15e5c70d55ae61e097df61de0602630feea8",
+      "after": "0bc8f29ae996314d6291bfcea248b6a2e3e02d059fc2b7f3412f9d288ef4eee0",
+      "rationale": "User requests edge-to-edge Map with a yellow Start walk control and expects completed walks in Activity.",
+      "impact": "Adds session-only demo history and full-map UI coverage. Existing scenarios retained; durable history and accounts remain planned.",
+      "review": "Peer review and physical retest required."
+    }
+  ]
+}

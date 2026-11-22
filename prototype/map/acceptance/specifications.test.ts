@@ -1,7 +1,10 @@
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { initial, walkReducer } from "../src/walkState";
+import { idleStart, pausePosition, newWalkPosition, mapReload, unavailableCache } from "./demoRecovery";
 
 type Step = {
   action: "sample" | "pause" | "resume" | "finish" | "elapsed" | "interrupt";
@@ -119,6 +122,22 @@ const executable: Record<string, (scenario: Scenario) => void | Promise<void>> =
       "GPS-17",
     ].map((id) => [id, exerciseWalk]),
   );
+
+executable["NAV-03"] = async () => {
+  await promisify(execFile)(process.execPath, ["node_modules/@playwright/test/cli.js", "test", "--grep", "NAV-03"], {
+    cwd: new URL("..", import.meta.url), timeout: 180000,
+  });
+};
+executable["NAV-04"] = async () => {
+  await promisify(execFile)(process.execPath, ["node_modules/@playwright/test/cli.js", "test", "--grep", "NAV-04"], {
+    cwd: new URL("..", import.meta.url), timeout: 180000,
+  });
+};
+executable["LIFE-04"] = idleStart;
+executable["LIFE-05"] = pausePosition;
+executable["LIFE-06"] = newWalkPosition;
+executable["MAP-04"] = mapReload;
+executable["MAP-05"] = unavailableCache;
 
 test("specification baseline has complete implemented coverage and no orphan tests", () => {
   const ids = new Set<string>();
