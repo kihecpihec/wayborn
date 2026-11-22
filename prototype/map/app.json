@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Wayborn \u00b7 Field Demo",
+    "name": "Wayborn · Field Demo",
     "slug": "demo1",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,7 +20,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "name": "Wayborn \u00b7 Field Demo"
+      "name": "Wayborn · Field Demo"
     },
     "plugins": [
       "expo-font",
@@ -29,7 +29,8 @@
         {
           "locationWhenInUsePermission": "Wayborn uses your location to follow your walk and show your trail on OpenStreetMap."
         }
-      ]
+      ],
+      "expo-router"
     ]
   }
 }

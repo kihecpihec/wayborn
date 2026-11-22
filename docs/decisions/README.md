@@ -33,3 +33,19 @@ Do not fill reviewer/evidence with invented approvals or unperformed device test
 The product direction is accepted; numeric trial settings and policy details above
 remain open until reviewed. Missing background support is a release blocker for full
 v1, not permission to quietly narrow the user's requested product.
+
+### D02 sample indexing trial
+
+Status is trial. `h3-samples-v1` uses H3 resolution 11 for already accepted GPS
+samples in WGS84 decimal degrees. H3 assigns boundary points to a cell. Both sides
+of the antimeridian and high latitudes are valid for point indexing. The function
+returns unique string IDs in first-seen order. Invalid coordinates and unknown
+versions cause explicit rejection without returning partial results.
+
+Resolution 11 distinguishes more cells on the synthetic street and park routes
+than resolution 10. This contract indexes only observed positions. It does not
+infer path intersections between samples, bridge gaps, project polygons, or
+claim captured interiors. GEO-03 and GEO-04 cover sample indexing. Final
+resolution, coverage, and client/server parity need Hanan and Ismar review
+before M2 persistence. No stored gameplay uses this trial version, so changing the
+version during evaluation requires no data migration.

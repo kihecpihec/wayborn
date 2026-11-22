@@ -1,0 +1,12 @@
+{
+  "changes": [
+    {
+      "feature": "MAP",
+      "before": "68da20e83172d07f6cedf6dd773f4977ad20372255feb6ba02c39adc004564f8",
+      "after": "20a756a7de9e04acc564d4c570f2011b8efc64998d3b6aac2a006914584461e8",
+      "rationale": "Implement the requested browse-first Expo entry as a narrow M1 slice.",
+      "impact": "Adds an explicit initial tile retry contract and keeps the full map presentation feature planned.",
+      "review": "Second-developer review of the deadline, tile fallback and Expo entry behavior required."
+    }
+  ]
+}

@@ -13,7 +13,9 @@
         "Keep provider attribution visible in all styles.",
         "Camera changes never change gameplay position or rewards.",
         "Unavailable tiles must not lose recorded walks.",
-        "Map opening does not start recording. Show labeled preview without a valid permitted fix."
+        "Map opening does not start recording. Show labeled preview without a valid permitted fix.",
+        "The first Expo entry slice opens a Ljubljana preview in pixel mode without requesting location or creating a walk.",
+        "Give the initial basemap attempt 3 seconds to show a drawable raster or pixel tile, then offer retry. Keep the preview shell usable throughout."
       ],
       "endResult": "A usable map with explicit loading/error states and independently controlled camera.",
       "dependencies": [],
@@ -38,6 +40,20 @@
           "when": "switch between pixel and normal styles",
           "then": "both styles retain provider attribution",
           "level": "ui"
+        },
+        {
+          "id": "MAP-04",
+          "given": "An initial basemap attempt with no drawable tiles",
+          "when": "3 seconds pass",
+          "then": "offer retry; retry begins a fresh loading attempt and the first visible tile clears the message",
+          "level": "domain"
+        },
+        {
+          "id": "MAP-05",
+          "given": "The first drawable raster or pixel tile arrives before the deadline",
+          "when": "the initial deadline passes",
+          "then": "keep the map visible without an unavailable message",
+          "level": "domain"
         }
       ]
     },
@@ -109,6 +125,13 @@
           "when": "return to map then reopen the summary",
           "then": "the same expedition remains queued and visible",
           "level": "ui"
+        },
+        {
+          "id": "NAV-03",
+          "given": "Map Home is open with a walk paused",
+          "when": "visit Activity and return to Map",
+          "then": "show the current session in Activity and retain the paused walk and totals on Map",
+          "level": "ui"
         }
       ]
     },
@@ -122,7 +145,8 @@
       "rules": [
         "H3 IDs are strings; never reinterpret demo cell keys.",
         "Record resolution, units, supported region and rules version.",
-        "Field-test thresholds; define path coverage, boundaries and captured-interior discovery before persistence."
+        "Field-test thresholds; define path coverage, boundaries and captured-interior discovery before persistence.",
+        "The M0 sample-only trial uses h3-samples-v1 at resolution 11. Use H3 point containment for globally valid coordinates, deduplicate in first-seen order, and reject invalid coordinates or unknown versions. This trial derives no traversed or captured interior."
       ],
       "endResult": "Documented rule decisions and shared deterministic geographic fixtures.",
       "dependencies": [],
@@ -140,6 +164,20 @@
           "when": "evaluate coverage",
           "then": "apply the documented boundary policy or explicit rejection without giant accidental capture",
           "level": "integration"
+        },
+        {
+          "id": "GEO-03",
+          "given": "Synthetic street, park, antimeridian and high-latitude samples",
+          "when": "index them with H3 at trial resolutions 10 and 11",
+          "then": "return valid string IDs at the requested resolution and match the documented H3 reference coordinate",
+          "level": "domain"
+        },
+        {
+          "id": "GEO-04",
+          "given": "The versioned H3 sample-only rules",
+          "when": "evaluate duplicates, an antimeridian trace, invalid coordinates and an unknown version",
+          "then": "return first-seen unique string cells for valid samples, one local cell for the fixture crossing, and explicit reasons for incompatible input",
+          "level": "domain"
         }
       ]
     },
@@ -745,6 +783,20 @@
           "when": "wait before explicitly starting",
           "then": "no expedition time, discovery or XP accrues",
           "level": "ui"
+        },
+        {
+          "id": "LIFE-04",
+          "given": "The walk is idle",
+          "when": "submit a sample, then explicitly start and receive poor followed by usable GPS",
+          "then": "stay idle until start and start recording only on the usable sample",
+          "level": "domain"
+        },
+        {
+          "id": "LIFE-05",
+          "given": "An active walk with about 11 metres recorded",
+          "when": "interrupt, wait, resume and receive a fix far away",
+          "then": "preserve distance, exclude interrupted time and begin a new display segment",
+          "level": "domain"
         }
       ]
     },
@@ -784,6 +836,13 @@
           "given": "An existing database with pending work",
           "when": "upgrade the schema",
           "then": "preserve samples, account ownership and queue contents",
+          "level": "integration"
+        },
+        {
+          "id": "STORE-04",
+          "given": "An account has a draft with a stored sample",
+          "when": "reopen SQLite, try a different account, then fail and retry finalization",
+          "then": "the owner retains the draft after the failed write and one pending result after retry, and the other account sees neither",
           "level": "integration"
         }
       ]

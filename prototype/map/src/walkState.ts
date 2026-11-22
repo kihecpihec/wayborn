@@ -11,7 +11,7 @@ type Walk = {
   position: Fix | null;
   lastTimestamp: number | null;
 };
-type Action =
+export type WalkAction =
   | { type: "fix"; fix: Fix }
   | { type: "tick"; seconds: number }
   | { type: "pause" }
@@ -29,7 +29,24 @@ export const initial: Walk = {
   position: null,
   lastTimestamp: null,
 };
-export function walkReducer(state: Walk, action: Action): Walk {
+export function validWalkFix(fix: Fix): boolean {
+  return (
+    Number.isFinite(fix.timestamp) &&
+    fix.timestamp >= 0 &&
+    !(
+      !Number.isFinite(fix.latitude) ||
+    Math.abs(fix.latitude) > 90 ||
+    !Number.isFinite(fix.longitude) ||
+    Math.abs(fix.longitude) > 180 ||
+    fix.accuracy === null ||
+    !Number.isFinite(fix.accuracy) ||
+    fix.accuracy < 0 ||
+    fix.accuracy > 50
+    )
+  );
+}
+
+export function walkReducer(state: Walk, action: WalkAction, demoCells = true): Walk {
   if (action.type === "reset") return { ...initial };
   if (state.ended) return state;
   if (action.type === "interrupt") return { ...state, last: null, path: [] };
@@ -50,16 +67,7 @@ export function walkReducer(state: Walk, action: Action): Walk {
   if (state.lastTimestamp !== null && fix.timestamp <= state.lastTimestamp)
     return state;
   const observed = { ...state, lastTimestamp: fix.timestamp };
-  if (
-    !Number.isFinite(fix.latitude) ||
-    Math.abs(fix.latitude) > 90 ||
-    !Number.isFinite(fix.longitude) ||
-    Math.abs(fix.longitude) > 180 ||
-    fix.accuracy === null ||
-    !Number.isFinite(fix.accuracy) ||
-    fix.accuracy < 0 ||
-    fix.accuracy > 50
-  )
+  if (!validWalkFix(fix))
     return { ...observed, last: null, path: [] };
   // D05 trial: silence is an interruption even without an explicit error callback.
   const baseline =
@@ -72,13 +80,13 @@ export function walkReducer(state: Walk, action: Action): Walk {
   if (baseline && meters < 3) return observed;
   const jump = baseline && meters / seconds > 4;
   if (jump) return { ...observed, last: fix, path: [] };
-  const key = cellKey(fix);
+  const key = demoCells ? cellKey(fix) : null;
   return {
     ...observed,
     last: fix,
     position: fix,
     meters: state.meters + meters,
     path: !baseline ? [fix] : [...state.path.slice(-1999), fix],
-    cells: state.cells.includes(key) ? state.cells : [...state.cells, key],
+    cells: key === null || state.cells.includes(key) ? state.cells : [...state.cells, key],
   };
 }

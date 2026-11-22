@@ -1,0 +1,12 @@
+{
+  "changes": [
+    {
+      "feature": "NAV",
+      "before": "eda55db820601eb957775c680eea15e5c70d55ae61e097df61de0602630feea8",
+      "after": "352c21133715b7f2573eeb4ea78d2b2a6d18e64e534d195ff94a590db5caa81a",
+      "rationale": "Specify tab switching with a shared walk session.",
+      "impact": "The current foreground session remains accessible across tabs.",
+      "review": "Review tab behavior and verify on native devices."
+    }
+  ]
+}

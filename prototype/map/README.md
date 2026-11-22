@@ -1,6 +1,6 @@
-# Wayborn · Demo 01
+# Wayborn Map Home
 
-An Expo / React Native walking demo for iOS, Android, and web. The desktop web view presents the app inside a phone, with developer location controls beside it. Small screens show the app full width; open **Developer tools** below the walking panel to override location.
+The Expo app opens to a Ljubljana preview on iOS, Android, and web. Browse, switch between pixel and standard tiles, or recenter the preview. Tap **Start walk** to request foreground location and wait for a valid fix. Pause or finish from the map. Walks are held in memory for the current session.
 
 ## Run
 
@@ -13,18 +13,26 @@ npm ci
 npm run web
 ```
 
-Open the URL printed by Expo. Allow location access. Until a fix arrives, the map shows an explicitly labeled Ljubljana preview **without a user marker**. Browser location requires localhost or HTTPS. When testing over a LAN on a phone, use the native app or HTTPS rather than an insecure browser URL.
+Open the URL printed by Expo. The preview shell opens immediately. While pixel tiles render, standard tiles can fill the map first. If neither source produces a drawable tile within three seconds, use **Retry map** after checking your connection.
 
 For a phone, run `npm start`, then open with an Expo Go version supporting SDK 58. Alternatively use `npm run ios` / `npm run android` with an installed simulator/emulator. A native development build can be created using `npx expo run:ios` or `npx expo run:android` if Expo Go on your device has a different SDK version. Native builds require the appropriate Xcode/Android toolchain.
 
-## Live location and spoofing
+For an iPhone that cannot reach Metro over Wi-Fi, run `npm run start:iphone` from this directory and scan the QR code. This starts the Expo Go tunnel on port 8092.
+
+Map opens first. Activity shows the current walk and its totals. To test session continuity, start and pause a walk, open Activity, then return to Map and check that **Resume walk** and the same totals are still visible. Guild, Goals, and Profile show their availability.
+
+## Walking demo
+
+Run `EXPO_PUBLIC_WALKING_DEMO=1 npm run web` or `EXPO_PUBLIC_WALKING_DEMO=1 npm start` to open the existing walking prototype in development. Stop Expo and restart without the flag to return to Map Home. The demo requests foreground location and shows a Ljubljana preview until an accepted fix arrives. Browser location requires localhost or HTTPS. Use simulator location controls or the developer inputs described below.
+
+### Live location and spoofing
 
 - **Device GPS** subscribes to foreground OS location updates with `expo-location`. Physically walking updates the explorer, camera, and dotted trail. Dragging the map changes only its camera; the target button restores following.
 - In **Developer tools**, type latitude/longitude (decimal degrees) or choose a city preset, then press **Apply location**. Presets only populate the fields. Applying stops GPS, labels the location as spoofed, and starts a fresh walk. **Use device GPS / retry** restores the OS location source and resets the session.
 - To simulate actual movement through the **same OS location pipeline**, leave Device GPS enabled and use simulator location controls: on iOS Simulator choose **Features → Location**, or replay `fixtures/ljubljana-walk.gpx` through Xcode’s location simulation. On Android Emulator use **Extended controls → Location** to set points or play a route. For browser GPS testing, Chrome DevTools **Sensors → Location** overrides browser geolocation. A browser watcher may require the GPS retry button after changing its override.
 - No movement joystick or map-tap relocation is implemented. Manual coordinate overrides are teleports and reset distance; simulated OS routes behave like walks.
 
-## Walk behavior
+### Walk behavior
 
 Pause/resume and end/new-walk controls work. GPS fixes with accuracy worse than 50 m, jitter under 3 m, and walking speeds above 4 m/s do not add distance. A large jump starts a new trail segment. The map still shows the most recent location, including low-accuracy fixes; the status explains weak GPS. Pausing continues map following but suspends distance, discovery, and timer. Resuming establishes a new baseline and fresh trail segment, preserving totals. The displayed trail retains at most 2,000 points.
 
@@ -47,7 +55,7 @@ The map opens in **pixel mode** (toggle with the **Pixel / Map** button beside t
 7. **Not too cluttered.** Mapped trees are thinned to one per world-anchored cell (7–11 art px, by zoom) and skipped on water, roads and rails; scattered park/wood trees stay out of their way. Zoomed out, sheds and tiny annexes are dropped (zoom 16 below 10 art px², zoom 17 below 3) and house outlines take the roof's dark shade instead of black at zoom 16.
 8. **Prefetch.** One ring of tiles around the view (vector tiles only; their detail is fetched when they scroll in), plus 3 tiles ahead along the heading of the last GPS fixes (`path`), with their detail cells. The renderer supports a ground-then-objects two-pass draw (`TWO_PASS` in `mapDocument.ts`); measured gain was ~15 ms for a screenful, so it is off.
 
-The status chip shows tiles drawn, cache hits and average ms per tile. Attribution: © OpenMapTiles © OpenStreetMap contributors · OpenFreeMap. Individually mapped trees and some small paths/land-use are not in the tiles; trees are scattered in parks and woods instead.
+The status chip indicates when the pixel view is loading or when the zoom level is too low for pixel tiles. Attribution: © OpenMapTiles © OpenStreetMap contributors · OpenFreeMap. Individually mapped trees and some small paths/land-use are not in the tiles; trees are scattered in parks and woods instead.
 
 Location handling follows [Expo Location](https://docs.expo.dev/versions/latest/sdk/location/); the native map uses [Expo WebView](https://docs.expo.dev/versions/latest/sdk/webview/).
 
@@ -62,3 +70,16 @@ npx expo export --platform ios --platform android --output-dir dist-native
 ```
 
 Tests cover OpenMapTiles classification, decoding a real tile (`fixtures/ljubljana-14-8852-5825.pbf`), z14→z17 rescaling, seamless tile edges, the OSM detail layer (classifier, query, seam-free tiles with detail, tree thinning, path replacement), cache keys/version invalidation/size cap, fills, thin lines, palette-only output and world-anchored rendering, as well as coordinate validation, walking distance, GPS jitter/accuracy, teleports, and pause/resume/end/reset behavior. Bundle export verifies compilation; real-device permissions and outdoor GPS need physical device testing. No native simulator is available in the current workspace environment.
+
+## Walk storage integration
+
+Migration 001 in `src/walkStorage.ts` defines SQLite tables for account-owned walks,
+ordered samples with segment IDs, and a completion outbox. A completion row removes
+a walk from the draft query and adds it to the outbox in one statement. The storage
+adapter takes the authenticated account ID and an open SQLite connection. Run the
+migration once when opening that connection, before starting reads or writes.
+
+The on-disk acceptance test uses Node SQLite and checks reopen, cross-account
+access, a failed completion write and a retried finish. The Expo UI still uses its
+in-memory session while native database opening, authenticated session wiring, and
+restart recovery are pending.
