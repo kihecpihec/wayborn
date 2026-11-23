@@ -17,9 +17,11 @@ territory-loss alerts. See the [full experience](09-product-experience.md).
 - **M9 full v1:** the entire requested experience passes device, backend, privacy,
   operational and playtest gates. Earlier alphas are not the finished requested app.
 
-Current implementation remains a technical map/GPS demo and acceptance baseline.
-Accounts, durable game storage, H3 gameplay and backend are not yet implemented.
-New specifications and milestones describe authorized target behavior, not shipped code.
+Current implementation includes the map/GPS shell, email/password accounts, a private
+profile backend and native account-owned SQLite drafts/outbox. H3 gameplay persistence,
+authoritative rewards and backend synchronization remain planned. AUTH/STORE stay
+planned at feature level until their remaining scenarios and device evidence pass.
+Specifications and milestones describe authorized target behavior, not a shipped release.
 
 ## Core rules
 

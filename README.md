@@ -51,7 +51,11 @@ npm run build:web
 as TODO, never as working functionality. CI fails for missing coverage of a feature
 marked implemented. Existing renderer/unit tests remain useful secondary checks.
 
-The Expo app opens into a browsable Map Home preview. The walking prototype is available
-through a development flag. Foreground walks can be started from Map Home. Accounts, persistent gameplay, H3 discovery, capture, and
-backend synchronization are not implemented. Mockups use
-sample data; a green baseline does not mean the finished MVP is available.
+After sign-in, the Expo app opens into a browsable Map Home preview. The walking prototype is available
+through a development flag. Foreground walks can be started from Map Home after
+email/password sign-in. Native SQLite keeps account-owned drafts and a local
+completion outbox; browser walks stay in memory. H3 gameplay persistence, capture,
+confirmed rewards and backend synchronization remain planned. See the
+[validation record](docs/07-validation.md) for hosted auth checks and outstanding
+device evidence. Mockups use sample data; a green baseline does not mean the
+finished MVP is available.

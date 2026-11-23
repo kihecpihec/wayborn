@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { Button, Text } from "react-native";
 import Destination from "../Destination";
-import { accounts } from "../auth";
+import { signOutOnRequest } from "../auth";
 
 export default function Profile() {
   const [error, setError] = useState("");
   async function logout() {
     try {
-      const result = await accounts?.auth.signOut({ scope: "local" });
-      if (result?.error) throw result.error;
+      await signOutOnRequest();
     } catch {
       setError("Sign-out failed. Please try again.");
     }

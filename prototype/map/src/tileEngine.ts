@@ -32,11 +32,14 @@ function reqP(r) { return new Promise(function (res, rej) { r.onsuccess = functi
 /* IndexedDB adapter for WaybornPixel.makeStore: raw tiles in 'tiles', their size/age/version in 'meta'. */
 function idbKV() {
   var dbp = new Promise(function (res, rej) {
+    // Optional basemap caching must not block rendering in a suspended WebView.
+    var settled = false;
+    var timer = setTimeout(function () { settled = true; rej(new Error('idb open timed out')); }, 2000);
     var r = indexedDB.open(DB, 1);
     r.onupgradeneeded = function () { var d = r.result; d.createObjectStore('tiles'); d.createObjectStore('meta'); d.createObjectStore('misc'); };
-    r.onsuccess = function () { res(r.result); };
-    r.onerror = function () { rej(r.error); };
-    r.onblocked = function () { rej(new Error('idb blocked')); };
+    r.onsuccess = function () { clearTimeout(timer); if (settled) { r.result.close(); return; } settled = true; res(r.result); };
+    r.onerror = function () { clearTimeout(timer); settled = true; rej(r.error); };
+    r.onblocked = function () { clearTimeout(timer); settled = true; rej(new Error('idb blocked')); };
   });
   function store(name, mode) { return dbp.then(function (db) { return db.transaction(name, mode).objectStore(name); }); }
   function done(tx) { return new Promise(function (res, rej) { tx.oncomplete = function () { res(); }; tx.onerror = tx.onabort = function () { rej(tx.error); }; }); }
@@ -82,8 +85,10 @@ function create(opt) {
       var cached = null;
       if (!force && kv) { try { cached = await kv.getMisc('tilejson'); } catch (e) {} }
       if (cached && Date.now() - cached.t < TEMPLATE_TTL) { cached.fresh = false; return cached; }
+      var controller = new AbortController();
+      var timeout = setTimeout(function () { controller.abort(); }, 15000);
       try {
-        var r = await fetch(TILEJSON), j = await r.json();
+        var r = await fetch(TILEJSON, { signal: controller.signal }), j = await r.json();
         if (!r.ok || !j.tiles || !j.tiles[0]) throw new Error('bad TileJSON');
         var rec = { tpl: j.tiles[0], maxzoom: j.maxzoom || 14, t: Date.now(), fresh: true };
         if (kv) kv.putMisc('tilejson', rec).catch(function () {});
@@ -91,7 +96,7 @@ function create(opt) {
       } catch (e) {
         if (cached) { cached.fresh = false; return cached; }
         tj = null; throw e;
-      }
+      } finally { clearTimeout(timeout); }
     })();
     return tj;
   }

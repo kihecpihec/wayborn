@@ -1,6 +1,6 @@
 # Wayborn Map Home
 
-The Expo app opens to a Ljubljana preview on iOS, Android, and web. Browse, switch between pixel and standard tiles, or recenter the preview. Tap **Start walk** to request foreground location and wait for a valid fix. Pause or finish from the map. Walks are held in memory for the current session.
+After sign-in, the Expo app opens to a Ljubljana preview on iOS, Android, and web. Browse, switch between pixel and standard tiles, or recenter the preview. Tap **Start walk** to request foreground location and wait for a valid fix. Pause or finish from the map. Native builds save account-owned drafts and pending walks in SQLite; browser walks are held in memory for the current session.
 
 ## Run
 
@@ -40,7 +40,7 @@ Steps are **estimates** using 0.75 m per step, not pedometer readings. “Places
 
 ## Map
 
-[Leaflet 1.9.4](https://leafletjs.com/) renders standard [OpenStreetMap](https://www.openstreetmap.org/copyright) raster tiles, with visible attribution. Web uses an iframe; native uses `react-native-webview`. Leaflet assets load from a version-pinned CDN and tiles require internet. Map loading failures display an inline message. There is no map API key, offline download, backend, analytics, or location upload; tile requests reveal the viewed map area to the tile provider. Follow the [OSM tile usage policy](https://operations.osmfoundation.org/policies/tiles/) if expanding beyond this low-traffic demo.
+[Leaflet 1.9.4](https://leafletjs.com/) renders standard [OpenStreetMap](https://www.openstreetmap.org/copyright) raster tiles, with visible attribution. Web uses an iframe; native uses `react-native-webview`. Leaflet assets load from a version-pinned CDN and tiles require internet. Map loading failures display an inline message. There is no map API key, offline map download, analytics, or location upload. Accounts use the separate Supabase auth/profile backend; expedition sync remains planned. Tile requests reveal the viewed map area to the tile provider. Follow the [OSM tile usage policy](https://operations.osmfoundation.org/policies/tiles/) if expanding beyond this low-traffic demo.
 
 ### Pixel world
 
@@ -80,9 +80,14 @@ adapter takes the authenticated account ID and an open SQLite connection. Run th
 migration once when opening that connection, before starting reads or writes.
 
 The on-disk acceptance test uses Node SQLite and checks reopen, cross-account
-access, a failed completion write and a retried finish. The Expo UI still uses its
-in-memory session while native database opening, authenticated session wiring, and
-restart recovery are pending.
+access, a failed completion write and a retried finish. The native UI opens SQLite before permitting recording. AccountGate supplies the signed-in
+user ID, and Activity offers explicit keep/discard recovery for interrupted drafts.
+Finish pauses recording and waits for all sample writes plus the outbox insert before
+showing a completed walk. Failed writes remain retryable in the same session; after
+process termination only the durable prefix can be recovered. Database writes are
+serialized across accounts so discard transactions cannot absorb recording writes.
+The browser explicitly reports in-memory recording. Native restart/device evidence
+and schema-upgrade coverage remain open; no synchronization is implemented.
 
 ## M0 screen-lock test build
 
@@ -101,3 +106,20 @@ EXPO_PUBLIC_LOCATION_SPIKE=1 npx expo start --dev-client --tunnel
 Install the signed build using its EAS link. Start the test outdoors, lock and walk
 for two minutes, unlock, then stop. Record total/background updates, errors, last
 fix time, device model and exact iOS version in the validation record.
+
+## Hosted accounts and email
+
+Copy the public `EXPO_PUBLIC_SUPABASE_URL` and
+`EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from the `development` profile in `eas.json`
+into an ignored `.env` when running Metro against the hosted backend. Restart Metro
+after changing them. EAS uses those public values for the development build.
+SMTP credentials belong only in Supabase, never in the app environment.
+
+See [authentication email setup](../../docs/auth-email-setup.md) for DNS, SMTP,
+templates and the explicit hosted two-account check. Local acceptance/UI tests
+always use the local Supabase backend and its test mailbox.
+
+The SDK-compatible `expo-crypto` module generates recording UUIDs on native builds;
+it avoids relying on a browser-only `globalThis.crypto` implementation. Rebuild the
+native development client after adding the module. JavaScript bundle exports do
+not validate device permissions, secure session storage or SQLite recovery.
