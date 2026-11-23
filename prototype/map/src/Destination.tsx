@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Destination({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
+    <SafeAreaView testID={`${title.toLowerCase()}-screen`} style={styles.screen} edges={["top", "left", "right"]}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text accessibilityRole="header" style={styles.title}>{title}</Text>
         {children}
