@@ -38,9 +38,12 @@ export function useForegroundWalk() {
         const permission = await Location.requestForegroundPermissionsAsync();
         if (stopped) return;
         if (!permission.granted) {
-          fail(permission.canAskAgain
-            ? "Location permission is needed to start a walk."
-            : "Enable location for Wayborn in Settings, then try again.");
+          // Nothing was recorded, so leave the walk as it was and keep the map browsable.
+          stop();
+          setNotice(permission.canAskAgain
+            ? "Location access was not allowed. You can keep browsing the map; allow location to record a walk."
+            : "Location is turned off for Wayborn. You can keep browsing the map; enable it in Settings to record a walk.");
+          dispatch({ type: "cancel" });
           return;
         }
         awaitSignal();

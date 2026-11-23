@@ -1349,6 +1349,13 @@
           "when": "open all core screens",
           "then": "essential text and actions remain readable and reachable",
           "level": "device"
+        },
+        {
+          "id": "ACCESS-03",
+          "given": "A signed-in player on the map who has not started a walk",
+          "when": "read the map screen, then start, pause and finish a walk using only labeled controls",
+          "then": "the map explains before any location request that location is used only during a walk the player starts, with the app open, and never while browsing; it asks the player to stay aware of their surroundings without promising safe routes; start, pause and finish are labeled buttons at least 44 px high",
+          "level": "ui"
         }
       ]
     },

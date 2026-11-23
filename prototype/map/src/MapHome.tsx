@@ -88,6 +88,23 @@ export default function MapHome() {
         </Pressable>
       </View>
       <View style={styles.walk}>
+        {phase === "idle" && notice !== "" && (
+          <Text accessibilityRole="alert" style={styles.notice}>
+            {notice}
+          </Text>
+        )}
+        {phase === "idle" && (
+          <>
+            <Text style={styles.preview}>
+              Wayborn uses your location only while a walk you started is
+              recording with the app open. Browsing the map never uses it.
+            </Text>
+            <Text style={styles.preview}>
+              Stay aware of your surroundings. Wayborn does not check whether a
+              route is safe or open to the public.
+            </Text>
+          </>
+        )}
         {hasWalk && (
           <Text style={styles.preview}>
             {Math.round(track.meters)} m · {Math.floor(track.elapsed)} s active
@@ -187,6 +204,7 @@ const styles = StyleSheet.create({
   heading: { flex: 1 },
   title: { color: "#141c30", fontSize: 24, fontWeight: "800" },
   preview: { color: "#444d60", fontSize: 14 },
+  notice: { color: "#141c30", fontSize: 14, fontWeight: "700" },
   map: { flex: 1, backgroundColor: "#e4eadc" },
   controls: {
     flexDirection: "row",

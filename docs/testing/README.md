@@ -34,6 +34,7 @@ integrated behavior, executed acceptance cases, required evidence and a reviewed
 Device evidence fields: scenario ID, date, tester/reviewer, commit/build, OS/device,
 rules version, steps, observed result, artifact location and limitations. Sanitize
 real routes before attaching evidence. Device tests are not claimed by a Node runner.
+M1 phone results go in [the M1 device evidence record](m1-device-evidence.md).
 
 ## Protect the specification baseline
 

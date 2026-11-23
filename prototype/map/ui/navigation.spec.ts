@@ -1,33 +1,6 @@
 import { register } from './accountFixture';
-import { test, expect, type Page } from '@playwright/test';
-
-// Browser GPS stub: each reading is 10 s and about 11 m after the previous one,
-// so the walk logic accepts it as walking. Unexpected access can be made to throw.
-async function stubGps(page: Page, behaviour: 'forbid' | 'walk') {
-  await page.addInitScript((mode) => {
-    let reading = 0;
-    let watches = 0;
-    Object.defineProperty(navigator, 'geolocation', { value: {
-      watchPosition(success: (p: unknown) => void) {
-        if (mode === 'forbid') throw new Error('Unexpected GPS request while browsing');
-        const send = () => {
-          reading += 1;
-          success({ timestamp: 1_000_000 + reading * 10_000, coords: { latitude: 46 + reading * 0.0001, longitude: 14, accuracy: 5, altitude: null, altitudeAccuracy: null, heading: null, speed: null } });
-        };
-        setTimeout(send, 50);
-        setTimeout(send, 150);
-        // expo-location tags events with this id, so each watch needs its own.
-        return ++watches;
-      },
-      getCurrentPosition(success: (p: unknown) => void) {
-        if (mode === 'forbid') throw new Error('Unexpected GPS request while browsing');
-        // The browser permission probe: grants access without producing a walk fix.
-        success({ timestamp: 1, coords: { latitude: 46, longitude: 14, accuracy: 5 } });
-      },
-      clearWatch() {},
-    } });
-  }, behaviour);
-}
+import { test, expect } from '@playwright/test';
+import { stubGps } from './gps';
 
 test('NAV-04: browse all destinations without starting GPS or a walk', async ({ page }) => {
   await stubGps(page, 'forbid');

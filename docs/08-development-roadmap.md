@@ -80,7 +80,8 @@ only in explicitly labeled development mode; begin a deliberate foreground activ
 - Storage and identity: the signed-in user now owns account-partitioned SQLite storage on
   native builds (recorder, draft recovery/discard, pending list on Activity; acceptance
   STORE-01, STORE-02 write-failure recovery, STORE-04, ISOLATION-01/02 run against real SQLite).
-  Still open: physical-device restart/termination evidence, STORE-03 (schema upgrade),
+  STORE-03 now upgrades a frozen version-1 database with pending work (24 November).
+  Still open: physical-device restart/termination evidence,
   browser storage (not provided; walks
   are in-memory there) and server-derived identity for expeditions (M2).
 - Carried over from `t3/check-m0-start-m1`, ported onto `dev`'s own shell: Activity lists
@@ -91,6 +92,13 @@ only in explicitly labeled development mode; begin a deliberate foreground activ
   `pixelReload` and `tileLoading`. Not ported because `dev` already covers them or the
   layout differs: cached-tile paint ordering (`dev` uses `requestAnimationFrame`), pixel
   status wording, zoom/status controls (the walk panel is outside the map on `dev`).
+
+- 24 November 2026: browser cases now run for MAP-01..03, LIFE-01, LIFE-03,
+  ACCESS-03 (new: location-use explanation, labeled 44 px walk controls) and
+  STARTUP-01 (saved account opens the map without waiting for a token refresh, behind
+  a static branded screen). MAP-04/05 already ran. Still open for M1: every device
+  scenario (see [the M1 device evidence record](testing/m1-device-evidence.md)),
+  STARTUP-02 (needs notifications), Google sign-in, and AUTH-02's submission half (M2).
 
 ## Milestone 2 — First complete walking-and-discovery alpha
 
