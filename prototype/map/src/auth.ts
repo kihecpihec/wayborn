@@ -12,11 +12,16 @@ const storage =
         setItem: SecureStore.setItemAsync,
         removeItem: SecureStore.deleteItemAsync,
       };
+// Supabase's own default key, named explicitly so the saved session can be read below.
+const storageKey = url
+  ? `sb-${new URL(url).hostname.split(".")[0]}-auth-token`
+  : "";
 export const accounts =
   url && key
     ? createClient(url, key, {
         auth: {
           storage,
+          storageKey,
           persistSession: true,
           detectSessionInUrl: false,
         },
@@ -66,5 +71,28 @@ export async function signOutOnRequest() {
   } catch (error) {
     requestedSignOut = false;
     throw error;
+  }
+}
+
+/**
+ * The account whose session Supabase saved on this device. Supabase only reports a
+ * saved session after refreshing an expired token over the network, so startup uses
+ * this to open that account's map and local walks without waiting. It is never a
+ * typed or submitted ID, and the server still authenticates every request itself.
+ */
+export async function savedAccountId(): Promise<string | null> {
+  if (!accounts) return null;
+  try {
+    const raw =
+      Platform.OS === "web"
+        ? globalThis.localStorage?.getItem(storageKey)
+        : await SecureStore.getItemAsync(storageKey);
+    const saved = raw ? JSON.parse(raw) : null;
+    return typeof saved?.user?.id === "string" &&
+      typeof saved.refresh_token === "string"
+      ? saved.user.id
+      : null;
+  } catch {
+    return null;
   }
 }

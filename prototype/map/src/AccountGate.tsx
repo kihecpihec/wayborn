@@ -16,7 +16,12 @@ import type { Session } from "@supabase/supabase-js";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AccountProvider } from "./AccountContext";
 import { describeAuthError } from "./authErrors";
-import { accounts, resetPassword, takeRequestedSignOut } from "./auth";
+import {
+  accounts,
+  resetPassword,
+  savedAccountId,
+  takeRequestedSignOut,
+} from "./auth";
 
 type Mode = "login" | "register" | "verify" | "forgot" | "reset";
 const titles = {
@@ -38,9 +43,20 @@ export function AccountGate({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(!accounts);
   const [expired, setExpired] = useState(false);
+  // undefined while the saved session is still being read from this device.
+  const [restored, setRestored] = useState<string | null | undefined>(
+    accounts ? undefined : null,
+  );
   const signedIn = useRef(false);
   useEffect(() => {
     if (!accounts) return;
+    let current = true;
+    void savedAccountId().then((id) => {
+      if (!current) return;
+      // The map for a saved account opens at once; a rejected refresh still signs out below.
+      signedIn.current ||= id !== null;
+      setRestored(id);
+    });
     const { data } = accounts.auth.onAuthStateChange((_event, value) => {
       // Losing a session the player did not end means it expired or was revoked.
       // Saved walks stay on the device under their account, so only say so.
@@ -55,17 +71,38 @@ export function AccountGate({ children }: { children: React.ReactNode }) {
       else accounts?.auth.stopAutoRefresh();
     });
     return () => {
+      current = false;
       data.subscription.unsubscribe();
       subscription.remove();
     };
   }, []);
-  if (session)
+  // Same key for the saved and the confirmed session, so the map is not remounted.
+  const accountId = session?.user.id ?? (ready ? null : restored);
+  if (accountId)
     return (
-      <React.Fragment key={session.user.id}>
-        <AccountProvider userId={session.user.id}>{children}</AccountProvider>
+      <React.Fragment key={accountId}>
+        <AccountProvider userId={accountId}>{children}</AccountProvider>
       </React.Fragment>
     );
+  if (!ready && restored === undefined) return <StartupScreen />;
   return <AccountEntry ready={ready} expired={expired} />;
+}
+
+// Static on purpose: no animation to wait for or to reduce, and no network dependency.
+function StartupScreen() {
+  return (
+    <View style={[s.page, s.startup]} testID="startup-screen">
+      <Image
+        source={require("../assets/wayborn-icon.png")}
+        style={{ width: 76, height: 76, borderRadius: 16 }}
+        accessible={false}
+      />
+      <Text style={s.brand}>wayborn</Text>
+      <Text style={s.label} accessibilityLiveRegion="polite">
+        Opening your map…
+      </Text>
+    </View>
+  );
 }
 
 function AccountEntry({ ready, expired }: { ready: boolean; expired: boolean }) {
@@ -305,6 +342,7 @@ function AccountEntry({ ready, expired }: { ready: boolean; expired: boolean }) 
 }
 const s = StyleSheet.create({
   page: { flex: 1, backgroundColor: "#13213a" },
+  startup: { alignItems: "center", justifyContent: "center", gap: 10 },
   scroll: {
     flexGrow: 1,
     justifyContent: "center",

@@ -49,6 +49,25 @@ test('AUTH-02: an expired session returns to sign-in and says so', async ({ page
   await expect(page.getByRole('tab', { name: 'Map', exact: true })).toBeVisible();
 });
 
+test('AUTH-02: reopening with a revoked saved session returns to sign-in and says so', async ({ page }) => {
+  const { email, password } = await register(page);
+  const session = await page.evaluate(() => {
+    const key = Object.keys(localStorage).find((k) => k.endsWith('-auth-token'))!;
+    const saved = JSON.parse(localStorage.getItem(key)!);
+    // The access token ran out while the app was closed, so reopening must refresh it.
+    localStorage.setItem(key, JSON.stringify({ ...saved, expires_at: Math.floor(Date.now() / 1000) - 60 }));
+    return saved;
+  });
+  expect((await admin().auth.admin.signOut(session.access_token, 'global')).error).toBeNull();
+  await page.reload();
+  await expect(page.getByRole('alert')).toContainText('Your session expired');
+  await expect(page.getByRole('tab')).toHaveCount(0);
+  await page.getByLabel('Email address').fill(email);
+  await page.getByLabel('Password', { exact: true }).fill(password);
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await expect(page.getByRole('tab', { name: 'Map', exact: true })).toBeVisible();
+});
+
 test('AUTH-02: pending work survives an expired session and stays with its owner', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'wayborn-auth02-'));
   const { sqlite, db } = openSqlite(join(dir, 'walks.sqlite'));

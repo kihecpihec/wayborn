@@ -1,0 +1,12 @@
+{
+  "changes": [
+    {
+      "feature": "ACCESS",
+      "before": "5fdcc62dd169b5100172ef1f0c543e6160d69733ff8b85b6f9e6aae922b26e1e",
+      "after": "e34b3692449eb1ca4d2d5df37aa85e2ecab0137435d7192ee77aee3db22d314f",
+      "rationale": "ACCESS-01 and ACCESS-02 need a phone and a screen reader. Add a browser-checkable case for the location-use explanation and labeled walk controls so the rule is exercised on every PR.",
+      "impact": "Adds ACCESS-03 (ui): before any location request the map explains foreground-only location use and gives no safe-route promise; start, pause and finish are labeled buttons at least 44 px high. ACCESS-01 and ACCESS-02 are unchanged and still need device evidence; status stays planned.",
+      "review": "Added scenario only; no expectation weakened. Review the explanation wording."
+    }
+  ]
+}

@@ -239,3 +239,42 @@ permission denial and poor-signal/background recovery still need an exact OS/bui
 record. Google OAuth, schema-upgrade coverage and M2 synchronization remain open.
 The PR must receive Hanan's review and green CI for its actual head before merging;
 this publication candidate does not complete M1.
+
+## M1 storage upgrade, map, permission, startup and access checks — 24 November 2026
+
+Branch `t3/m1-store03-startup-access` from `dev` at `c69d794`.
+
+- STORE-03 runs against real SQLite. A frozen copy of the shipped version-1 schema
+  (`prototype/map/acceptance/walkStorageV1.sql`) is filled with a draft and queued
+  walks for two accounts, then opened by the current app. Every row, each account's
+  drafts, samples and queue are unchanged; the draft keeps recording and finishes
+  into its owner's queue; reopening is a no-op; a newer (unknown) version is refused
+  without touching rows or version. Two temporary mutations of the migration (queue
+  cleared on open; version 1 rejected) both made STORE-03 fail. No migration 002 was
+  added: nothing in M1 needs a schema change.
+- Browser checks against the local Supabase stack, written before the app changes:
+  MAP-01 (pan, style switch and recenter keep the walk distance), MAP-02 (blocked tile
+  hosts show "Map tiles unavailable" with Retry, a walk is still recorded and listed,
+  Retry with tiles back clears the message), MAP-03 (attribution in both styles) and
+  LIFE-03 (two idle minutes on a fake clock accrue nothing) already passed on the
+  unchanged app. LIFE-01, ACCESS-03 and STARTUP-01 failed first.
+- LIFE-01 fix: a denied permission now returns the walk to idle with a message that
+  browsing continues, instead of an "interrupted" walk that never started.
+- ACCESS-03 (new scenario, change record 0011): the idle map explains foreground-only
+  location use and gives no safe-route promise before any location request; walk
+  buttons are at least 44 px high.
+- STARTUP-01 fix: Supabase reports a saved session only after refreshing an expired
+  token over the network, which kept a returning player on the sign-in form for as
+  long as the network took. The app now opens the map for the account in Supabase's
+  saved session at once and shows a static branded screen while that is read. If the
+  refresh is rejected, the player returns to sign-in with the expiry notice (new
+  AUTH-02 browser regression; removing the fix made it fail). The ID comes only from
+  the auth library's saved session; the server still authenticates every request.
+- Results: typecheck, lint, web export; unit 45 passed; acceptance 47 passed, 93 TODO,
+  0 failed; Playwright 18 passed. Documentation, specification and baseline checks passed.
+
+Not tested: none of this on a phone. LIFE-01 and ACCESS-01/02 are device scenarios,
+and STARTUP-01's 3 s budget still needs a cold start on the reference iPhone. No
+iPhone results for development build `8871de65` have been reported yet; the form is
+in [the M1 device evidence record](testing/m1-device-evidence.md). STARTUP-02 needs
+notifications (M6) and stays a TODO. All M1 features remain planned.

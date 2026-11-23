@@ -3,6 +3,7 @@ import { exerciseGeographyBoundary, exerciseGeographyParity } from "./exerciseGe
 import { exerciseH3Trial, exerciseVersionedGeography } from "./exerciseH3Trial";
 import { exerciseAccountIsolation, exerciseDraftRecovery, exerciseInterruptedFinish } from "./exerciseAccountIsolation";
 import { exerciseWalkStorage } from "./exerciseWalkStorage";
+import { exerciseSchemaUpgrade } from "./exerciseSchemaUpgrade";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
@@ -193,6 +194,7 @@ executable["LIFE-05"] = () => {
 
 executable["STORE-01"] = exerciseDraftRecovery;
 executable["STORE-02"] = exerciseInterruptedFinish;
+executable["STORE-03"] = exerciseSchemaUpgrade;
 executable["STORE-04"] = exerciseWalkStorage;
 executable["ISOLATION-01"] = exerciseAccountIsolation;
 executable["ISOLATION-02"] = exerciseAccountIsolation;
@@ -202,7 +204,10 @@ executable["GEO-03"] = exerciseH3Trial;
 executable["GEO-04"] = exerciseVersionedGeography;
 executable["GEO-05"] = exerciseSegmentCoverage;
 
-for (const id of ["AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "NAV-03", "NAV-04", "NAV-05"]) {
+for (const id of [
+  "AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "NAV-03", "NAV-04", "NAV-05",
+  "MAP-01", "MAP-02", "MAP-03", "LIFE-01", "LIFE-03", "ACCESS-03", "STARTUP-01",
+]) {
   executable[id] = async () => {
     try {
       await promisify(execFile)(process.execPath, ["node_modules/@playwright/test/cli.js", "test", "--grep", id], {

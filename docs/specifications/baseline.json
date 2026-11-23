@@ -186,11 +186,12 @@
       ]
     },
     "ACCESS": {
-      "digest": "5fdcc62dd169b5100172ef1f0c543e6160d69733ff8b85b6f9e6aae922b26e1e",
+      "digest": "e34b3692449eb1ca4d2d5df37aa85e2ecab0137435d7192ee77aee3db22d314f",
       "status": "planned",
       "scenarios": [
         "ACCESS-01",
-        "ACCESS-02"
+        "ACCESS-02",
+        "ACCESS-03"
       ]
     },
     "RELEASE": {

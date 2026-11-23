@@ -462,6 +462,7 @@ Acceptance scenarios:
 
 - **ACCESS-01** (device): Given A new player; when complete onboarding with a screen reader; then understand location use and safety; reach start/pause/finish controls.
 - **ACCESS-02** (device): Given Large text or a narrow screen; when open all core screens; then essential text and actions remain readable and reachable.
+- **ACCESS-03** (ui): Given A signed-in player on the map who has not started a walk; when read the map screen, then start, pause and finish a walk using only labeled controls; then the map explains before any location request that location is used only during a walk the player starts, with the app open, and never while browsing; it asks the player to stay aware of their surroundings without promising safe routes; start, pause and finish are labeled buttons at least 44 px high.
 
 ## RELEASE: Operational release readiness
 
