@@ -67,20 +67,30 @@ only in explicitly labeled development mode; begin a deliberate foreground activ
 
 **Open M1 work after the account PR (#15), 22 November 2026:**
 
-- Accounts: AUTH-02 (invalid credentials, expired session, pending work kept); Google
+- Accounts: AUTH-02 is covered for email/password (wrong password message; expired or revoked
+  session returns to sign-in with a notice; saved walks stay with their owner, tested against
+  the local backend and real SQLite). The submission half waits for M2 sync, and AUTH stays
+  planned until device evidence exists. Still open: Google
   sign-in via a hosted development Supabase project and `wayborn-field-demo://auth/callback`;
-  hosted development backend; keyboard layout, secure-store development build and sign-out
-  on the iPhone; confirm the CI account backend runs remotely.
-- Storage and identity: account-partitioned local storage wired to the signed-in user
-  (STORE, ISOLATION), and server-derived identity for expeditions.
-- Carried over from the earlier shell branch `t3/check-m0-start-m1` (commits `55fadde`,
-  `11f932c`), not merged because `dev` has its own shell. Check each against `dev` first:
-  the Activity list of several completed walks in one session (`dev` shows only the current
-  walk); browser tests NAV-03 (all five tabs reachable with no GPS request) and NAV-04
-  (full-height map, finished walk appears in Activity); map-document fixes (stale tile job
-  cleanup race, clearer pixel-map status text, pan only when the position moves, zoom and
-  status controls clear of the walk panel); tests `mapUpdates`, `pixelReload` and
-  `tileLoading`; NAV-03 wording "signed-in player launches the development shell".
+  keyboard layout, secure-store development build and sign-out
+  on the iPhone; verify CI on the new PR head.
+- Hosted auth infrastructure: private-profile migration `202611220001` is deployed;
+  real two-account profile/RLS checks pass and both SMTP code flows were verified
+  through a real temporary mailbox and hosted web app. This is not device evidence.
+- Storage and identity: the signed-in user now owns account-partitioned SQLite storage on
+  native builds (recorder, draft recovery/discard, pending list on Activity; acceptance
+  STORE-01, STORE-02 write-failure recovery, STORE-04, ISOLATION-01/02 run against real SQLite).
+  Still open: physical-device restart/termination evidence, STORE-03 (schema upgrade),
+  browser storage (not provided; walks
+  are in-memory there) and server-derived identity for expeditions (M2).
+- Carried over from `t3/check-m0-start-m1`, ported onto `dev`'s own shell: Activity lists
+  every walk completed in the session; browser tests NAV-04 (five tabs, no GPS request)
+  and NAV-05 (several finished walks in Activity), added as new scenarios so NAV-03's
+  paused-walk expectation is kept; map-document fixes for the tile-job cleanup race and
+  pan-only-when-moved; tile-source and cache-open timeouts; unit tests `mapUpdates`,
+  `pixelReload` and `tileLoading`. Not ported because `dev` already covers them or the
+  layout differs: cached-tile paint ordering (`dev` uses `requestAnimationFrame`), pixel
+  status wording, zoom/status controls (the walk panel is outside the map on `dev`).
 
 ## Milestone 2 — First complete walking-and-discovery alpha
 

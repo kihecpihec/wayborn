@@ -77,6 +77,8 @@ Acceptance scenarios:
 - **NAV-01** (ui): Given An active or paused expedition; when open finish confirmation and cancel; then restore the exact preceding lifecycle state and totals.
 - **NAV-02** (ui): Given A persisted pending summary; when return to map then reopen the summary; then the same expedition remains queued and visible.
 - **NAV-03** (ui): Given Map Home is open with a walk paused; when visit Activity and return to Map; then show the current session in Activity and retain the paused walk and totals on Map.
+- **NAV-04** (ui): Given A signed-in player launches the development shell; when browse Map, Activity, Guild, Goals and Profile then return to Map; then all five destinations are reachable without location permission; unavailable services are explained and no walk starts.
+- **NAV-05** (ui): Given A signed-in player on the full-height Map; when start, pause and finish a walk, open Activity, then record and finish a second walk; then Activity lists both completed walks from this session in order, and the Map keeps its Start walk control.
 
 ## GEO: Versioned geographic rules
 

@@ -1,5 +1,5 @@
 import { useFonts } from "expo-font";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   AppState,
   Image,
@@ -14,7 +14,9 @@ import {
 } from "react-native";
 import type { Session } from "@supabase/supabase-js";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { accounts, resetPassword } from "./auth";
+import { AccountProvider } from "./AccountContext";
+import { describeAuthError } from "./authErrors";
+import { accounts, resetPassword, takeRequestedSignOut } from "./auth";
 
 type Mode = "login" | "register" | "verify" | "forgot" | "reset";
 const titles = {
@@ -35,9 +37,16 @@ const actions = {
 export function AccountGate({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(!accounts);
+  const [expired, setExpired] = useState(false);
+  const signedIn = useRef(false);
   useEffect(() => {
     if (!accounts) return;
     const { data } = accounts.auth.onAuthStateChange((_event, value) => {
+      // Losing a session the player did not end means it expired or was revoked.
+      // Saved walks stay on the device under their account, so only say so.
+      if (!value && signedIn.current) setExpired(!takeRequestedSignOut());
+      if (value) setExpired(false);
+      signedIn.current = !!value;
       setSession(value);
       setReady(true);
     });
@@ -51,11 +60,15 @@ export function AccountGate({ children }: { children: React.ReactNode }) {
     };
   }, []);
   if (session)
-    return <React.Fragment key={session.user.id}>{children}</React.Fragment>;
-  return <AccountEntry ready={ready} />;
+    return (
+      <React.Fragment key={session.user.id}>
+        <AccountProvider userId={session.user.id}>{children}</AccountProvider>
+      </React.Fragment>
+    );
+  return <AccountEntry ready={ready} expired={expired} />;
 }
 
-function AccountEntry({ ready }: { ready: boolean }) {
+function AccountEntry({ ready, expired }: { ready: boolean; expired: boolean }) {
   const [fontsReady] = useFonts({
     PixelifySans: require("../assets/fonts/PixelifySans.ttf"),
   });
@@ -63,7 +76,9 @@ function AccountEntry({ ready }: { ready: boolean }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(
+    expired ? "Your session expired. Sign in again. Walks saved on this device are kept." : "",
+  );
   const [busy, setBusy] = useState(false);
   function change(next: Mode) {
     setMode(next);
@@ -102,9 +117,7 @@ function AccountEntry({ ready }: { ready: boolean }) {
         if (!result.data.session) change("verify");
       }
     } catch (e) {
-      setMessage(
-        e instanceof Error ? e.message : "Unable to connect. Try again.",
-      );
+      setMessage(describeAuthError(e));
     } finally {
       setBusy(false);
     }

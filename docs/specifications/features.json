@@ -139,6 +139,20 @@
           "when": "visit Activity and return to Map",
           "then": "show the current session in Activity and retain the paused walk and totals on Map",
           "level": "ui"
+        },
+        {
+          "id": "NAV-04",
+          "given": "A signed-in player launches the development shell",
+          "when": "browse Map, Activity, Guild, Goals and Profile then return to Map",
+          "then": "all five destinations are reachable without location permission; unavailable services are explained and no walk starts",
+          "level": "ui"
+        },
+        {
+          "id": "NAV-05",
+          "given": "A signed-in player on the full-height Map",
+          "when": "start, pause and finish a walk, open Activity, then record and finish a second walk",
+          "then": "Activity lists both completed walks from this session in order, and the Map keeps its Start walk control",
+          "level": "ui"
         }
       ]
     },

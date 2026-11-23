@@ -13,6 +13,9 @@
 11. [Delivery and test workflow](testing/README.md)
 12. [Feature specifications and test baseline](specifications/README.md)
 
+Operational guides: [Authentication email setup (Neoserv, Resend, Supabase)](auth-email-setup.md).
+Current handoff: [M1 pre-merge checklist](pre-merge-checklist.md).
+
 The technical app is in `prototype/map/` at the repository root. Mockups illustrate
 planned behavior; implementation status is explicit in the specification catalog.
 

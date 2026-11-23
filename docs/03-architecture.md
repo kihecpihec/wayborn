@@ -3,11 +3,13 @@
 ## Layers
 
 - Client: React Native, Expo, TypeScript; current demo uses Expo 58.
-- Navigation: planned Expo Router; currently a single app screen.
+- Navigation: Expo Router with Map, Activity, Guild, Goals and Profile tabs; accounts gate entry.
 - Location: foreground Expo Location in the current demo; full v1 requires separately validated native screen-lock recording (M3).
 - Map: existing Leaflet/WebView or iframe and pixel renderer, OpenFreeMap/OSM data.
-- Local persistence: planned SQLite with account-partitioned drafts and durable outbox.
-- Backend: planned Supabase Auth, PostgreSQL/RLS, and authoritative server validation.
+- Local persistence: native SQLite with account-partitioned drafts and local completion outbox;
+  browser recordings are in-memory only. Persisted H3 gameplay is planned for M2.
+- Backend: Supabase Auth and private PostgreSQL profiles protected by RLS. Authoritative
+  expedition validation and reward transactions remain planned.
 - Geography: planned H3; resolution remains a field-test decision. IDs are strings.
 
 Device GPS → client → local store/outbox → authenticated submission → server

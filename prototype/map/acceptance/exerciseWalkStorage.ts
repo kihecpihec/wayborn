@@ -2,20 +2,8 @@ import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { DatabaseSync } from "node:sqlite";
-import { migrateWalkStorage, walkStorage, type WalkDatabase } from "../src/walkStorage";
-
-function open(path: string) {
-  const sqlite = new DatabaseSync(path);
-  const db: WalkDatabase = {
-    async exec(sql) { sqlite.exec(sql); },
-    async run(sql, ...values) { return { changes: Number(sqlite.prepare(sql).run(...values).changes) }; },
-    async all<T>(sql: string, ...values: (string | number)[]) {
-      return sqlite.prepare(sql).all(...values).map((row) => ({ ...row })) as T[];
-    },
-  };
-  return { sqlite, db };
-}
+import { migrateWalkStorage, walkStorage } from "../src/walkStorage";
+import { openSqlite as open } from "./sqliteFixture";
 
 export async function exerciseWalkStorage() {
   const dir = mkdtempSync(join(tmpdir(), "wayborn-store-"));

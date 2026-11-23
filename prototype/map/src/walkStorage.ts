@@ -59,9 +59,16 @@ export async function migrateWalkStorage(db: WalkDatabase) {
   }
 }
 
+const writeQueues = new WeakMap<WalkDatabase, Promise<unknown>>();
+function write<T>(db: WalkDatabase, operation: () => Promise<T>) {
+  const result = (writeQueues.get(db) ?? Promise.resolve()).then(operation);
+  writeQueues.set(db, result.catch(() => undefined));
+  return result;
+}
+
 export function walkStorage(db: WalkDatabase, accountId: string) {
   if (!accountId.trim()) throw new Error("An account is required for walk storage");
-  return {
+  const store = {
     async start(id: string, startedAt: number) {
       await db.run("INSERT INTO walk VALUES (?, ?, ?)", accountId, id, startedAt);
     },
@@ -101,11 +108,47 @@ export function walkStorage(db: WalkDatabase, accountId: string) {
       `, finishedAt, accountId, id, finishedAt);
       return result.changes === 1;
     },
+    // A draft that was never finished can be queued as recorded, or removed entirely.
+    // Neither touches queued work, and neither can reach another account's rows.
+    async recover(id: string) {
+      const last = await db.all<{ at: number | null }>(
+        "SELECT MAX(recorded_at) AS at FROM walk_sample WHERE account_id = ? AND walk_id = ?",
+        accountId, id);
+      const at = last[0]?.at;
+      return at == null ? false : this.finish(id, at);
+    },
+    async discard(id: string) {
+      await db.exec("BEGIN IMMEDIATE");
+      try {
+        const queued = await db.all(
+          "SELECT 1 FROM walk_outbox WHERE account_id = ? AND walk_id = ?", accountId, id);
+        if (queued.length) {
+          await db.exec("COMMIT");
+          return false;
+        }
+        await db.run("DELETE FROM walk_sample WHERE account_id = ? AND walk_id = ?", accountId, id);
+        const result = await db.run("DELETE FROM walk WHERE account_id = ? AND id = ?", accountId, id);
+        await db.exec("COMMIT");
+        return result.changes === 1;
+      } catch (error) {
+        await db.exec("ROLLBACK");
+        throw error;
+      }
+    },
     pending() {
       return db.all<{ id: string; finishedAt: number }>(`
         SELECT walk_id AS id, finished_at AS finishedAt FROM walk_outbox
         WHERE account_id = ? ORDER BY finished_at, walk_id
       `, accountId);
     },
+  };
+  // Every account shares this connection. Keep complete write transactions in
+  // order so a discard cannot commit or roll back another recorder's writes.
+  return {
+    ...store,
+    start: (id: string, at: number) => write(db, () => store.start(id, at)),
+    append: (id: string, sample: WalkSample) => write(db, () => store.append(id, sample)),
+    finish: (id: string, at: number) => write(db, () => store.finish(id, at)),
+    discard: (id: string) => write(db, () => store.discard(id)),
   };
 }

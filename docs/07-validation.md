@@ -158,3 +158,84 @@ two minutes, unlock, stop, and record the resulting counts and fix time. Backgro
 delivery count measures when the task callback ran. Compare it with the reported
 lock interval to assess screen-lock delivery. A completed iOS JS export verifies
 bundling; installation, signing and actual execution still require the device.
+
+## M1 storage/account pre-merge checks — 23 November 2026
+
+Worktree branch `t3/ddf88be8`, based on `6e2e53e`; uncommitted integration changes.
+The fetched `origin/dev` matched this base. PR #16 was merged with successful
+documentation and map-prototype checks. These are historical CI results, not CI
+evidence for the current uncommitted files.
+
+- `npm test`: 39 unit tests passed; acceptance reported 38 passed, 101 TODO and
+  zero failures. AUTH-01/02/03/04 and NAV-04/05 run browser flows against the real
+  local Supabase stack; storage cases use real on-disk SQLite.
+- `npm run test:ui`: nine tests passed in a separate sequential run. The first
+  attempt conflicted with acceptance Playwright on port 8093; rerunning after
+  acceptance finished resolved the conflict.
+- `npm run lint` and `npm run build:web`: passed after the recorder fix.
+- `npm run typecheck`: passed after the recorder fix. A concurrent typecheck/build
+  attempt hit disappearing generated `dist` files; the successful final typecheck
+  ran sequentially after export.
+- `python3 scripts/check_docs.py`, `python3 scripts/specifications.py`,
+  `python3 scripts/check_baseline.py --base-ref origin/dev`,
+  `python3 scripts/test_baseline.py` (six tests), and `git diff --check`: passed.
+  The base comparison flags NAV's added cases for human contract review.
+- STORE-02 red/green: a real SQLite trigger aborting sample writes first produced
+  an incorrect pending expedition; the new assertion failed. After the recorder
+  fix, the failed walk retains its durable draft prefix, another walk can finish,
+  and reopen/explicit recovery preserves ownership and recorded samples.
+- Hosted checks: custom SMTP settings persisted; email signup and confirmation
+  are enabled, Google is disabled. The profiles endpoint returned HTTP 404 with
+  `PGRST205`, so the hosted profile migration is not verified/deployed there.
+  Resend still showed no sent email; real inbox delivery remains unverified.
+
+No new physical-device, hosted RLS, complete hosted signup/recovery, or native
+termination evidence was collected. No commit, push, new PR or merge was performed.
+See the [remaining code and release gates](pre-merge-checklist.md). Full features
+remain planned; passing cases do not complete M1.
+
+## M1 publication candidate — 23 November 2026
+
+This supersedes the earlier readiness findings for this worktree; historical test
+counts above describe earlier snapshots. The final candidate retains planned
+feature status and the same SQLite schema version 1.
+
+- Final unit suite: 45 passed, including six real-SQLite persistence integration
+  regressions. Acceptance: 39 passed, 100 TODO, zero failures. NAV-03 now executes
+  paused-walk navigation in addition to NAV-04/05. Standalone UI: 10 passed.
+- Typecheck, lint, web export and iOS/Android JavaScript/Hermes exports passed.
+  Exports do not prove a signed app can install or run on a physical device.
+- Documentation/specification/baseline checks and six baseline-policy tests passed;
+  NAV's added cases still require human contract review.
+- Recorder red/green evidence: failed sample insertion previously allowed incorrect
+  outbox publication. Completion now waits for writes, preserves failed operations
+  for explicit retry, and never acknowledges a failed save as a completed walk.
+- A concurrent-discard regression failed before serializing connection writes:
+  another account's recording entered the open transaction. The fixed test proves
+  it starts only after discard commits. Initialization/read failures, delayed finish,
+  rejected GPS jumps, account isolation and list-refresh retry also have real tests.
+- The first NAV-03 test attempt failed because the Map and retained Activity screen
+  both contain the same totals in the DOM. Scoping the final assertion to MapHome
+  preserves the exact expected totals and verifies the correct destination.
+- Read SDK 58 reference/SQLite/Crypto documentation before native API changes.
+  Added only `expo-crypto` ~58.0.8 using `expo install` for native-safe UUIDs; no
+  renderer rewrite or incidental dependency upgrade.
+- Hosted migration `202611220001_private_profiles.sql` was applied through the
+  linked CLI after dry-run, and hosted migration history matches local history.
+  Hosted schema lint found no errors.
+- Hosted two-account checks passed: trigger-created profiles, real password sign-in,
+  owner-only SELECT, cross-account invisibility, anonymous denial and client-write
+  denial. Temporary users/profiles were removed and cleanup verified. The service
+  role's lack of a profile SELECT grant was preserved; cleanup used linked SQL.
+- Real SMTP/browser check: a temporary Neoserv mailbox received signup and recovery
+  messages from Wayborn via Resend. Both messages were marked delivered. The app
+  verified the signup code, retrieved only its own hosted profile, rejected a wrong
+  recovery code, changed the password, rejected the old password and accepted the
+  new one. The test user and temporary mailbox were removed afterward.
+
+No physical-device verification or code-expiry timing test is claimed. iPhone
+keyboard layout, secure session storage, offline finish, restart/account switching,
+permission denial and poor-signal/background recovery still need an exact OS/build
+record. Google OAuth, schema-upgrade coverage and M2 synchronization remain open.
+The PR must receive Hanan's review and green CI for its actual head before merging;
+this publication candidate does not complete M1.

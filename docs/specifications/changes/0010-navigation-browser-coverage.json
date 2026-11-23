@@ -1,0 +1,12 @@
+{
+  "changes": [
+    {
+      "feature": "NAV",
+      "before": "352c21133715b7f2573eeb4ea78d2b2a6d18e64e534d195ff94a590db5caa81a",
+      "after": "61682a019a26ace3edb4921d488ae5c860a2177d80cd1aaf6217f9b17ca69406",
+      "rationale": "Carry over the browser navigation and multi-walk Activity coverage dropped when the shell branch was not merged.",
+      "impact": "Adds NAV-04 (five destinations reachable without location) and NAV-05 (several completed walks listed in Activity). NAV-01 to NAV-03 are unchanged; the shell branch's reworded NAV-03 is kept as NAV-04 so the paused-walk expectation is retained.",
+      "review": "Added scenarios only; no expectation weakened and status stays planned. Peer review of the wording required."
+    }
+  ]
+}

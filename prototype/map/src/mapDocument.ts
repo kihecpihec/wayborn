@@ -120,7 +120,7 @@ function pump(){
 }
 async function run(j){
   j.running=true;inflight++;
-  try{const r=await wbBackend.draw({z:j.z,x:j.x,y:j.y,pass:j.pass});jobs.delete(j.jk);done(j,r)}
+  try{const r=await wbBackend.draw({z:j.z,x:j.x,y:j.y,pass:j.pass});done(j,r);if(jobs.get(j.jk)===j)jobs.delete(j.jk)}
   catch(err){
     j.running=false;j.tries++;perf.fails++;stats.retries++;
     j.at=Date.now()+Math.min(10000,400*Math.pow(2,j.tries));setTimeout(pump,j.at-Date.now()+20);
@@ -267,8 +267,10 @@ const route=L.polyline([],{color:'#248a65',weight:5,dashArray:'2 10',lineCap:'sq
 let following=true,last=null,nonce=-1;map.on('dragstart',()=>{following=false});
 function update(data){if(!data||data.type!=='wayborn-location')return;
 setPixel(data.pixel);
-if(data.recenter!==nonce){following=true;if(nonce!==-1&&!data.point)map.panTo(preview,{animate:false});nonce=data.recenter}
-if(data.point){last=[data.point.latitude,data.point.longitude];if(!map.hasLayer(marker)){halo.addTo(map);marker.addTo(map)}marker.setLatLng(last);halo.setLatLng(last);if(following)map.panTo(last,{animate:true})}else{map.removeLayer(marker);map.removeLayer(halo)}
+const recentered=data.recenter!==nonce;
+const moved=data.point&&(!last||last[0]!==data.point.latitude||last[1]!==data.point.longitude);
+if(recentered){following=true;if(nonce!==-1&&!data.point)map.panTo(preview,{animate:false});nonce=data.recenter}
+if(data.point){last=[data.point.latitude,data.point.longitude];if(!map.hasLayer(marker)){halo.addTo(map);marker.addTo(map)}marker.setLatLng(last);halo.setLatLng(last);if(following&&(moved||recentered))map.panTo(last,{animate:true})}else{map.removeLayer(marker);map.removeLayer(halo)}
 pathPts=data.path.map(p=>[p.latitude,p.longitude]);route.setLatLngs(pathPts);if(pixelOn)soonPlan();}
 applyUpdate=update;if(latest)update(latest);
 window.addEventListener('resize',()=>map.invalidateSize());

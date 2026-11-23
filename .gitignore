@@ -10,3 +10,7 @@ dist-native/
 # Python validation scripts
 __pycache__/
 *.pyc
+
+# Browser test output (may contain test-session data)
+prototype/map/test-results/
+prototype/map/playwright-report/

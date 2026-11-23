@@ -23,12 +23,14 @@
       ]
     },
     "NAV": {
-      "digest": "352c21133715b7f2573eeb4ea78d2b2a6d18e64e534d195ff94a590db5caa81a",
+      "digest": "61682a019a26ace3edb4921d488ae5c860a2177d80cd1aaf6217f9b17ca69406",
       "status": "planned",
       "scenarios": [
         "NAV-01",
         "NAV-02",
-        "NAV-03"
+        "NAV-03",
+        "NAV-04",
+        "NAV-05"
       ]
     },
     "GEO": {

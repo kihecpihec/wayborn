@@ -42,7 +42,7 @@ test('AUTH-03: recover account using emailed code', async ({ page }) => {
   await page.getByRole('button',{name:'Reset password'}).click();
   await page.getByLabel('Password',{exact:true}).fill(password);
   await page.getByRole('button',{name:'Sign in',exact:true}).click();
-  await expect(page.getByRole('alert')).toContainText(/invalid/i);
+  await expect(page.getByRole('alert')).toContainText(/incorrect/i);
   await page.getByLabel('Password',{exact:true}).fill(password+'new');
   await page.getByRole('button',{name:'Sign in',exact:true}).click();
   await expect(page.getByRole('tab',{name:'Map',exact:true})).toBeVisible();

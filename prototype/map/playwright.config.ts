@@ -8,6 +8,8 @@ const local = JSON.parse(
 );
 process.env.EXPO_PUBLIC_SUPABASE_URL = local.API_URL;
 process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY = local.PUBLISHABLE_KEY;
+// Test-only: lets specs revoke sessions on the local backend. Not an EXPO_PUBLIC_ name, so never bundled.
+process.env.SUPABASE_SERVICE_ROLE_KEY = local.SERVICE_ROLE_KEY;
 export default defineConfig({
   testDir: "./ui",
   workers: 1,

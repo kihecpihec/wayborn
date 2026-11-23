@@ -8,18 +8,40 @@ export default function MapHome() {
   const [pixel, setPixel] = useState(true);
   const [recenter, setRecenter] = useState(0);
 
-  const { session: { phase, track }, notice, dispatch, start } = useWalkSession();
+  const {
+    session: { phase, track },
+    notice,
+    dispatch,
+    start,
+    finish,
+    saving,
+    canStart,
+    saveError,
+    walks,
+  } = useWalkSession();
   const [confirmFinish, setConfirmFinish] = useState(false);
   const hasWalk = track.position !== null;
   const canFinish = hasWalk && phase !== "finished";
-  const status = phase === "waiting" ? "Waiting for a valid GPS fix…"
-    : phase === "active" ? "Recording walk"
-    : phase === "paused" ? "Walk paused"
-    : phase === "interrupted" ? notice || "GPS signal lost. Resume when ready."
-    : phase === "finished" ? "Walk finished" : "Ljubljana map preview";
+  const status = saving
+    ? "Saving walk…"
+    : phase === "waiting"
+      ? "Waiting for a valid GPS fix…"
+      : phase === "active"
+        ? "Recording walk"
+        : phase === "paused"
+          ? "Walk paused"
+          : phase === "interrupted"
+            ? notice || "GPS signal lost. Resume when ready."
+            : phase === "finished"
+              ? "Walk finished"
+              : "Ljubljana map preview";
 
   return (
-    <SafeAreaView style={styles.home} edges={["top", "left", "right"]}>
+    <SafeAreaView
+      testID="map-home"
+      style={styles.home}
+      edges={["top", "left", "right"]}
+    >
       <View style={styles.header}>
         <Image
           source={require("../assets/wayborn-icon.png")}
@@ -30,11 +52,18 @@ export default function MapHome() {
           <Text accessibilityRole="header" style={styles.title}>
             Wayborn
           </Text>
-          <Text style={styles.preview} accessibilityLiveRegion="polite">{status}</Text>
+          <Text style={styles.preview} accessibilityLiveRegion="polite">
+            {status}
+          </Text>
         </View>
       </View>
-      <View style={styles.map}>
-        <MapView point={track.position} path={track.path} recenter={recenter} pixel={pixel} />
+      <View testID="map-screen" style={styles.map}>
+        <MapView
+          point={track.position}
+          path={track.path}
+          recenter={recenter}
+          pixel={pixel}
+        />
       </View>
       <View style={styles.controls}>
         <Pressable
@@ -44,14 +73,18 @@ export default function MapHome() {
           onPress={() => setPixel((value) => !value)}
           style={[styles.button, pixel && styles.selected]}
         >
-          <Text style={styles.label}>{pixel ? "Pixel map" : "Standard map"}</Text>
+          <Text style={styles.label}>
+            {pixel ? "Pixel map" : "Standard map"}
+          </Text>
         </Pressable>
         <Pressable
           accessibilityRole="button"
           onPress={() => setRecenter((value) => value + 1)}
           style={styles.button}
         >
-          <Text style={styles.label}>{hasWalk ? "Recenter on walk" : "Recenter preview"}</Text>
+          <Text style={styles.label}>
+            {hasWalk ? "Recenter on walk" : "Recenter preview"}
+          </Text>
         </Pressable>
       </View>
       <View style={styles.walk}>
@@ -60,10 +93,30 @@ export default function MapHome() {
             {Math.round(track.meters)} m · {Math.floor(track.elapsed)} s active
           </Text>
         )}
-        <Text style={styles.preview}>Walks are kept for this session only.</Text>
+        <Text style={styles.preview}>
+          {walks.status === "ready"
+            ? "Walks are saved on this device. Sync is not available yet."
+            : walks.status === "loading"
+              ? "Opening saved walks…"
+              : walks.status === "failed"
+                ? "Storage is unavailable. Retry before starting a walk."
+                : "Walks are kept for this browser session only."}
+        </Text>
+        {saveError !== "" && <Text accessibilityRole="alert">{saveError}</Text>}
+        {walks.status === "failed" && (
+          <Pressable
+            accessibilityRole="button"
+            style={styles.button}
+            onPress={() => void walks.retry()}
+          >
+            <Text style={styles.label}>Retry storage</Text>
+          </Pressable>
+        )}
         <View style={styles.actions}>
           <Pressable
             accessibilityRole="button"
+            disabled={!canStart}
+            accessibilityState={{ disabled: !canStart }}
             style={[styles.button, styles.selected]}
             onPress={() => {
               if (phase === "waiting") dispatch({ type: "cancel" });
@@ -72,24 +125,46 @@ export default function MapHome() {
             }}
           >
             <Text style={styles.label}>
-              {phase === "waiting" ? "Cancel GPS search" : phase === "active" ? "Pause walk"
-                : canFinish ? "Resume walk" : "Start walk"}
+              {phase === "waiting"
+                ? "Cancel GPS search"
+                : phase === "active"
+                  ? "Pause walk"
+                  : canFinish
+                    ? "Resume walk"
+                    : "Start walk"}
             </Text>
           </Pressable>
           {canFinish && (
             <Pressable
               accessibilityRole="button"
+              disabled={saving}
+              accessibilityState={{ disabled: saving }}
               style={styles.button}
               onPress={() => {
-                if (confirmFinish) dispatch({ type: "finish" });
-                setConfirmFinish(!confirmFinish);
+                if (confirmFinish || saveError) {
+                  void finish().then((saved) => {
+                    if (saved) setConfirmFinish(false);
+                  });
+                } else setConfirmFinish(true);
               }}
             >
-              <Text style={styles.label}>{confirmFinish ? "Confirm finish" : "Finish walk"}</Text>
+              <Text style={styles.label}>
+                {saving
+                  ? "Saving walk…"
+                  : saveError
+                    ? "Retry saving walk"
+                    : confirmFinish
+                      ? "Confirm finish"
+                      : "Finish walk"}
+              </Text>
             </Pressable>
           )}
           {canFinish && confirmFinish && (
-            <Pressable accessibilityRole="button" style={styles.button} onPress={() => setConfirmFinish(false)}>
+            <Pressable
+              accessibilityRole="button"
+              style={styles.button}
+              onPress={() => setConfirmFinish(false)}
+            >
               <Text style={styles.label}>Keep walk</Text>
             </Pressable>
           )}

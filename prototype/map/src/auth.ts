@@ -50,3 +50,21 @@ export async function resetPassword(
     await recovery.auth.signOut({ scope: "local" });
   }
 }
+
+// A sign-out the player asked for. Any other end of the session is an expiry or revocation.
+let requestedSignOut = false;
+export function takeRequestedSignOut() {
+  const requested = requestedSignOut;
+  requestedSignOut = false;
+  return requested;
+}
+export async function signOutOnRequest() {
+  requestedSignOut = true;
+  try {
+    const result = await accounts?.auth.signOut({ scope: "local" });
+    if (result?.error) throw result.error;
+  } catch (error) {
+    requestedSignOut = false;
+    throw error;
+  }
+}

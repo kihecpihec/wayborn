@@ -1,5 +1,13 @@
 {
   "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://hltnlqwlfswepktnkcvp.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_87On8atz12cu3RnixbLAFg_uA5YK7Jn"
+      }
+    },
     "location-test": {
       "developmentClient": true,
       "distribution": "internal",
