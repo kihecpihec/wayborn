@@ -204,9 +204,15 @@ executable["GEO-05"] = exerciseSegmentCoverage;
 
 for (const id of ["AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "NAV-03", "NAV-04", "NAV-05"]) {
   executable[id] = async () => {
-    await promisify(execFile)(process.execPath, ["node_modules/@playwright/test/cli.js", "test", "--grep", id], {
-      cwd: new URL("..", import.meta.url), timeout: 180000,
-    });
+    try {
+      await promisify(execFile)(process.execPath, ["node_modules/@playwright/test/cli.js", "test", "--grep", id], {
+        cwd: new URL("..", import.meta.url), timeout: 180000,
+      });
+    } catch (error) {
+      // Surface Playwright's own report so a CI failure says which assertion failed.
+      const { stdout = "" } = error as { stdout?: string };
+      throw new Error(`${id} browser test failed:\n${stdout.slice(-4000)}`, { cause: error });
+    }
   };
 }
 

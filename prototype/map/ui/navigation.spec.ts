@@ -72,7 +72,9 @@ test('NAV-03: Activity retains the paused walk and totals when returning to Map'
   await page.getByRole('button', { name: 'Start walk', exact: true }).click();
   await expect(page.getByText(/^1\d m · /).first()).toBeVisible();
   await page.getByRole('button', { name: 'Pause walk', exact: true }).click();
-  const totals = await page.getByText(/^1\d m · /).first().innerText();
+  // Read the totals only once the pause has rendered; before that a timer tick can still land.
+  await expect(page.getByRole('button', { name: 'Resume walk', exact: true })).toBeVisible();
+  const totals = await page.getByTestId('map-home').getByText(/^1\d m · /).innerText();
   await page.getByRole('tab', { name: 'Activity', exact: true }).click();
   await expect(page.getByText('Walk paused', { exact: true })).toBeVisible();
   await expect(page.getByText(totals)).toBeVisible();
