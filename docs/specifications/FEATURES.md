@@ -6,7 +6,7 @@ Implemented means the listed acceptance scenarios execute; it does not imply adj
 
 ## MAP: Map presentation
 
-Owner: Hanan. Milestone: M1. Status: **planned**.
+Owner: Hanan. Milestone: M1. Status: **implemented**.
 
 Goal: Show real geography in a readable pixel-art world.
 
@@ -152,7 +152,7 @@ Acceptance scenarios:
 
 ## LIFE: Foreground expedition lifecycle
 
-Owner: Hanan. Milestone: M1. Status: **planned**.
+Owner: Hanan. Milestone: M1. Status: **implemented**.
 
 Goal: Record only deliberately started foreground walking.
 
@@ -177,7 +177,7 @@ Acceptance scenarios:
 
 ## STORE: Durable drafts and migrations
 
-Owner: Ismar. Milestone: M1. Status: **planned**.
+Owner: Ismar. Milestone: M1. Status: **implemented**.
 
 Goal: Protect an unfinished walk from app termination.
 

@@ -4,6 +4,7 @@ import { exerciseH3Trial, exerciseVersionedGeography } from "./exerciseH3Trial";
 import { exerciseAccountIsolation, exerciseDraftRecovery, exerciseInterruptedFinish } from "./exerciseAccountIsolation";
 import { exerciseWalkStorage } from "./exerciseWalkStorage";
 import { exerciseSchemaUpgrade } from "./exerciseSchemaUpgrade";
+import { requireDeviceEvidence } from "./deviceEvidence";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
@@ -220,6 +221,15 @@ for (const id of [
     }
   };
 }
+
+// Device-level scenarios: LIFE-02 has no automated equivalent; LIFE-01 runs its
+// browser case above and also needs the recorded phone result.
+executable["LIFE-02"] = () => requireDeviceEvidence("LIFE-02");
+const lifeBrowser = executable["LIFE-01"];
+executable["LIFE-01"] = async (scenario) => {
+  await lifeBrowser(scenario);
+  requireDeviceEvidence("LIFE-01");
+};
 
 test("specification baseline has complete implemented coverage and no orphan tests", () => {
   const ids = new Set<string>();

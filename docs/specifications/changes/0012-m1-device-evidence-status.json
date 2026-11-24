@@ -1,0 +1,28 @@
+{
+  "changes": [
+    {
+      "feature": "STORE",
+      "before": "098b1fcd8b52490c00e4238385ea97bedc6a5a2b8b1cc86c27eef9e166bced5a",
+      "after": "f68cc1e10a4ed80ce6dc9a1726d594d30a66585f4e401aae7f58afccc7fb6073",
+      "rationale": "STORE-01..04 all run against real SQLite (recovery and discard after termination, interrupted finish, frozen version-1 upgrade, account-scoped retry). On 24 November 2026 the owner reported the force-quit draft recovery check passing on iPhone 13 Pro Max, iOS 26, development build 8871de65.",
+      "impact": "Status planned -> implemented. Scenarios and expectations unchanged. Browser storage stays in-memory only, as documented in the roadmap.",
+      "review": "Status only. Check that the four SQLite cases still assert the scenario results, and the STORE-01 row in docs/testing/m1-device-evidence.md."
+    },
+    {
+      "feature": "LIFE",
+      "before": "7ff72031ffb3107cf1a9c6990822f4e27e3655f87c436d698c6f3a96b7151cd8",
+      "after": "5bd255f6244b3525e1551486e5e6a4c248aade6d380fe6b3334c80007e86a905",
+      "rationale": "LIFE-03..05 run in the browser and domain suites. LIFE-01 runs its browser case and now also requires the recorded phone result; LIFE-02 (pause, background, resume) has no automated equivalent and is registered through requireDeviceEvidence, which fails unless docs/testing/m1-device-evidence.md has a complete build record and a row starting with Passed. The owner reported both as passing on 24 November 2026 (iOS 26, build 8871de65), as one summary for the whole checklist with no per-check notes.",
+      "impact": "Status planned -> implemented. Scenarios and expectations unchanged. LIFE-02's adapter checks a reviewed record, not a phone; a future build needs a new evidence record. Background recording stays gated by BACKGROUND (M3).",
+      "review": "Feature owner is Hanan. The evidence was recorded and reviewed by the tester (owner Ismar) only; Hanan should confirm the LIFE-01/LIFE-02 rows."
+    },
+    {
+      "feature": "MAP",
+      "before": "20a756a7de9e04acc564d4c570f2011b8efc64998d3b6aac2a006914584461e8",
+      "after": "67888ac2c3e2452702073887424c8977f81fb6a18e57bac0fdc6b0a5bb97b481",
+      "rationale": "MAP-01..03 run as browser cases (pan/style/recenter keep the walk, blocked tile hosts show retry and the walk is still listed, attribution in both styles); MAP-04/05 run the real tile-deadline logic. No MAP scenario is device-level.",
+      "impact": "Status planned -> implemented. Scenarios unchanged. M1 has no discoveries or XP, so MAP-01 currently checks the recorded walk distance and state; when M2 adds discoveries and XP, the MAP-01 case must be extended to assert those too.",
+      "review": "Feature owner is Hanan; please confirm. The native map renderer was not separately tested with tiles blocked on the phone."
+    }
+  ]
+}
