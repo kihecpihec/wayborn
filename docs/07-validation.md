@@ -278,3 +278,30 @@ and STARTUP-01's 3 s budget still needs a cold start on the reference iPhone. No
 iPhone results for development build `8871de65` have been reported yet; the form is
 in [the M1 device evidence record](testing/m1-device-evidence.md). STARTUP-02 needs
 notifications (M6) and stays a TODO. All M1 features remain planned.
+
+## M1 iPhone evidence and status update — 24 November 2026
+
+Branch `t3/m1-device-evidence` from `dev` at `1fb9dbc`.
+
+- Device: iPhone 13 Pro Max, iOS 26 (minor version not reported), iOS development
+  build `8871de65` (commit `fcd055f`) with JavaScript from Metro, hosted Supabase
+  development project, D05 walking trial thresholds. Tester: Ismar (owner), who also
+  reviewed the record; no independent reviewer.
+- Reported after PR #18: "everything works properly" for the checklist in
+  [the M1 device evidence record](testing/m1-device-evidence.md) (location deny and
+  allow, pause/background/resume, force-quit recovery, finish to pending, account
+  switch, session restart, keyboard, wrong password, VoiceOver, largest text, poor
+  signal). One summary, no per-check notes; nothing behaved unexpectedly.
+- Not tested on the phone: STARTUP-01 offline or slow cold start (the development
+  build loads JavaScript from Metro). The VoiceOver and largest-text rows covered the
+  map and walk controls; whether sign-up and the other tabs were covered is unknown,
+  so ACCESS-01/02 stay open with full-scope rows.
+- New evidence-backed adapter `acceptance/deviceEvidence.ts`: LIFE-02 passes only if
+  the record has a complete build table and a "Passed" row; LIFE-01 also needs it
+  after its browser case. Both failed against the unfilled record ("device record
+  lacks iOS version") before it was filled, then passed.
+- Status (change record 0012): STORE, LIFE and MAP implemented. ISOLATION, NAV,
+  ACCESS, STARTUP and AUTH stay planned (reasons in the roadmap).
+- Results: typecheck, lint, web export; unit 45 passed; acceptance 48 passed, 92 TODO,
+  0 failed (including the Playwright cases against the local Supabase). Documentation,
+  specification and baseline checks passed.

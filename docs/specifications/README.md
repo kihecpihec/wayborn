@@ -8,8 +8,9 @@ roadmap still apply. Resolve conflicts in a reviewed specification change first.
 
 ## What this baseline proves
 
-Only `GPS` (accepted walking samples in the demo) is marked implemented. This is
-not full expedition lifecycle, H3 discovery, persistence, or server validation.
+Implemented: `GPS` (accepted walking samples), and from M1 `STORE` (account-owned
+SQLite drafts and queue), `LIFE` (foreground walk lifecycle) and `MAP` (map
+presentation). This is not H3 discovery, sync or server validation.
 Executable scenarios exercise actual production behavior through a thin adapter,
 using expected observations written in the specification. They do not compute
 expected answers with the implementation's distance, cell, or reward functions.
@@ -78,7 +79,11 @@ Scenarios labeled `device` require physical-device execution with scenario ID,
 OS/device/build, rules version, steps, observed result, date and reviewer recorded
 in the release validation record. `integration` requires the relevant actual local
 or staging service, including migrations/RLS and concurrency where specified.
-Domain tests and a web export cannot substitute for either. Add these environments
+Domain tests and a web export cannot substitute for either. A device scenario of an
+implemented feature is registered with `requireDeviceEvidence` in
+`prototype/map/acceptance/deviceEvidence.ts`: it fails unless the device evidence
+record is complete and the scenario's row starts with "Passed". It checks the
+record, not the phone; reviewing the record is what makes it evidence. Add these environments
 to CI as their features land; do not turn unavailable-service failures into passes.
 
 ## Full-product decisions and release scope

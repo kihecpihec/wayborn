@@ -2,8 +2,8 @@
   "version": 1,
   "features": {
     "MAP": {
-      "digest": "20a756a7de9e04acc564d4c570f2011b8efc64998d3b6aac2a006914584461e8",
-      "status": "planned",
+      "digest": "67888ac2c3e2452702073887424c8977f81fb6a18e57bac0fdc6b0a5bb97b481",
+      "status": "implemented",
       "scenarios": [
         "MAP-01",
         "MAP-02",
@@ -68,8 +68,8 @@
       ]
     },
     "LIFE": {
-      "digest": "7ff72031ffb3107cf1a9c6990822f4e27e3655f87c436d698c6f3a96b7151cd8",
-      "status": "planned",
+      "digest": "5bd255f6244b3525e1551486e5e6a4c248aade6d380fe6b3334c80007e86a905",
+      "status": "implemented",
       "scenarios": [
         "LIFE-01",
         "LIFE-02",
@@ -79,8 +79,8 @@
       ]
     },
     "STORE": {
-      "digest": "098b1fcd8b52490c00e4238385ea97bedc6a5a2b8b1cc86c27eef9e166bced5a",
-      "status": "planned",
+      "digest": "f68cc1e10a4ed80ce6dc9a1726d594d30a66585f4e401aae7f58afccc7fb6073",
+      "status": "implemented",
       "scenarios": [
         "STORE-01",
         "STORE-02",

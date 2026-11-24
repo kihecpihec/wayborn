@@ -100,6 +100,16 @@ only in explicitly labeled development mode; begin a deliberate foreground activ
   scenario (see [the M1 device evidence record](testing/m1-device-evidence.md)),
   STARTUP-02 (needs notifications), Google sign-in, and AUTH-02's submission half (M2).
 
+- 24 November 2026, device evidence: the owner reported the M1 checklist passing on
+  the iPhone 13 Pro Max (iOS 26, development build `8871de65`). STORE, LIFE and MAP
+  are now implemented (change record 0012); LIFE-02 and LIFE-01's phone half are
+  registered through the evidence-backed adapter `requireDeviceEvidence`. Still planned:
+  ISOLATION (ISOLATION-02 needs M2 sync), NAV (NAV-01 finish-cancel and NAV-02
+  summary reopen have no cases yet), ACCESS (full-scope VoiceOver and largest-text
+  rows not reported), STARTUP (offline cold start needs an embedded-bundle build;
+  STARTUP-02 needs notifications) and AUTH (Google sign-in, submission half of AUTH-02).
+  When M2 adds discoveries and XP, extend the MAP-01 case to assert them.
+
 ## Milestone 2 — First complete walking-and-discovery alpha
 
 Required feature IDs: `FOG, API, XP, SYNC, RECONCILE, PRIVACY, PROGRESS`.

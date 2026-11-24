@@ -7,7 +7,7 @@
       "title": "Map presentation",
       "owner": "Hanan",
       "wave": 1,
-      "status": "planned",
+      "status": "implemented",
       "goal": "Show real geography in a readable pixel-art world.",
       "rules": [
         "Keep provider attribution visible in all styles.",
@@ -778,7 +778,7 @@
       "title": "Foreground expedition lifecycle",
       "owner": "Hanan",
       "wave": 1,
-      "status": "planned",
+      "status": "implemented",
       "goal": "Record only deliberately started foreground walking.",
       "rules": [
         "Start idle and request permission only through the start flow.",
@@ -834,7 +834,7 @@
       "title": "Durable drafts and migrations",
       "owner": "Ismar",
       "wave": 1,
-      "status": "planned",
+      "status": "implemented",
       "goal": "Protect an unfinished walk from app termination.",
       "rules": [
         "Persist samples incrementally.",
